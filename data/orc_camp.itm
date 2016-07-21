@@ -1,0 +1,36 @@
+[0]
+Name=Боевой Топор
+Category=Axe
+Material=Metal
+Level=2
+Durability=31
+X=40
+Y=22
+Symbol=)
+Color=6220500
+Count=1
+
+[1]
+Name=Короткое Копье
+Category=Spear
+Material=Wood
+Level=1
+Durability=11
+X=41
+Y=22
+Symbol=)
+Color=8782471
+Count=1
+
+[2]
+Name=Орочий Меч
+Category=Sword
+Material=Bone
+Level=2
+Durability=19
+X=42
+Y=22
+Symbol=)
+Color=1812422
+Count=1
+

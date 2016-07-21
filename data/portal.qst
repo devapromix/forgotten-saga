@@ -1,0 +1,23 @@
+:0
+proc портал
+if quest3=1 then
+btn close (dialog 0:4:1&quest3=2), Использовать кольцо шамана!
+endif
+end
+
+:1
+proc портал
+end
+
+:портал
+pln
+btn close, Отойти от портала.
+end
+
+
+
+
+
+
+
+
