@@ -2,7 +2,7 @@ program ForgottenSaga;
 
 uses  
   Forms,
-  Engine in '..\RogueEngine\Engine.pas',
+  Engine in 'Engine.pas',
   ForgottenSaga.MainForm in 'ForgottenSaga.MainForm.pas' {fMain},
   ForgottenSaga.Game in 'ForgottenSaga.Game.pas',
   ForgottenSaga.Inv in 'ForgottenSaga.Inv.pas',
