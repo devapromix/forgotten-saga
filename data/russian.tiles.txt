@@ -1,1 +1,8 @@
+None=Пустота
+Dirt=Грязь
+Grass=Трава
 Tree=Дерево
+Entrance to dungeon=Вход в подземелье
+=Выход из подземелья
+Stone wall=Каменная стена
+Stone floor=Каменный пол

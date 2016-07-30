@@ -226,7 +226,7 @@ end;
 
 function TCustomInventory.Del(ID: string; ACount: Integer): Boolean;
 var
-  I, J: TInvByte;
+  I: TInvByte;
 begin
   Result := False;
   I := IndexOf(ID);
@@ -251,7 +251,7 @@ end;
 
 procedure TInventory.LoadFromFile(FileName: string);
 var
-  P, I, C: Integer;
+  P, I: Integer;
   E: TStringList;  
 begin
   P := 1;

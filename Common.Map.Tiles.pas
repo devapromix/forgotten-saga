@@ -65,19 +65,19 @@ end;
 
 constructor TTiles.Create;
 begin
-  FTiles[tNone] := Add('Пустота', ' ', False, cBlack);
-  FTiles[tDirt] := Add('Грязь', '.', True, clDirt);
-  FTiles[tGrass] := Add('Трава', '"', True, clGrass);
-  FTiles[tGrass2] := Add('Трава (Остролист)', '"', True, clPlant);
+  FTiles[tNone] := Add('None', ' ', False, cBlack);
+  FTiles[tDirt] := Add('Dirt', '.', True, clDirt);
+  FTiles[tGrass] := Add('Grass', '"', True, clGrass);
+  FTiles[tGrass2] := Add('Grass', '"', True, clPlant);
   FTiles[tSmallTree] := Add('Tree', 't', False, clLtPlant);
   FTiles[tTree] := Add('Tree', 'T', False, clDkPlant);
-  FTiles[tStDn] := Add('Вход в подземелье', '>', True, clTileEnt);
-  FTiles[tStUp] := Add('Выход из подземелья', '<', True, clTileEnt);
-  FTiles[tStone] := Add('Каменный пол', '.', True, clStone);
-  FTiles[tStoneWall] := Add('Каменная стена', '#', False, clStone2);
-  FTiles[tStone2] := Add('Каменный пол', '.', True, clStone3);
-  FTiles[tStoneWall2] := Add('Каменная стена', '#', False, clStone4);
-  FTiles[tStone3] := Add('Каменный пол', '.', True, cDkGray);
+  FTiles[tStDn] := Add('Entrance to dungeon', '>', True, clTileEnt);
+  FTiles[tStUp] := Add('Out of the dungeon', '<', True, clTileEnt);
+  FTiles[tStoneWall] := Add('Stone wall', '#', False, clStone2);
+  FTiles[tStoneWall2] := Add('Stone wall', '#', False, clStone4);
+  FTiles[tStone] := Add('Stone floor', '.', True, clStone);
+  FTiles[tStone2] := Add('Stone floor', '.', True, clStone3);
+  FTiles[tStone3] := Add('Stone floor', '.', True, cDkGray);
 end;
 
 procedure TTiles.Render(Engine: TEngine; X, Y, Z: Integer; Tile: TTile);
