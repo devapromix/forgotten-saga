@@ -1,5 +1,7 @@
 unit Engine;
 
+{$DEFINE USE_TERMINAL}
+
 {$IFDEF FPC}
 {$MODE Delphi}
 {$ENDIF}

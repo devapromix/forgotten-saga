@@ -1,7 +1,8 @@
 program ForgottenSaga;
 
-uses  
+uses
   Forms,
+  BearLibTerminal in 'BearLibTerminal.pas',
   Engine in 'Engine.pas',
   ForgottenSaga.MainForm in 'ForgottenSaga.MainForm.pas' {fMain},
   ForgottenSaga.Game in 'ForgottenSaga.Game.pas',
