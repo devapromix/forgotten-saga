@@ -1,6 +1,6 @@
 unit Engine;
 
-{$DEFINE USE_TERMINAL}
+{$I Include.inc}
 
 {$IFDEF FPC}
 {$MODE Delphi}
@@ -52,7 +52,11 @@ implementation
 
 uses
 {$IFNDEF FPC}
+//{$IFDEF USE_TERMINAL}
+  BearLibTerminal,
+//{$ELSE}
   Windows,
+//{$ENDIF}
 {$ELSE}
   LCLIntf, LCLType, LMessages, LazUTF8,
 {$ENDIF}
