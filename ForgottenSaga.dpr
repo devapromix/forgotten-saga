@@ -30,8 +30,10 @@ uses
 begin
 {$IFDEF USE_TERMINAL}
   terminal_open();
-  terminal_set(Format('window: size=%dx%d', [MapWidth + PanelWidth, MapHeight]));
-  terminal_print(1, 1, 'Hello, world!');
+  Saga := TSaga.Create(MapWidth + PanelWidth, MapHeight);
+  Saga.Init;
+  terminal_set(Format('window.title=%s', [__('Forgotten Saga')]));
+  terminal_print(1, 1, 'Привет мир!');    
   terminal_refresh();
   while (terminal_read() <> TK_CLOSE) do
   begin

@@ -8,7 +8,11 @@ unit Engine;
 
 interface
 
-uses Types, Graphics;
+uses
+{$IFNDEF USE_TERMINAL}
+  Graphics,
+{$ENDIF}
+  Types;
 
 type
   TAlign = (aLeft, aCenter, aRight);
@@ -22,7 +26,9 @@ type
 type
   TEngine = class(TObject)
   private
+{$IFNDEF USE_TERMINAL}
     FSurface: TBitmap;
+{$ENDIF}
     FWindow: TSize;
     FChar: TSize;
   public
@@ -43,7 +49,9 @@ type
       : Integer; overload;
     function LightColor(Color: Integer; Percent: Byte): Integer;
     function DarkColor(Color: Integer; Percent: Byte): Integer;
+{$IFNDEF USE_TERMINAL}
     property Surface: TBitmap read FSurface write FSurface;
+{$ENDIF}
     property Window: TSize read FWindow write FWindow;
     property Char: TSize read FChar write FChar;
   end;
@@ -51,12 +59,11 @@ type
 implementation
 
 uses
-{$IFNDEF FPC}
-//{$IFDEF USE_TERMINAL}
+{$IFDEF USE_TERMINAL}
   BearLibTerminal,
-//{$ELSE}
+{$ENDIF}
+{$IFNDEF FPC}
   Windows,
-//{$ENDIF}
 {$ELSE}
   LCLIntf, LCLType, LMessages, LazUTF8,
 {$ENDIF}
@@ -65,10 +72,15 @@ uses
 constructor TEngine.Create(AWidth, AHeight: Integer);
 begin
   Randomize;
-  FSurface := Graphics.TBitmap.Create;
   FWindow.Width := AWidth;
   FWindow.Height := AHeight;
-  FSurface.PixelFormat := pf16bit;   
+{$IFDEF USE_TERMINAL}
+  terminal_set('font: UbuntuMono-R.ttf, size=11;');
+  terminal_set(Format('terminal.encoding=%s', ['windows-1251']));
+  terminal_set(Format('window: size=%dx%d, icon=%s', [AWidth, AHeight, 'ForgottenSaga.ico']));
+{$ELSE}
+  FSurface := Graphics.TBitmap.Create;
+  FSurface.PixelFormat := pf16bit;
   FSurface.Canvas.Brush.Style := bsClear;
   FSurface.Canvas.Font.Name := 'Courier New';
   FSurface.Canvas.Font.Style := [];
@@ -77,27 +89,34 @@ begin
   FChar.Height := Surface.Canvas.TextHeight('W');
   FSurface.Width := FChar.Width * FWindow.Width;
   FSurface.Height := FChar.Height * FWindow.Height;
+{$ENDIF}
 end;
 
 destructor TEngine.Destroy;
 begin
+{$IFNDEF USE_TERMINAL}
   FSurface.Free;
+{$ENDIF}
   inherited;
 end;
 
 procedure TEngine.FontColor(Color: Integer);
 begin
+{$IFNDEF USE_TERMINAL}
   Surface.Canvas.Font.Color := Color;
+{$ENDIF}
 end;
 
 procedure TEngine.FontBackColor(Color: Integer);
 begin
+{$IFNDEF USE_TERMINAL}
   case Color of
     clClear:
       Surface.Canvas.Brush.Style := bsClear;
   else
     Surface.Canvas.Brush.Color := Color;
   end;
+{$ENDIF}
 end;
 
 procedure TEngine.TitleOut(Y: Integer; Text: string);
@@ -116,9 +135,11 @@ end;
 
 procedure TEngine.Clear;
 begin
+{$IFNDEF USE_TERMINAL}
   Surface.Canvas.Brush.Color := clBlack;
   Surface.Canvas.FillRect(Rect(0, 0, Surface.Width, Surface.Height));
   FontBackColor(clClear);
+{$ENDIF}
 end;
 
 procedure TEngine.KeyOut(X, Y: Integer; Caption: string; Key: string; Active: Boolean = True);
@@ -144,8 +165,8 @@ begin
     aCenter:
       begin
         S := '[' + Key + '] ' + Caption;
-        L := (((Surface.Width + (X * Char.Width)) div 2)) -
-          (Surface.Canvas.TextWidth(S) div 2);
+        L := ((((Char.Width * Window.Width) + (X * Char.Width)) div 2)) -
+          ((Length(S) * Char.Width) div 2);
         KeyOut(L div Char.Width, Y, Caption, Key, Active);
       end;
     aRight:
@@ -159,6 +180,7 @@ procedure TEngine.TextOut(X, Y: Integer; Text: string; Align: TAlign = aLeft);
 var
   Width: Integer;
 begin
+{$IFNDEF USE_TERMINAL}
   Width := Surface.Canvas.TextWidth(Text);
   case Align of
     aLeft:
@@ -169,6 +191,7 @@ begin
     aRight:
       Surface.Canvas.TextOut(Surface.Width - Width, Y * Char.Height, Text);
   end;
+{$ENDIF}
 end;
 
 function TEngine.TextOut(aText: string; aRect: TRect;
@@ -186,7 +209,9 @@ var
 
   function AddLine(astr, aword: string): Boolean;
   begin
+{$IFNDEF USE_TERMINAL}
     Result := Surface.Canvas.TextWidth(astr + aword) >= aRect.Right;
+{$ENDIF}
     if Result then
     begin
       AddRow(astr);
@@ -233,6 +258,8 @@ var
   R, G, B: Byte;  
   C: Integer;
 begin
+  Result := Color;
+{$IFNDEF USE_TERMINAL}
   C := ColorToRGB(Color);
   R := GetRValue(C);
   G := GetGValue(C);
@@ -241,6 +268,7 @@ begin
   G := G - MulDiv(G, Percent, 100);
   B := B - MulDiv(B, Percent, 100);
   Result := RGB(R, G, B);
+{$ENDIF}
 end;
 
 function TEngine.LightColor(Color: Integer; Percent: Byte): Integer;
@@ -248,6 +276,8 @@ var
   R, G, B: Byte;
   C: Integer;
 begin
+  Result := Color;
+{$IFNDEF USE_TERMINAL}
   C := ColorToRGB(Color);
   R := GetRValue(C);
   G := GetGValue(C);
@@ -256,14 +286,17 @@ begin
   G := G + MulDiv(255 - G, Percent, 100);
   B := B + MulDiv(255 - B, Percent, 100);
   Result := RGB(R, G, B);
+{$ENDIF}
 end;
 
 procedure TEngine.Border(Pos: TPoint; Color: Integer);
 begin
+{$IFNDEF USE_TERMINAL}
   Surface.Canvas.Pen.Color := Color;
   Surface.Canvas.Brush.Style := bsClear;
   Surface.Canvas.Rectangle(Pos.X * Char.Width - 1, Pos.Y * Char.Height - 1,
     Pos.X * Char.Width + Char.Width + 1, Pos.Y * Char.Height + Char.Height + 1);
+{$ENDIF}
 end;
 
 end.
