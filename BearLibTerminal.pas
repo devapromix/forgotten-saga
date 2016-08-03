@@ -344,22 +344,22 @@ begin
     terminal_set := terminal_set_unicode(PWideChar(Options));
 end;
 
-procedure terminal_color(Color: AnsiString);
+procedure terminal_color(Color: AnsiString); overload;
 begin
 	terminal_color(color_from_name(Color));
 end;
 
-procedure terminal_color(Color: WideString);
+procedure terminal_color(Color: WideString); overload;
 begin
 	terminal_color(color_from_name(Color));
 end;
 
-procedure terminal_bkcolor(Color: AnsiString);
+procedure terminal_bkcolor(Color: AnsiString); overload;
 begin
 	terminal_bkcolor(color_from_name(Color));
 end;
 
-procedure terminal_bkcolor(Color: WideString);
+procedure terminal_bkcolor(Color: WideString); overload;
 begin
 	terminal_bkcolor(color_from_name(Color));
 end;
@@ -382,27 +382,27 @@ begin
     terminal_put_integer(X, Y, ord(Code));
 end;
 
-procedure terminal_put_ext(X, Y, dX, dY: Int32; Code: WideChar; Corners: PUInt32);
+procedure terminal_put_ext(X, Y, dX, dY: Int32; Code: WideChar; Corners: PUInt32); overload;
 begin
 	terminal_put_ext(X, Y, dX, dY, ord(Code), Corners);
 end;
 
-procedure terminal_put_ext(X, Y, dX, dY, Code: Int32);
+procedure terminal_put_ext(X, Y, dX, dY, Code: Int32); overload;
 begin
 	terminal_put_ext(X, Y, dX, dY, Code, PUInt32(0));
 end;
 
-procedure terminal_put_ext(X, Y, dX, dY: Int32; Code: WideChar);
+procedure terminal_put_ext(X, Y, dX, dY: Int32; Code: WideChar); overload;
 begin
 	terminal_put_ext(X, Y, dX, dY, ord(Code), PUInt32(0));
 end;
 
-function terminal_pick(X, Y: Int32): Int32;
+function terminal_pick(X, Y: Int32): Int32; overload;
 begin
 	terminal_pick := terminal_pick(X, Y, 0);
 end;
 
-function terminal_pick_color(X, Y: Int32): UInt32;
+function terminal_pick_color(X, Y: Int32): UInt32; overload;
 begin;
 	terminal_pick_color := terminal_pick_color(X, Y, 0);
 end;

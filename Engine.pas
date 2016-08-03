@@ -124,7 +124,8 @@ begin
   FontColor(clTitle);
   TextOut(0, Y - 1, Text, aCenter);
   TextOut(0, Y, StringOfChar('=',
-    {$IFDEF FPC}UTF8{$ENDIF}Length(Text)), aCenter);
+    //{$IFDEF FPC}UTF8{$ENDIF}
+    Length(Text)), aCenter);
 end;
 
 procedure TEngine.CharOut(X, Y: Integer; Symbol: System.Char; Color: Integer);
