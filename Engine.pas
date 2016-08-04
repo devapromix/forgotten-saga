@@ -78,6 +78,8 @@ begin
   terminal_set('font: UbuntuMono-R.ttf, size=11;');
   terminal_set(Format('terminal.encoding=%s', ['windows-1251']));
   terminal_set(Format('window: size=%dx%d, icon=%s', [AWidth, AHeight, 'ForgottenSaga.ico']));
+  FChar.Width := 8;
+  FChar.Height := 16;
 {$ELSE}
   FSurface := Graphics.TBitmap.Create;
   FSurface.PixelFormat := pf16bit;
@@ -136,7 +138,9 @@ end;
 
 procedure TEngine.Clear;
 begin
-{$IFNDEF USE_TERMINAL}
+{$IFDEF USE_TERMINAL}
+  terminal_clear();
+{$ELSE}
   Surface.Canvas.Brush.Color := clBlack;
   Surface.Canvas.FillRect(Rect(0, 0, Surface.Width, Surface.Height));
   FontBackColor(clClear);
@@ -181,7 +185,9 @@ procedure TEngine.TextOut(X, Y: Integer; Text: string; Align: TAlign = aLeft);
 var
   Width: Integer;
 begin
-{$IFNDEF USE_TERMINAL}
+{$IFDEF USE_TERMINAL}
+  terminal_print(X, Y, Text);
+{$ELSE}
   Width := Surface.Canvas.TextWidth(Text);
   case Align of
     aLeft:

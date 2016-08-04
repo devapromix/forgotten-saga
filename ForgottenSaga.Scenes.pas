@@ -276,8 +276,8 @@ type
 
 implementation
 
-uses Forms, SysUtils, Windows, Math, Engine, ForgottenSaga.Game, Common.Color, Common.Utils, ForgottenSaga.Creature, Common.Map.Tiles,
-  ForgottenSaga.Inv;
+uses Forms, SysUtils, Windows, Math, Engine, ForgottenSaga.Game, Common.Color,
+  Common.Utils, ForgottenSaga.Creature, Common.Map.Tiles, ForgottenSaga.Inv;
 
 { TStages }
 
@@ -583,17 +583,23 @@ end;
 
 procedure TStageMainMenu.Render;
 begin
-  inherited;
+  inherited Render;
+  Saga.Engine.FontColor(cLtGray);
+  Saga.Engine.TextOut(0, Saga.Engine.Window.Height - 1, 'Copyright (C) 2016 Sergiy Tkach (DevApromix)', aCenter);
 end;
 
 procedure TStageMainMenu.Update(var Key: Word);
 begin
   inherited;
+//  Box(MenuPos);
   case Key of
     13:
       case MenuPos of
         0:
-          Saga.Stages.SetStage(stRaceMenu);
+          begin
+            //Box;
+            Saga.Stages.SetStage(stRaceMenu);
+          end;
         1:
           begin
             Saga.LoadSlots;
@@ -790,7 +796,9 @@ procedure TStageStorageMenu.Update(var Key: Word);
 begin
   case Key of
     27:
+    begin
       Saga.Stages.Back;
+    end;
     38, 40:
       MenuPos := Clamp(MenuPos + Key - 39, 0, 9, False);
   end;
@@ -1108,7 +1116,7 @@ end;
 procedure TStageQuestInfo.Update(var Key: Word);
 begin
   case Key of
-    27:
+    7:
       Saga.Stages.SetStage(stQuestLog);
   end;
 end;

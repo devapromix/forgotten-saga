@@ -23,9 +23,14 @@ uses
   Common.Map.Tiles in 'Common.Map.Tiles.pas',
   Common.Color in 'Common.Color.pas';
 
-//{$IFNDEF USE_TERMINAL}
+{$IFNDEF USE_TERMINAL}
 {$R *.res}
-//{$ENDIF}
+{$ENDIF}
+
+{$IFDEF USE_TERMINAL}
+var
+  Key: Word;
+{$ENDIF}
 
 begin
 {$IFDEF USE_TERMINAL}
@@ -33,13 +38,20 @@ begin
   Saga := TSaga.Create(MapWidth + PanelWidth, MapHeight);
   Saga.Init;
   terminal_set(Format('window.title=%s', [__('Forgotten Saga')]));
-  terminal_print(1, 1, 'Привет мир!');    
-  terminal_refresh();
-  while (terminal_read() <> TK_CLOSE) do
-  begin
-
-  end;
+  terminal_refresh;
+  repeat
+    Key := 0;
+    Key := terminal_read();
+    if (Key = 0) then Continue;
+    if Key = $28 then Key := 13;
+    if Key = $29 then Key := 27;
+    terminal_clear();
+    Saga.Stages.Render;
+    Saga.Stages.Update(Key);
+    terminal_refresh;
+  until (Key = TK_CLOSE);
   terminal_close();
+  Saga.Free;
 {$ELSE}
   Application.Initialize;
   Application.Title := 'Forgotten Saga';

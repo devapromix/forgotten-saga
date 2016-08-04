@@ -369,16 +369,21 @@ end;
 
 procedure TSaga.Init;
 var
-  F: TStringList;
+  S: TStringList;
+  F: string;
   I: Integer;
 begin
-  F := TStringList.Create;
+  S := TStringList.Create;
   try
-    F.LoadFromFile(GetPath('data') + Lg.Current + '.intro.txt');
-    for I := 0 to F.Count - 1 do
-      Log[lgIntro].Add(__(F[I]), False);
+    F := GetPath('data') + Lg.Current + '.intro.txt';
+    if (FileExists(F)) then
+    begin
+      S.LoadFromFile(F);
+      for I := 0 to S.Count - 1 do
+        Log[lgIntro].Add(__(S[I]), False);
+    end;
   finally
-    F.Free;
+    S.Free;
   end;
 
   Lg.Clear;
@@ -736,7 +741,7 @@ constructor TLanguage.Create;
 begin
   FID := TStringList.Create;
   FValue := TStringList.Create;
-  FCurrent := 'russian';
+  //FCurrent := 'russian';
 end;
 
 destructor TLanguage.Destroy;
