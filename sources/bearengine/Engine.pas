@@ -5,6 +5,104 @@ interface
 uses
   Types;
 
+const
+  // Keyboard scancodes
+  TK_A               = $04;
+  TK_B               = $05;
+  TK_C               = $06;
+  TK_D               = $07;
+  TK_E               = $08;
+  TK_F               = $09;
+  TK_G               = $0A;
+  TK_H               = $0B;
+  TK_I               = $0C;
+  TK_J               = $0D;
+  TK_K               = $0E;
+  TK_L               = $0F;
+  TK_M               = $10;
+  TK_N               = $11;
+  TK_O               = $12;
+  TK_P               = $13;
+  TK_Q               = $14;
+  TK_R               = $15;
+  TK_S               = $16;
+  TK_T               = $17;
+  TK_U               = $18;
+  TK_V               = $19;
+  TK_W               = $1A;
+  TK_X               = $1B;
+  TK_Y               = $1C;
+  TK_Z               = $1D;
+  TK_1               = $1E;
+  TK_2               = $1F;
+  TK_3               = $20;
+  TK_4               = $21;
+  TK_5               = $22;
+  TK_6               = $23;
+  TK_7               = $24;
+  TK_8               = $25;
+  TK_9               = $26;
+  TK_0               = $27;
+  TK_RETURN          = $28;
+  TK_ENTER           = $28;
+  TK_ESCAPE          = $29;
+  TK_BACKSPACE       = $2A;
+  TK_TAB             = $2B;
+  TK_SPACE           = $2C;
+  TK_MINUS           = $2D;
+  TK_EQUALS          = $2E;
+  TK_LBRACKET        = $2F;
+  TK_RBRACKET        = $30;
+  TK_BACKSLASH       = $31;
+  TK_SEMICOLON       = $33;
+  TK_APOSTROPHE      = $34;
+  TK_GRAVE           = $35;
+  TK_COMMA           = $36;
+  TK_PERIOD          = $37;
+  TK_SLASH           = $38;
+  TK_F1              = $3A;
+  TK_F2              = $3B;
+  TK_F3              = $3C;
+  TK_F4              = $3D;
+  TK_F5              = $3E;
+  TK_F6              = $3F;
+  TK_F7              = $40;
+  TK_F8              = $41;
+  TK_F9              = $42;
+  TK_F10             = $43;
+  TK_F11             = $44;
+  TK_F12             = $45;
+  TK_PAUSE           = $48;
+  TK_INSERT          = $49;
+  TK_HOME            = $4A;
+  TK_PAGEUP          = $4B;
+  TK_DELETE          = $4C;
+  TK_END             = $4D;
+  TK_PAGEDOWN        = $4E;
+  TK_RIGHT           = $4F;
+  TK_LEFT            = $50;
+  TK_DOWN            = $51;
+  TK_UP              = $52;
+  TK_KP_DIVIDE       = $54;
+  TK_KP_MULTIPLY     = $55;
+  TK_KP_MINUS        = $56;
+  TK_KP_PLUS         = $57;
+  TK_KP_ENTER        = $58;
+  TK_KP_1            = $59;
+  TK_KP_2            = $5A;
+  TK_KP_3            = $5B;
+  TK_KP_4            = $5C;
+  TK_KP_5            = $5D;
+  TK_KP_6            = $5E;
+  TK_KP_7            = $5F;
+  TK_KP_8            = $60;
+  TK_KP_9            = $61;
+  TK_KP_0            = $62;
+  TK_KP_PERIOD       = $63;
+  TK_SHIFT           = $70;
+  TK_CONTROL         = $71;
+  TK_ALT             = $72;
+
 type
   TAlign = (aLeft, aCenter, aRight);
 
@@ -40,7 +138,6 @@ type
     function DarkColor(Color: Integer; Percent: Byte): Integer;
     property Window: TSize read FWindow write FWindow;
     property Char: TSize read FChar write FChar;
-    function GetKey: Word;
   end;
 
 implementation
@@ -79,17 +176,6 @@ begin
 {$ENDIF}
 end;
 
-function TEngine.GetKey: Word;
-begin
-  Result := terminal_read();
-  if (Result = TK_RETURN) then
-    Result := 13;
-  if (Result = TK_ESCAPE) then
-    Result := 27;
-  if (Result = TK_SPACE) then
-    Result := 32;
-end;
-
 procedure TEngine.FontBackColor(Color: Integer);
 begin
 {$IFNDEF USE_TERMINAL}
@@ -123,16 +209,16 @@ end;
 procedure TEngine.KeyOut(X, Y: Integer; Caption: string; Key: string;
   Active: Boolean = True);
 var
-  K: string;
+  S: string;
 begin
-  K := '[' + Key + ']';
+  S := '<' + Key + '>';
   if Active then
     FontColor(clHotKey)
   else
     FontColor(DarkColor(clHotKey, 60));
-  TextOut(X, Y, K);
+  TextOut(X, Y, S);
   FontColor(clButton);
-  TextOut(X + Length(K) + 1, Y, Caption);
+  TextOut(X + Length(S) + 1, Y, Caption);
 end;
 
 procedure TEngine.KeyOut(X, Y: Integer; Caption: string; Key: string;

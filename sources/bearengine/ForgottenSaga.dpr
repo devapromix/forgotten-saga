@@ -28,7 +28,7 @@ begin
     terminal_refresh();
     repeat
       Saga.Stages.Render;
-      Key := Saga.Engine.GetKey;
+      Key := terminal_read();
       Saga.Stages.Update(Key);
       terminal_refresh();
     until (Key = TK_CLOSE);

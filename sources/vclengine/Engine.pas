@@ -10,6 +10,54 @@ uses
   Graphics,
   Types;
 
+const
+  TK_A               = ord('A');
+  TK_B               = ord('B');
+  TK_C               = ord('C');
+  TK_D               = ord('D');
+  TK_E               = ord('E');
+  TK_F               = ord('F');
+  TK_G               = ord('G');
+  TK_H               = ord('H');
+  TK_I               = ord('I');
+  TK_J               = ord('J');
+  TK_K               = ord('K');
+  TK_L               = ord('L');
+  TK_M               = ord('M');
+  TK_N               = ord('N');
+  TK_O               = ord('O');
+  TK_P               = ord('P');
+  TK_Q               = ord('Q');
+  TK_R               = ord('R');
+  TK_S               = ord('S');
+  TK_T               = ord('T');
+  TK_U               = ord('U');
+  TK_V               = ord('V');
+  TK_W               = ord('W');
+  TK_X               = ord('X');
+  TK_Y               = ord('Y');
+  TK_Z               = ord('Z');
+
+  TK_1               = 49;
+  TK_2               = 50;
+  TK_3               = 51;
+  TK_4               = 52;
+  TK_5               = 53;
+  TK_6               = 54;
+  TK_7               = 55;
+  TK_8               = 56;
+  TK_9               = 57;
+  TK_0               = 58;
+
+  TK_ENTER           = 13;
+  TK_ESCAPE          = 27;
+  TK_SPACE           = 32;
+
+  TK_RIGHT           = 39;
+  TK_LEFT            = 37;
+  TK_DOWN            = 40;
+  TK_UP              = 38;
+
 type
   TAlign = (aLeft, aCenter, aRight);
 
@@ -122,7 +170,7 @@ procedure TEngine.KeyOut(X, Y: Integer; Caption: string; Key: string;
 var
   K: string;
 begin
-  K := '[' + Key + ']';
+  K := '<' + Key + '>';
   if Active then
     FontColor(clHotKey)
   else

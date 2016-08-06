@@ -457,7 +457,7 @@ procedure TStageGame.Update(var Key: Word);
 begin
   // Box(Ord(Key));
   case Key of
-    27:
+    TK_ESCAPE:
       begin
         if Saga.Player.Look.Enabled then
         begin
@@ -476,23 +476,23 @@ begin
         Saga.LoadSlots;
         Saga.Stages.SetStage(stLoadMenu, stGame);
       end;
-    37, 100, ord('A'):
+    TK_LEFT, 100, TK_A:
       PlayerMove(-1, 0);
-    39, 102, ord('D'):
+    TK_RIGHT, 102, TK_D:
       PlayerMove(1, 0);
-    38, 104, ord('W'):
+    TK_UP, 104, TK_W:
       PlayerMove(0, -1);
-    40, 98, ord('X'):
+    TK_DOWN, 98, TK_X:
       PlayerMove(0, 1);
-    103, 36, ord('Q'):
+    103, 36, TK_Q:
       PlayerMove(-1, -1);
-    105, 33, ord('E'):
+    105, 33, TK_E:
       PlayerMove(1, -1);
-    97, 35, ord('Z'):
+    97, 35, TK_Z:
       PlayerMove(-1, 1);
-    99, 34, ord('C'):
+    99, 34, TK_C:
       PlayerMove(1, 1);
-    101, 12, ord('S'):
+    101, TK_S:
       PlayerMove(0, 0);
     188:
       if Saga.World.CurrentMap.HasTile(tStUp, Saga.Player.Pos.X,
@@ -502,20 +502,20 @@ begin
       if Saga.World.CurrentMap.HasTile(tStDn, Saga.Player.Pos.X,
         Saga.Player.Pos.Y) then
         Saga.World.GoLoc(drBottom);
-    ord('J'):
+    TK_J:
       Saga.Stages.SetStage(stQuestLog);
-    ord('I'):
+    TK_I:
       Saga.Stages.SetStage(stInv);
-    ord('V'):
+    TK_V:
       Saga.Player.Victory;
-    ord('B'):
+    TK_B:
       Saga.Player.Defeat;
-    ord('G'):
+    TK_G:
       Saga.Player.Pickup;
-    ord('H'):
+    TK_H:
       Saga.World.CurrentItems.Add('|', cDkBrown, 1, 'Посох Шамана', mtBone,
         ctStaff, 15);
-    ord('L'):
+    TK_L:
       begin
         Saga.Player.Look.SetPosition(Saga.Player.Pos);
         Saga.Player.Look.Enabled := not Saga.Player.Look.Enabled;
@@ -575,8 +575,10 @@ end;
 procedure TStageMenu.Update(var Key: Word);
 begin
   case Key of
-    38, 40:
-      MenuPos := Clamp(MenuPos + Key - 39, 0, Count - 1, False);
+    TK_DOWN:
+      MenuPos := Clamp(MenuPos + 1, 0, Count - 1, False);
+    TK_UP:
+      MenuPos := Clamp(MenuPos - 1, 0, Count - 1, False);
   end;
 end;
 
@@ -602,7 +604,7 @@ begin
   inherited;
   // Box(MenuPos);
   case Key of
-    13:
+    TK_ENTER:
       case MenuPos of
         0:
           begin
@@ -648,9 +650,9 @@ procedure TStageGameMenu.Update(var Key: Word);
 begin
   inherited;
   case Key of
-    27:
+    TK_ESCAPE:
       Saga.Stages.SetStage(stGame);
-    13:
+    TK_ENTER:
       case MenuPos of
         0:
           Saga.Stages.SetStage(stGame);
@@ -693,12 +695,15 @@ end;
 procedure TStageRaceMenu.Update(var Key: Word);
 begin
   case Key of
-    27:
+    TK_ESCAPE:
       Saga.Stages.SetStage(stMainMenu);
-    38, 40:
-      MenuPos := Clamp(MenuPos + Key - 39, ord(Low(TRaceEnum)),
+    TK_UP:
+      MenuPos := Clamp(MenuPos - 1, ord(Low(TRaceEnum)),
         ord(High(TRaceEnum)), False);
-    13:
+    TK_DOWN:
+      MenuPos := Clamp(MenuPos + 1, ord(Low(TRaceEnum)),
+        ord(High(TRaceEnum)), False);
+    TK_ENTER:
       case MenuPos of
         0 .. 2:
           begin
@@ -724,11 +729,11 @@ end;
 procedure TStageNameMenu.Update(var Key: Word);
 begin
   case Key of
-    27:
+    TK_ESCAPE:
       Saga.Stages.SetStage(stRaceMenu);
-    13:
+    TK_ENTER:
       Saga.Stages.SetStage(stTextMenu);
-    32:
+    TK_SPACE:
       Saga.Player.GenName;
   end;
 end;
@@ -746,9 +751,9 @@ end;
 procedure TStageTextMenu.Update(var Key: Word);
 begin
   case Key of
-    27:
+    TK_ESCAPE:
       Saga.Stages.SetStage(stNameMenu);
-    13:
+    TK_ENTER:
       Saga.New;
   end;
 end;
@@ -809,12 +814,14 @@ end;
 procedure TStageStorageMenu.Update(var Key: Word);
 begin
   case Key of
-    27:
+    TK_ESCAPE:
       begin
         Saga.Stages.Back;
       end;
-    38, 40:
-      MenuPos := Clamp(MenuPos + Key - 39, 0, 9, False);
+    TK_UP:
+      MenuPos := Clamp(MenuPos - 1, 0, 9, False);
+    TK_DOWN:
+      MenuPos := Clamp(MenuPos + 1, 0, 9, False);
   end;
 end;
 
@@ -831,7 +838,7 @@ procedure TStageSaveMenu.Update(var Key: Word);
 begin
   inherited;
   case Key of
-    13:
+    TK_ENTER:
       begin
         Saga.SaveToSlot(MenuPos);
         Saga.Stages.SetStage(stGame);
@@ -853,7 +860,7 @@ procedure TStageLoadMenu.Update(var Key: Word);
 begin
   inherited;
   case Key of
-    13:
+    TK_ENTER:
       if Saga.LoadFromSlot(MenuPos) then
         Saga.Stages.SetStage(stGame);
   end;
@@ -888,11 +895,11 @@ end;
 procedure TStageBattle.Update(var Key: Word);
 begin
   case Key of
-    49: // Атаковать
+    TK_1: // Атаковать
       begin
         Saga.Battle.PlayerMove();
       end;
-    50: // Отступить
+    TK_2: // Отступить
       begin
         Saga.Log[lgBattle].Add(__('Ты пытаешься уклониться от поединка.'));
         if (Math.RandomRange(1, 5) = 1) then
@@ -989,9 +996,9 @@ end;
 procedure TStageDialog.Update(var Key: Word);
 begin
   case Key of
-    49 .. 54: // 1..5
+    TK_1 .. TK_5: // 1..5
       begin
-        if (Key - 49 > LinkList.Count - 1) or (Key < 49) then
+        if (Key - TK_1 > LinkList.Count - 1) or (Key < TK_1) then
           Exit;
         Answer(Key);
         Render;
@@ -1004,7 +1011,7 @@ var
   ID: string;
 begin
   Saga.Log[lgDialog].Clear;
-  ID := Trim(LinkList.GetName(Key - 49));
+  ID := Trim(LinkList.GetName(Key - TK_1));
   LinkList.Clear;
   Dialog.Next(ID);
 end;
@@ -1031,7 +1038,7 @@ end;
 procedure TStageVictory.Update(var Key: Word);
 begin
   case Key of
-    27:
+    TK_ESCAPE:
       begin
         Saga.Recs.Load;
         Saga.Stages.SetStage(stRecMenu, stMainMenu);
@@ -1055,7 +1062,7 @@ end;
 procedure TStageDefeat.Update(var Key: Word);
 begin
   case Key of
-    27:
+    TK_ESCAPE:
       begin
         Saga.Recs.Load;
         Saga.Stages.SetStage(stRecMenu, stMainMenu);
@@ -1103,9 +1110,9 @@ var
 begin
   inherited;
   case Key of
-    27:
+    TK_ESCAPE:
       Saga.Stages.SetStage(stGame);
-    13:
+    TK_ENTER:
       if (Saga.Quest.Get(MenuPos, 0) <> '') then
       begin
         Saga.Log[lgQuest].Clear;
@@ -1152,7 +1159,7 @@ end;
 procedure TStageAboutMenu.Update(var Key: Word);
 begin
   case Key of
-    27:
+    TK_ESCAPE:
       Saga.Stages.Back;
   end;
 end;
@@ -1189,7 +1196,7 @@ procedure TStageRecMenu.Update(var Key: Word);
 begin
   inherited;
   case Key of
-    27:
+    TK_ESCAPE:
       Saga.Stages.Back;
   end;
 end;
@@ -1223,7 +1230,7 @@ procedure TStageInv.Update(var Key: Word);
 begin
   inherited;
   case Key of
-    27:
+    TK_ESCAPE:
       Saga.Stages.SetStage(stGame);
   end;
 end;
@@ -1270,15 +1277,15 @@ var
 begin
   inherited;
   case Key of
-    27:
+    TK_ESCAPE:
       Saga.Stages.SetStage(stGame);
-    ord('A') .. ord('Z'):
+    TK_A .. TK_Z:
       begin
         C := Saga.World.CurrentItems.Count(Saga.Player.Pos.X,
           Saga.Player.Pos.Y);
         if (C > 0) then
         begin
-          I := Key - (ord('A'));
+          I := Key - TK_A;
           if (I < C) then
           begin
             Saga.World.CurrentItems.Pickup(Saga.World.CurrentItems.GetIndex(I,
@@ -1287,9 +1294,9 @@ begin
           end;
         end;
       end;
-    32:
+    TK_SPACE:
       begin
-        K := ord('A');
+        K := TK_A;
         for I := 0 to High(TInvByte) - 1 do
           Self.Update(K);
       end;
