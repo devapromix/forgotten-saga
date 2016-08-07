@@ -30,6 +30,7 @@ begin
       Saga.Stages.Render;
       Key := terminal_read();
       Saga.Stages.Update(Key);
+      Saga.Stages.Timer;
       terminal_refresh();
     until (Key = TK_CLOSE);
     terminal_close();

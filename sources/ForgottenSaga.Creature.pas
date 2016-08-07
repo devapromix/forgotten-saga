@@ -914,7 +914,7 @@ var
       Result := Format(KeyFmt, ['@', Saga.Player.GetFullName]);
   end;
 
-  function GetItems: string;
+  function GetItems(Pos: TPoint): string;
   var
     I, C: Integer;
     Item: TItem;
@@ -936,7 +936,12 @@ var
 
 begin
   if not Enabled then
+  begin
+    Saga.Engine.FontColor(cWhiteYel);
+    Saga.Engine.FontBackColor(0);
+    Saga.Engine.TextOut(0, 39, GetItems(Saga.Player.Pos));
     Exit;
+  end;
   Saga.Engine.FontBackColor(cDkBrown);
   Saga.Engine.CharOut(Pos.X, Pos.Y, Saga.World.CurrentMap.GetTopTileChar(Pos.X,
     Pos.Y), cWhiteYel);
@@ -945,7 +950,7 @@ begin
   Saga.Engine.FontBackColor(0);
   Saga.Engine.TextOut(0, 39, Trim(Format('[%s] %s %s %s',
     [Saga.Tiles.GetTile(T).Symbol, __(Saga.Tiles.GetTile(T).Name),
-    GetCreatures(), GetItems()])));
+    GetCreatures(), GetItems(Pos)])));
 end;
 
 { TItem }
