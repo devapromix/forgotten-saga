@@ -38,7 +38,7 @@ begin
   Left := (Screen.Width div 2) - (Width div 2);
   Top := (Screen.Height div 2) - (Height div 2);
   Application.Title := __('Forgotten Saga');
-  Caption := __('Forgotten Saga');
+  Caption := Application.Title;
 end;
 
 procedure TfMain.FormPaint(Sender: TObject);

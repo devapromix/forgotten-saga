@@ -17,7 +17,8 @@ uses
   Common.Color in '..\Common.Color.pas';
 
 var
-  Key: Word;
+  Key: Word = 0;
+  Tik: Integer = 0;
 
 begin
   terminal_open();
@@ -25,16 +26,26 @@ begin
   try
     Saga.Init;
     terminal_set(Format('window.title=%s', [__('Forgotten Saga')]));
+    Saga.Stages.Render;
     terminal_refresh();
     repeat
       Saga.Stages.Render;
-      Key := terminal_read();
+      Key := 0;
+      if terminal_has_input() then
+        Key := terminal_read();
       Saga.Stages.Update(Key);
-      Saga.Stages.Timer;
+      if (Tik > 59) then
+      begin
+        Saga.Stages.Timer;
+        Tik := 0;
+      end;
       terminal_refresh();
+      Inc(Tik);
+      terminal_delay(1);
     until (Key = TK_CLOSE);
     terminal_close();
   finally
     Saga.Free;
   end;
+
 end.

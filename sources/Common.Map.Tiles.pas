@@ -82,7 +82,7 @@ end;
 
 procedure TTiles.Render(Engine: TEngine; X, Y, Z: Integer; Tile: TTile);
 begin
-  Engine.FontBackColor(Engine.DarkColor(FTiles[Tile].Color, 55));
+  Engine.FontBackColor(Engine.DarkColor(FTiles[Tile].Color, 90));
   Engine.CharOut(X, Y, FTiles[Tile].Symbol, FTiles[Tile].Color);
 end;
 

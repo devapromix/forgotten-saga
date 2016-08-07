@@ -260,7 +260,8 @@ type
 
 const
   BarFmt = '%d/%d';
-  KeyFmt = '[%s] %s';
+  InfFmt = '%s %s';
+  KeyFmt = '<%s> %s';
 
 implementation
 
@@ -530,9 +531,9 @@ procedure TCreature.Render;
 begin
   case Force of
     fcEnemy:
-      Saga.Engine.FontBackColor($000018);
+      Saga.Engine.FontBackColor($000022);
     fcAlly:
-      Saga.Engine.FontBackColor($001800);
+      Saga.Engine.FontBackColor($002200);
   end;
   Saga.Engine.CharOut(Pos.X, Pos.Y, Symbol, Color);
 end;
@@ -758,7 +759,7 @@ end;
 
 function TPlayer.GetFullName: string;
 begin
-  Result := Format(__('%s %s %d level'), [Name, GetRaceName, Level]);
+  Result := Format(__(InfFmt + ' %d level'), [Name, GetRaceName, Level]);
 end;
 
 function TPlayer.GetRaceName: string;
@@ -928,7 +929,7 @@ var
         Saga.World.CurrentItems.GetItemPropStr(Item)]));
       C := Saga.World.CurrentItems.Count(Pos.X, Pos.Y);
       if (C > 1) then
-        Result := Format(__('[%s] Несколько (%dx) предметов (%s)'),
+        Result := Format(__('<%s> Несколько (%dx) предметов (%s)'),
           [Saga.World.CurrentItems.Get(I).Symbol, C,
           Saga.World.CurrentItems.Get(I).Name]);
     end;
@@ -948,7 +949,7 @@ begin
   T := Saga.World.CurrentMap.GetTile(Pos.X, Pos.Y, lrTerrain);
   Saga.Engine.FontColor(cWhiteYel);
   Saga.Engine.FontBackColor(0);
-  Saga.Engine.TextOut(0, 39, Trim(Format('[%s] %s %s %s',
+  Saga.Engine.TextOut(0, 39, Trim(Format(KeyFmt + ' ' + InfFmt,
     [Saga.Tiles.GetTile(T).Symbol, __(Saga.Tiles.GetTile(T).Name),
     GetCreatures(), GetItems(Pos)])));
 end;

@@ -429,12 +429,12 @@ end;
 procedure TStageGame.Render;
 begin
   Saga.World.CurrentMap.Render;
-  RenderPlayerInfo;
-  Saga.Log[lgGame].Render(81, 15, 39);
   Saga.World.CurrentItems.Render;
   Saga.World.CurrentCreatures.Render;
-  Saga.Notification.Render(0, 0);
   Saga.Engine.FontBackColor(0);
+  RenderPlayerInfo;
+  Saga.Log[lgGame].Render(81, 15, 39);
+  Saga.Notification.Render(0, 0);
 end;
 
 procedure TStageGame.RenderPlayerInfo;
