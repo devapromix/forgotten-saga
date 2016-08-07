@@ -49,9 +49,36 @@ const
   TK_9               = 57;
   TK_0               = 58;
 
+  TK_F1              = 112;
+  TK_F2              = 113;
+  TK_F3              = 114;
+  TK_F4              = 115;
+  TK_F5              = 116;
+  TK_F6              = 117;
+  TK_F7              = 118;
+  TK_F8              = 119;
+  TK_F9              = 120;
+  TK_F10             = 121;
+  TK_F11             = 122;
+  TK_F12             = 123;
+
   TK_ENTER           = 13;
   TK_ESCAPE          = 27;
   TK_SPACE           = 32;
+
+  TK_KP_0            = 96;
+  TK_KP_1            = 97;
+  TK_KP_2            = 98;
+  TK_KP_3            = 99;
+  TK_KP_4            = 100;
+  TK_KP_5            = 101;
+  TK_KP_6            = 102;
+  TK_KP_7            = 103;
+  TK_KP_8            = 104;
+  TK_KP_9            = 105;
+
+  TK_COMMA           = 188;
+  TK_PERIOD          = 190;
 
   TK_RIGHT           = 39;
   TK_LEFT            = 37;
@@ -87,7 +114,6 @@ type
       Align: TAlign = aLeft); overload;
     procedure FontColor(Color: Integer);
     procedure FontBackColor(Color: Integer);
-    procedure Border(Pos: TPoint; Color: Integer);
     function TextOut(aText: string; aRect: TRect; Align: TAlign = aLeft)
       : Integer; overload;
     function LightColor(Color: Integer; Percent: Byte): Integer;
@@ -95,6 +121,7 @@ type
     property Surface: TBitmap read FSurface write FSurface;
     property Window: TSize read FWindow write FWindow;
     property Char: TSize read FChar write FChar;
+    procedure Close;
   end;
 
 implementation
@@ -105,7 +132,7 @@ uses
 {$ELSE}
   LCLIntf, LCLType, LMessages, LazUTF8,
 {$ENDIF}
-  Classes, SysUtils, Common.Color;
+  Forms, Classes, SysUtils, Common.Color, Common.Utils;
 
 constructor TEngine.Create(AWidth, AHeight: Integer);
 begin
@@ -163,6 +190,11 @@ begin
   Surface.Canvas.Brush.Color := clBlack;
   Surface.Canvas.FillRect(Rect(0, 0, Surface.Width, Surface.Height));
   FontBackColor(clClear);
+end;
+
+procedure TEngine.Close;
+begin
+  Application.Terminate;
 end;
 
 procedure TEngine.KeyOut(X, Y: Integer; Caption: string; Key: string;
@@ -302,14 +334,6 @@ begin
   G := G + MulDiv(255 - G, Percent, 100);
   B := B + MulDiv(255 - B, Percent, 100);
   Result := RGB(R, G, B);
-end;
-
-procedure TEngine.Border(Pos: TPoint; Color: Integer);
-begin
-  Surface.Canvas.Pen.Color := Color;
-  Surface.Canvas.Brush.Style := bsClear;
-  Surface.Canvas.Rectangle(Pos.X * Char.Width - 1, Pos.Y * Char.Height - 1,
-    Pos.X * Char.Width + Char.Width + 1, Pos.Y * Char.Height + Char.Height + 1);
 end;
 
 end.

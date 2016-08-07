@@ -9,9 +9,11 @@ type
   private
     FPos: TPoint;
   public
-    procedure SetPosition(const A: TPoint); overload;
+    procedure SetPosition(const APos: TPoint); overload;
     procedure SetPosition(const X, Y: Integer); overload;
     property Pos: TPoint read FPos;
+    function Has(const APos: TPoint): Boolean; overload;
+    function Has(const X, Y: Integer): Boolean; overload;
   end;
 
 type
@@ -276,14 +278,24 @@ const
 
   { TBaseEntity }
 
+function TBaseEntity.Has(const APos: TPoint): Boolean;
+begin
+  Result := (FPos.X = APos.X) and (FPos.Y = APos.Y)
+end;
+
+function TBaseEntity.Has(const X, Y: Integer): Boolean;
+begin
+  Result := (FPos.X = X) and (FPos.Y = Y)
+end;
+
 procedure TBaseEntity.SetPosition(const X, Y: Integer);
 begin
   FPos := Point(X, Y)
 end;
 
-procedure TBaseEntity.SetPosition(const A: TPoint);
+procedure TBaseEntity.SetPosition(const APos: TPoint);
 begin
-  FPos := A
+  FPos := APos
 end;
 
 { TEntity }
@@ -568,7 +580,7 @@ var
 begin
   Result := -1;
   for I := 0 to Count - 1 do
-    if (FCreature[I].Pos.X = X) and (FCreature[I].Pos.Y = Y) then
+    if (FCreature[I].Has(X, Y)) then
     begin
       Result := I;
       Break;
@@ -898,7 +910,7 @@ var
     if (I > -1) then
       Result := Format(KeyFmt, [Saga.World.CurrentCreatures.Get(I).Symbol,
         Saga.World.CurrentCreatures.Get(I).Name]);
-    if (Saga.Player.Pos.X = Pos.X) and (Saga.Player.Pos.Y = Pos.Y) then
+    if (Saga.Player.Has(Pos.X, Pos.Y)) then
       Result := Format(KeyFmt, ['@', Saga.Player.GetFullName]);
   end;
 
@@ -925,7 +937,9 @@ var
 begin
   if not Enabled then
     Exit;
-  Saga.Engine.Border(Pos, cYellow);
+  Saga.Engine.FontBackColor(cDkBrown);
+  Saga.Engine.CharOut(Pos.X, Pos.Y, Saga.World.CurrentMap.GetTopTileChar(Pos.X,
+    Pos.Y), cWhiteYel);
   T := Saga.World.CurrentMap.GetTile(Pos.X, Pos.Y, lrTerrain);
   Saga.Engine.FontColor(cWhiteYel);
   Saga.Engine.FontBackColor(0);

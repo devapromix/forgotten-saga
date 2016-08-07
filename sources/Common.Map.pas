@@ -36,9 +36,11 @@ type
     procedure LoadFromFile(FileName: string);
     procedure SaveToFile(FileName: string);
     function CellInMap(X, Y: Integer): Boolean;
+    function GetTopTileChar(X, Y: Integer): Char;
     procedure SetTile(X, Y, Z: Integer; Tile: TTile);
     function GetTile(X, Y, Z: Integer): TTile;
-    function HasTile(Tile: TTile; X, Y: Integer; Z: Integer = lrTerrain): Boolean;
+    function HasTile(Tile: TTile; X, Y: Integer;
+      Z: Integer = lrTerrain): Boolean;
     procedure Render;
     procedure Gen;
   end;
@@ -51,7 +53,7 @@ uses Engine, Classes, SysUtils, Math, Common.Utils, Common.Map.Generator,
 const
   Offset = 40;
 
-{ TCustomMap }
+  { TCustomMap }
 
 constructor TCustomMap.Create(Width, Height: Integer);
 begin
@@ -96,7 +98,7 @@ begin
   L.LoadFromFile(FileName);
   for Z := 0 to Layers - 1 do
   begin
-    I := L.IndexOf(Format('[%d]',[Z])) + 1;
+    I := L.IndexOf(Format('[%d]', [Z])) + 1;
     for Y := 0 to Height - 1 do
       for X := 0 to Width - 1 do
         FMap[Y][X][Z] := TTile(Ord(L[Y + I][X + 1]) - Offset);
@@ -113,12 +115,12 @@ begin
   L := TStringList.Create;
   for Z := 0 to Layers - 1 do
   begin
-    L.Append(Format('[%d]',[Z]));
+    L.Append(Format('[%d]', [Z]));
     for Y := 0 to Height - 1 do
     begin
       S := '';
       for X := 0 to Width - 1 do
-        S := S + Chr(ord(FMap[Y][X][Z]) + Offset);
+        S := S + Chr(Ord(FMap[Y][X][Z]) + Offset);
       L.Append(S);
     end;
   end;
@@ -160,10 +162,12 @@ procedure TMap.Clear;
 var
   I: Integer;
 begin
-  for I := 0 to Layers - 1 do ClearLayer(I);
+  for I := 0 to Layers - 1 do
+    ClearLayer(I);
 end;
 
-function TMap.HasTile(Tile: TTile; X, Y: Integer; Z: Integer = lrTerrain): Boolean;
+function TMap.HasTile(Tile: TTile; X, Y: Integer;
+  Z: Integer = lrTerrain): Boolean;
 begin
   Result := FMap[Y][X][Z] = Tile
 end;
@@ -178,11 +182,31 @@ begin
   Result := FMap[Y][X][Z];
 end;
 
+function TMap.GetTopTileChar(X, Y: Integer): Char;
+var
+  N, Z: Integer;
+begin
+  for Z := Layers - 1 downto 0 do
+    if (GetTile(X, Y, Z) <> tNone) then
+    begin
+      Result := Saga.Tiles.GetTile(GetTile(X, Y, Z)).Symbol;
+      N := Saga.World.CurrentItems.Has(X, Y);
+      if (N > -1) then
+        Result := Saga.World.CurrentItems.Get(N).Symbol;
+      N := Saga.World.CurrentCreatures.Has(X, Y);
+      if (N > -1) then
+        Result := Saga.World.CurrentCreatures.Get(N).Symbol;
+      if (Saga.Player.Has(X, Y)) then
+        Result := '@';
+      Exit;
+    end;
+end;
+
 procedure TMap.Gen;
 begin
-  //GenTestMap();
-  //GenOrcVillage();
-  //GenDarkCave();
+  // GenTestMap();
+  // GenOrcVillage();
+  // GenDarkCave();
 end;
 
 end.

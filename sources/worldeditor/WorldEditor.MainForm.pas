@@ -27,23 +27,21 @@ type
     Label1: TLabel;
     OD: TOpenDialog;
     SD: TSaveDialog;
-    procedure FormMouseMove(Sender: TObject; Shift: TShiftState; X,
-      Y: Integer);
+    procedure FormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormPaint(Sender: TObject);
     procedure FormMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
-    procedure FormKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure brTerrainClick(Sender: TObject);
     procedure ListBoxClick(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
   private
     { Private declarations }
   public
-    { Public declarations }   
-  end;  
+    { Public declarations }
+  end;
 
 var
   fMain: TfMain;
@@ -54,18 +52,29 @@ uses WorldEditor.Classes, Common.Map.Tiles;
 
 {$R *.dfm}
 
+procedure Border(Pos: TPoint; Color: Integer; Symbol: Char = #32);
+begin
+  Editor.Engine.Surface.Canvas.Pen.Color := Color;
+  Editor.Engine.Surface.Canvas.Brush.Style := bsClear;
+  Editor.Engine.Surface.Canvas.Rectangle(Pos.X * Editor.Engine.Char.Width - 1,
+    Pos.Y * Editor.Engine.Char.Height - 1, Pos.X * Editor.Engine.Char.Width +
+    Editor.Engine.Char.Width + 1, Pos.Y * Editor.Engine.Char.Height +
+    Editor.Engine.Char.Height + 1);
+end;
+
 procedure TfMain.FormCreate(Sender: TObject);
 begin
   Editor := TEditor.Create;
   Editor.ToolBarHeight := ToolBar.Height;
   ClientWidth := Editor.Engine.Surface.Width + ToolsPanel.Width;
-  ClientHeight := Editor.Engine.Surface.Height + Editor.ToolBarHeight + StatusBar.Height;
+  ClientHeight := Editor.Engine.Surface.Height + Editor.ToolBarHeight +
+    StatusBar.Height;
   Left := (Screen.Width div 2) - (Width div 2);
   Top := (Screen.Height div 2) - (Height div 2);
 end;
 
-procedure TfMain.FormMouseMove(Sender: TObject; Shift: TShiftState; X,
-  Y: Integer);
+procedure TfMain.FormMouseMove(Sender: TObject; Shift: TShiftState;
+  X, Y: Integer);
 begin
   Editor.MouseMove(X, Y);
   FormPaint(Sender);
@@ -75,14 +84,22 @@ end;
 procedure TfMain.FormPaint(Sender: TObject);
 begin
   Editor.Engine.Clear;
-  if btTerrain.Down then Editor.RenderTerrain;
-  if btObjects.Down then Editor.RenderObjects;
-  if btItems.Down then Editor.RenderItems;
-  if btCreatures.Down then Editor.RenderCreatures;
-  if brTerrain.Down then Editor.Engine.Border(Editor.Pos, clYellow);
-  if brObjects.Down then Editor.Engine.Border(Editor.Pos, clWhite);
-  if brItems.Down then Editor.Engine.Border(Editor.Pos, clSkyBlue);
-  if brCreatures.Down then Editor.Engine.Border(Editor.Pos, clFuchsia);
+  if btTerrain.Down then
+    Editor.RenderTerrain;
+  if btObjects.Down then
+    Editor.RenderObjects;
+  if btItems.Down then
+    Editor.RenderItems;
+  if btCreatures.Down then
+    Editor.RenderCreatures;
+  if brTerrain.Down then
+    Border(Editor.Pos, clYellow);
+  if brObjects.Down then
+    Border(Editor.Pos, clWhite);
+  if brItems.Down then
+    Border(Editor.Pos, clSkyBlue);
+  if brCreatures.Down then
+    Border(Editor.Pos, clFuchsia);
   Canvas.Draw(0, Editor.ToolBarHeight, Editor.Engine.Surface);
 end;
 
@@ -130,7 +147,7 @@ begin
   if OD.Execute then
   begin
     Editor.Map.LoadFromFile(OD.FileName);
-    
+
   end;
 end;
 

@@ -2,6 +2,8 @@ unit ForgottenSaga.Scenes;
 
 interface
 
+{$I Include.inc}
+
 uses Classes, ForgottenSaga.Script;
 
 type
@@ -276,7 +278,7 @@ type
 
 implementation
 
-uses Forms, SysUtils, Windows, Math, Engine, ForgottenSaga.Game, Common.Color,
+uses SysUtils, Math, Engine, ForgottenSaga.Game, Common.Color,
   Common.Utils, ForgottenSaga.Creature, Common.Map.Tiles, ForgottenSaga.Inv;
 
 { TStages }
@@ -432,6 +434,7 @@ begin
   Saga.World.CurrentItems.Render;
   Saga.World.CurrentCreatures.Render;
   Saga.Notification.Render(0, 0);
+  Saga.Engine.FontBackColor(0);
 end;
 
 procedure TStageGame.RenderPlayerInfo;
@@ -455,7 +458,7 @@ end;
 
 procedure TStageGame.Update(var Key: Word);
 begin
-  // Box(Ord(Key));
+  //Box(Ord(Key));
   case Key of
     TK_ESCAPE:
       begin
@@ -466,42 +469,44 @@ begin
         end;
         Saga.Stages.SetStage(stGameMenu);
       end;
-    113:
+    TK_F2:
       begin
         Saga.LoadSlots;
         Saga.Stages.SetStage(stSaveMenu, stGame);
       end;
-    114:
+    TK_F3:
       begin
         Saga.LoadSlots;
         Saga.Stages.SetStage(stLoadMenu, stGame);
       end;
-    TK_LEFT, 100, TK_A:
+    TK_LEFT, TK_KP_4, TK_A:
       PlayerMove(-1, 0);
-    TK_RIGHT, 102, TK_D:
+    TK_RIGHT, TK_KP_6, TK_D:
       PlayerMove(1, 0);
-    TK_UP, 104, TK_W:
+    TK_UP, TK_KP_8, TK_W:
       PlayerMove(0, -1);
-    TK_DOWN, 98, TK_X:
+    TK_DOWN, TK_KP_2, TK_X:
       PlayerMove(0, 1);
-    103, 36, TK_Q:
+    TK_KP_7, {$IFDEF VCLENGINE}36,{$ENDIF}TK_Q:
       PlayerMove(-1, -1);
-    105, 33, TK_E:
+    TK_KP_9, {$IFDEF VCLENGINE}33,{$ENDIF}TK_E:
       PlayerMove(1, -1);
-    97, 35, TK_Z:
+    TK_KP_1, {$IFDEF VCLENGINE}35,{$ENDIF}TK_Z:
       PlayerMove(-1, 1);
-    99, 34, TK_C:
+    TK_KP_3, {$IFDEF VCLENGINE}34,{$ENDIF}TK_C:
       PlayerMove(1, 1);
-    101, TK_S:
+    TK_KP_5, {$IFDEF VCLENGINE}12,{$ENDIF}TK_S:
       PlayerMove(0, 0);
-    188:
+    TK_COMMA:
       if Saga.World.CurrentMap.HasTile(tStUp, Saga.Player.Pos.X,
         Saga.Player.Pos.Y) then
         Saga.World.GoLoc(drTop);
-    190:
+    TK_PERIOD:
+    begin
       if Saga.World.CurrentMap.HasTile(tStDn, Saga.Player.Pos.X,
         Saga.Player.Pos.Y) then
         Saga.World.GoLoc(drBottom);
+    end;
     TK_J:
       Saga.Stages.SetStage(stQuestLog);
     TK_I:
@@ -627,7 +632,7 @@ begin
             Saga.Stages.SetStage(stAboutMenu, stMainMenu);
           end;
         4:
-          Application.Terminate;
+          Saga.Engine.Close();
       end;
   end;
 end;

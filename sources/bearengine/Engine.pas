@@ -131,13 +131,15 @@ type
       Align: TAlign = aLeft); overload;
     procedure FontColor(Color: Integer);
     procedure FontBackColor(Color: Integer);
-    procedure Border(Pos: TPoint; Color: Integer);
+    procedure Border(Pos: TPoint; Color: Integer; Symbol: Char = #32);
     function TextOut(aText: string; aRect: TRect; Align: TAlign = aLeft)
       : Integer; overload;
     function LightColor(Color: Integer; Percent: Byte): Integer;
     function DarkColor(Color: Integer; Percent: Byte): Integer;
     property Window: TSize read FWindow write FWindow;
     property Char: TSize read FChar write FChar;
+    function GetColor(Color: Integer): Cardinal;
+    procedure Close;
   end;
 
 implementation
@@ -149,7 +151,7 @@ uses
 {$ELSE}
   LCLIntf, LCLType, LMessages, LazUTF8,
 {$ENDIF}
-  Classes, SysUtils, Common.Color;
+  Graphics, Classes, SysUtils, Common.Color, Common.Utils;
 
 constructor TEngine.Create(AWidth, AHeight: Integer);
 begin
@@ -171,21 +173,17 @@ end;
 
 procedure TEngine.FontColor(Color: Integer);
 begin
-{$IFNDEF USE_TERMINAL}
-  // Surface.Canvas.Font.Color := Color;
-{$ENDIF}
+  terminal_color(GetColor(Color));
 end;
 
 procedure TEngine.FontBackColor(Color: Integer);
 begin
-{$IFNDEF USE_TERMINAL}
   case Color of
     clClear:
-      // Surface.Canvas.Brush.Style := bsClear;
+      terminal_bkcolor(0);
     else
-      // Surface.Canvas.Brush.Color := Color;
+      terminal_bkcolor(GetColor(Color));
   end;
-{$ENDIF}
 end;
 
 procedure TEngine.TitleOut(Y: Integer; Text: string);
@@ -204,6 +202,11 @@ end;
 procedure TEngine.Clear;
 begin
   terminal_clear();
+end;
+
+procedure TEngine.Close;
+begin
+  terminal_close();
 end;
 
 procedure TEngine.KeyOut(X, Y: Integer; Caption: string; Key: string;
@@ -318,7 +321,14 @@ var
   R, G, B: Byte;
   C: Integer;
 begin
-  Result := Color;
+  C := ColorToRGB(Color);
+  R := GetRValue(C);
+  G := GetGValue(C);
+  B := GetBValue(C);
+  R := R - MulDiv(R, Percent, 100);
+  G := G - MulDiv(G, Percent, 100);
+  B := B - MulDiv(B, Percent, 100);
+  Result := RGB(R, G, B);
 end;
 
 function TEngine.LightColor(Color: Integer; Percent: Byte): Integer;
@@ -326,12 +336,32 @@ var
   R, G, B: Byte;
   C: Integer;
 begin
-  Result := Color;
+  C := ColorToRGB(Color);
+  R := GetRValue(C);
+  G := GetGValue(C);
+  B := GetBValue(C);
+  R := R + MulDiv(255 - R, Percent, 100);
+  G := G + MulDiv(255 - G, Percent, 100);
+  B := B + MulDiv(255 - B, Percent, 100);
+  Result := RGB(R, G, B);
 end;
 
-procedure TEngine.Border(Pos: TPoint; Color: Integer);
+function TEngine.GetColor(Color: Integer): Cardinal;
+var
+  R, G, B: Byte;
+  C: Integer;
 begin
+  C := ColorToRGB(Color);
+  R := GetRValue(C);
+  G := GetGValue(C);
+  B := GetBValue(C);
+  Result := color_from_argb(255, R, G, B);
+end;
 
+procedure TEngine.Border(Pos: TPoint; Color: Integer; Symbol: Char = #32);
+begin
+  FontBackColor(DarkColor(Color, 50));
+  CharOut(Pos.X, Pos.Y, Symbol, Color);
 end;
 
 end.
