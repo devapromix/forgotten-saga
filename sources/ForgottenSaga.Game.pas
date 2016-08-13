@@ -6,7 +6,7 @@ uses Classes, Types, Engine, ForgottenSaga.Scenes, Common.Map, ForgottenSaga.Cre
 
 const
   // Ширина инф. панели
-  PanelWidth = 30;
+  PanelWidth = 40;
 
 function __(S: string): string;
 

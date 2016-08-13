@@ -726,8 +726,8 @@ procedure TStageNameMenu.Render;
 begin
   Saga.Engine.TitleOut(Top, __('What is your name?'));
   Saga.Engine.FontColor(Saga.Race[TRaceEnum(Saga.Player.Race)].Color);
-  Saga.Engine.TextOut(0, Top + 2, Saga.Player.GetRaceName + ' [' +
-    Saga.Player.Name + ']', aCenter);
+  Saga.Engine.TextOut(0, Top + 2, Saga.Player.GetRaceName + ' <' +
+    Saga.Player.Name + '>', aCenter);
   Saga.Engine.KeyOut(0, Top + 4, __('Random name'), 'SPACE', aCenter);
 end;
 

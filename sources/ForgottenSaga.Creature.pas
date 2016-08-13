@@ -269,10 +269,11 @@ uses SysUtils, Math, Engine, ForgottenSaga.Game, Common.Map.Tiles, Common.Color,
   Common.Utils,
   ForgottenSaga.Scenes;
 
-const
+const    //Improved generation of names.
   FRaceName: array [TRaceEnum] of string =
-    ('Goblin_name1|Goblin_name2|Goblin_name3', 'Orc_name1|Orc_name2|Orc_name3',
-    'Troll_name1|Troll_name2');
+    ('Avgu,Leo,Tan,Sho,Penr,Lok,Gron,Lar,Midr|sin,neg,zar,kar,tun,rel,bal,rin,kon|or,fin,shog,tal,rod,pin,ol,kan,on',
+    'Had,Rod,Shag,Dor,Lid,Tar,Kreg,Bron,Shung|Garum,Turum,Ur,Utak,Udoom,Ud,Urak,Doon,Vuug|Kat,Shak,Gir,Bood,Dreg,Din,Grok,Rig,Sadr',
+    'Blind,Glad,Proud,Sharp-sighted,Powerful,Dancer,Guarding,Thunderous,Night|Wolfhound,Wood-goblin,Destroyer,Crusher,Pathfinder,Astrologer,Bootes,Caretaker,Befouler');
   RaceNameDiv: array [TRaceEnum] of string = ('', '-', ' ');
   cAdr = 75;
   cExp = 15;

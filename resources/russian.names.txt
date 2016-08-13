@@ -1,0 +1,8 @@
+Avgu,Leo,Tan,Sho,Penr,Lok,Gron,Lar,Midr=Авгу,Лео,Тан,Шо,Пенр,Лок,Грон,Лар,Мидр
+sin,neg,zar,kar,tun,rel,bal,rin,kon=син,нег,зар,кар,тун,рел,бал,рин,кон
+or,fin,shog,tal,rod,pin,ol,kan,on=ор,фин,шог,тал,род,пин,ол,кан,он
+Had,Rod,Shag,Dor,Lid,Tar,Kreg,Bron,Shung=Хад,Род,Шаг,Дор,Лид,Тар,Крэг,Брон,Шунг
+Garum,Turum,Ur,Utak,Udoom,Ud,Urak,Doon,Vuug=Гарум,Турум,Ур,Утак,Удум,Уд,Урак,Дун,Вууг
+Kat,Shak,Gir,Bood,Dreg,Din,Grok,Rig,Sadr=Кат,Шак,Гир,Буд,Дрэг,Дин,Грок,Риг,Садр
+Blind,Glad,Proud,Sharp-sighted,Powerful,Dancer,Guarding,Thunderous,Night=Слепой,Яростный,Гордый,Зоркий,Могучий,Танцующий,Стерегущий,Громовой,Ночной
+Wolfhound,Wood-goblin,Destroyer,Crusher,Pathfinder,Astrologer,Bootes,Caretaker,Befouler=Волкодав,Моховик,Обрушитель,Крушитель,Следопыт,Звездочет,Волопас,Смотритель,Осквернитель
