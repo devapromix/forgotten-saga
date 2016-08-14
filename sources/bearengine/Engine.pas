@@ -234,7 +234,7 @@ begin
       KeyOut(X, Y, Caption, Key, Active);
     aCenter:
       begin
-        S := '[' + Key + '] ' + Caption;
+        S := '<' + Key + '> ' + Caption;
         L := ((((Char.Width * Window.Width) + (X * Char.Width)) div 2)) -
           ((Length(S) * Char.Width) div 2);
         KeyOut(L div Char.Width, Y, Caption, Key, Active);
@@ -273,7 +273,7 @@ var
 
   function AddLine(astr, aword: string): Boolean;
   begin
-    // Result := Surface.Canvas.TextWidth(astr + aword) >= aRect.Right;
+    Result := Length(astr + aword) * FChar.Width >= aRect.Right;
     if Result then
     begin
       AddRow(astr);

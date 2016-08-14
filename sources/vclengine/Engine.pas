@@ -143,8 +143,8 @@ begin
   FSurface.PixelFormat := pf16bit;
   FSurface.Canvas.Brush.Style := bsClear;
   FSurface.Canvas.Font.Name := 'Courier New';
-  FSurface.Canvas.Font.Style := [];
-  FSurface.Canvas.Font.Size := 9;
+  FSurface.Canvas.Font.Style := [fsBold];
+  FSurface.Canvas.Font.Size := 11;
   FChar.Width := Surface.Canvas.TextWidth('W');
   FChar.Height := Surface.Canvas.TextHeight('W');
   FSurface.Width := FChar.Width * FWindow.Width;

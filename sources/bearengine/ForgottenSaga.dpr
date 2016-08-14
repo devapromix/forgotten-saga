@@ -18,7 +18,7 @@ uses
 
 var
   Key: Word = 0;
-  Tik: Integer = 0;
+  Tick: Integer = 0;
 
 begin
   terminal_open();
@@ -34,13 +34,13 @@ begin
       if terminal_has_input() then
         Key := terminal_read();
       Saga.Stages.Update(Key);
-      if (Tik > 59) then
+      if (Tick > 59) then
       begin
         Saga.Stages.Timer;
-        Tik := 0;
+        Tick := 0;
       end;
       terminal_refresh();
-      Inc(Tik);
+      Inc(Tick);
       terminal_delay(1);
     until (Key = TK_CLOSE);
     terminal_close();
