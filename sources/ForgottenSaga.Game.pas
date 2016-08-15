@@ -5,7 +5,7 @@ interface
 uses Classes, Types, Engine, ForgottenSaga.Scenes, Common.Map, ForgottenSaga.Creature, Common.Map.Tiles, ForgottenSaga.Battle;
 
 const
-  FSVersion = '0.0.2';     // Версия
+  FSVersion = '0.0.3';     // Версия
   PanelWidth = 40;         // Ширина панели
 
 function __(S: string): string;

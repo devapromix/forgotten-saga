@@ -157,8 +157,6 @@ begin
   Randomize;
   FWindow.Width := AWidth;
   FWindow.Height := AHeight;
-  terminal_set('font: resources\UbuntuMono-R.ttf, size=11;');
-  terminal_set(Format('terminal.encoding=%s', ['windows-1251']));
   terminal_set(Format('window: size=%dx%d, icon=%s', [AWidth, AHeight,
     'resources\icon.ico']));
   FChar.Width := terminal_state(TK_CELL_WIDTH);

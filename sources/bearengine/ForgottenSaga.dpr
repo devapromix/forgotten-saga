@@ -19,6 +19,7 @@ uses
 var
   Key: Word = 0;
   Tick: Integer = 0;
+  C: string;
 
 begin
   terminal_open();

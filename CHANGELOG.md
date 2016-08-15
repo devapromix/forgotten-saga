@@ -1,6 +1,13 @@
+﻿
+
+   **Version 0.0.3**
+
+ - Added configuration file config.ini.
+
+---
 
 
-   **Version 0.0.2**
+   **Version 0.0.2 - August 15, 2016**
 
  - BearLibTerminal integrated.
  - Major cleanup of the code.
