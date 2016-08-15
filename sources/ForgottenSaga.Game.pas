@@ -5,8 +5,8 @@ interface
 uses Classes, Types, Engine, ForgottenSaga.Scenes, Common.Map, ForgottenSaga.Creature, Common.Map.Tiles, ForgottenSaga.Battle;
 
 const
-  // Ширина инф. панели
-  PanelWidth = 40;
+  FSVersion = '0.0.2';     // Версия
+  PanelWidth = 40;         // Ширина панели
 
 function __(S: string): string;
 

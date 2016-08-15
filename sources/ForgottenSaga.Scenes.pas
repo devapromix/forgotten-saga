@@ -602,6 +602,8 @@ begin
   Saga.Engine.FontColor(cLtGray);
   Saga.Engine.TextOut(0, Saga.Engine.Window.Height - 1,
     'Copyright (C) 2016 Sergiy Tkach (DevApromix)', aCenter);
+  Saga.Engine.TextOut(0, Saga.Engine.Window.Height - 1,
+    'v.' + FSVersion, aRight);
 end;
 
 procedure TStageMainMenu.Update(var Key: Word);
