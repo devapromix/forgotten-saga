@@ -15,7 +15,8 @@ uses
   Common.Map.Generator in '..\Common.Map.Generator.pas',
   ForgottenSaga.Creature in '..\ForgottenSaga.Creature.pas',
   ForgottenSaga.Battle in '..\ForgottenSaga.Battle.pas',
-  ForgottenSaga.Inv in '..\ForgottenSaga.Inv.pas';
+  ForgottenSaga.Inv in '..\ForgottenSaga.Inv.pas',
+  Common.Variables in '..\Common.Variables.pas';
 
 {$R *.res}
 

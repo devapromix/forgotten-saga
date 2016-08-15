@@ -14,7 +14,8 @@ uses
   Common.Map in '..\Common.Map.pas',
   Common.Map.Generator in '..\Common.Map.Generator.pas',
   Common.Map.Tiles in '..\Common.Map.Tiles.pas',
-  Common.Color in '..\Common.Color.pas';
+  Common.Color in '..\Common.Color.pas',
+  Common.Variables in '..\Common.Variables.pas';
 
 {$R *.res}
 

@@ -35,4 +35,7 @@ Items=Предметы
 You pick up a %s.=Ты поднял %s.
 You are carrying a too much!=Ты перегружен!
 Empty slot=Пустой слот
+The new quest is added to the log.=Новое задание добавлено в журнал.
+You have completed the quest.=Ты выполнил задание.
+I have completed this quest.=Я выполнил это задание.
 

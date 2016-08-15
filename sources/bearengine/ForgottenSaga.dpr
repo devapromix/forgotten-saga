@@ -14,12 +14,12 @@ uses
   Common.Map in '..\Common.Map.pas',
   Common.Map.Generator in '..\Common.Map.Generator.pas',
   Common.Map.Tiles in '..\Common.Map.Tiles.pas',
-  Common.Color in '..\Common.Color.pas';
+  Common.Color in '..\Common.Color.pas',
+  Common.Variables in '..\Common.Variables.pas';
 
 var
   Key: Word = 0;
   Tick: Integer = 0;
-  C: string;
 
 begin
   terminal_open();
@@ -27,6 +27,7 @@ begin
   try
     Saga.Init;
     terminal_set(Format('window.title=%s', [__('Forgotten Saga')]));
+    terminal_set('$40: resources\char.png, align=center');
     Saga.Stages.Render;
     terminal_refresh();
     repeat

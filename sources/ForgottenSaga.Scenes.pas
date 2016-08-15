@@ -279,7 +279,8 @@ type
 implementation
 
 uses SysUtils, Math, Engine, ForgottenSaga.Game, Common.Color,
-  Common.Utils, ForgottenSaga.Creature, Common.Map.Tiles, ForgottenSaga.Inv;
+  Common.Utils, ForgottenSaga.Creature, Common.Map.Tiles, ForgottenSaga.Inv,
+  Common.Variables;
 
 { TStages }
 
@@ -458,7 +459,7 @@ end;
 
 procedure TStageGame.Update(var Key: Word);
 begin
-  //Box(Ord(Key));
+  // Box(Ord(Key));
   case Key of
     TK_ESCAPE:
       begin
@@ -487,26 +488,26 @@ begin
       PlayerMove(0, -1);
     TK_DOWN, TK_KP_2, TK_X:
       PlayerMove(0, 1);
-    TK_KP_7, {$IFDEF VCLENGINE}36,{$ENDIF}TK_Q:
+    TK_KP_7, {$IFDEF VCLENGINE}36, {$ENDIF}TK_Q:
       PlayerMove(-1, -1);
-    TK_KP_9, {$IFDEF VCLENGINE}33,{$ENDIF}TK_E:
+    TK_KP_9, {$IFDEF VCLENGINE}33, {$ENDIF}TK_E:
       PlayerMove(1, -1);
-    TK_KP_1, {$IFDEF VCLENGINE}35,{$ENDIF}TK_Z:
+    TK_KP_1, {$IFDEF VCLENGINE}35, {$ENDIF}TK_Z:
       PlayerMove(-1, 1);
-    TK_KP_3, {$IFDEF VCLENGINE}34,{$ENDIF}TK_C:
+    TK_KP_3, {$IFDEF VCLENGINE}34, {$ENDIF}TK_C:
       PlayerMove(1, 1);
-    TK_KP_5, {$IFDEF VCLENGINE}12,{$ENDIF}TK_S:
+    TK_KP_5, {$IFDEF VCLENGINE}12, {$ENDIF}TK_S:
       PlayerMove(0, 0);
     TK_COMMA:
       if Saga.World.CurrentMap.HasTile(tStUp, Saga.Player.Pos.X,
         Saga.Player.Pos.Y) then
         Saga.World.GoLoc(drTop);
     TK_PERIOD:
-    begin
-      if Saga.World.CurrentMap.HasTile(tStDn, Saga.Player.Pos.X,
-        Saga.Player.Pos.Y) then
-        Saga.World.GoLoc(drBottom);
-    end;
+      begin
+        if Saga.World.CurrentMap.HasTile(tStDn, Saga.Player.Pos.X,
+          Saga.Player.Pos.Y) then
+          Saga.World.GoLoc(drBottom);
+      end;
     TK_J:
       Saga.Stages.SetStage(stQuestLog);
     TK_I:
@@ -597,6 +598,8 @@ begin
 end;
 
 procedure TStageMainMenu.Render;
+//var
+//  I: string;
 begin
   inherited Render;
   Saga.Engine.FontColor(cLtGray);
@@ -604,6 +607,9 @@ begin
     'Copyright (C) 2016 Sergiy Tkach (DevApromix)', aCenter);
   Saga.Engine.TextOut(0, Saga.Engine.Window.Height - 1,
     'v.' + FSVersion, aRight);
+//  I := terminal_get('ini.settings.tile-size', '0');
+//  Saga.Engine.TextOut(0, Saga.Engine.Window.Height - 1,
+//    'tile-size=' + I, aLeft);
 end;
 
 procedure TStageMainMenu.Update(var Key: Word);
@@ -978,7 +984,7 @@ end;
 procedure TStageDialog.Render;
 var
   I: Integer;
-  S, N: string;
+  S, N, Close: string;
 begin
   Saga.Engine.FontColor(Saga.World.CurrentCreatures.Get(ID).Color);
   Saga.Engine.TextOut(0, 9, Saga.World.CurrentCreatures.Get(ID).Name, aCenter);
@@ -990,12 +996,13 @@ begin
   for I := 0 to LinkList.Count - 1 do
   begin
     S := '';
+    Close := Format('(%s)', [__('Close')]);
     N := LinkList.GetLabel(I);
-    N := SysUtils.StringReplace(N, '(' + Dialog.CloseTag + ')',
-      __(Dialog.CloseStr), [SysUtils.rfIgnoreCase]);
+    N := SysUtils.StringReplace(N, '(' + Dialog.CloseTag + ')', Close,
+      [SysUtils.rfIgnoreCase]);
     if (Copy(Trim(LinkList.GetName(I)), 1, Length(Dialog.CloseTag))
       = Dialog.CloseTag) then
-      S := __(Dialog.CloseStr);
+      S := Close;
     Saga.Engine.KeyOut(35, I + 25, Trim(N + ' ' + S), Format('%d', [I + 1]));
   end;
 end;

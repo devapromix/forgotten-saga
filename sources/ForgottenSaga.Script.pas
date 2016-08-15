@@ -30,7 +30,6 @@ type
     FIsNext: Boolean;
     FIsIf: Boolean;
     FList: TStringList;
-    FCloseStr: string;
     FCloseTag: string;
     FVars: TVars;
   public
@@ -43,7 +42,6 @@ type
     procedure Next(const ID: string);
     procedure Run(const Code: string);
     procedure RunCode(const Code: string);
-    property CloseStr: string read FCloseStr write FCloseStr;
     property CloseTag: string read FCloseTag write FCloseTag;
     property Vars: TVars read FVars write FVars;
   end;
@@ -55,7 +53,6 @@ uses SysUtils, Engine, ForgottenSaga.Game, ForgottenSaga.Scenes, Common.Utils,
 
 constructor TScript.Create;
 begin
-  CloseStr := '(ЗАВЕРШИТЬ)';
   CloseTag := 'close';
   FList := TStringList.Create;
   FVars := TVars.Create;
@@ -256,13 +253,13 @@ begin
     Val(L, I, E);
     if IsTag('begin', S) then
     begin
-      Saga.Log[lgGame].Add(__('Новое задание добавлено в журнал.'));
+      Saga.Log[lgGame].Add(__('The new quest is added to the log.'));
       Exit;
     end;
     if IsTag(CloseTag, S) then
     begin
-      Saga.Log[lgGame].Add(__('Ты выполнил задание.'));
-      Saga.Quest.Add(I - 1, __('Я выполнил это задание.'));
+      Saga.Log[lgGame].Add(__('You have completed the quest.'));
+      Saga.Quest.Add(I - 1, __('I have completed this quest.'));
       Exit;
     end;
     Saga.Quest.Add(I - 1, S);
