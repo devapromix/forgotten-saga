@@ -593,23 +593,22 @@ end;
 constructor TStageMainMenu.Create;
 begin
   inherited;
-  Items := 'New game|Load game|High scores table|About|Quit';
+  Items := 'New game|Load game|High scores table|About FS|Quit';
   Count := 5;
 end;
 
 procedure TStageMainMenu.Render;
-//var
-//  I: string;
+// var
+// I: string;
 begin
   inherited Render;
   Saga.Engine.FontColor(cLtGray);
-  Saga.Engine.TextOut(0, Saga.Engine.Window.Height - 1,
-    'Copyright (C) 2016 Sergiy Tkach (DevApromix)', aCenter);
+  Saga.Engine.TextOut(0, Saga.Engine.Window.Height - 1, Copyright, aCenter);
   Saga.Engine.TextOut(0, Saga.Engine.Window.Height - 1,
     'v.' + FSVersion, aRight);
-//  I := terminal_get('ini.settings.tile-size', '0');
-//  Saga.Engine.TextOut(0, Saga.Engine.Window.Height - 1,
-//    'tile-size=' + I, aLeft);
+  // I := terminal_get('ini.settings.tile-size', '0');
+  // Saga.Engine.TextOut(0, Saga.Engine.Window.Height - 1,
+  // 'tile-size=' + I, aLeft);
 end;
 
 procedure TStageMainMenu.Update(var Key: Word);
@@ -1157,7 +1156,7 @@ end;
 procedure TStageQuestInfo.Update(var Key: Word);
 begin
   case Key of
-    7:
+    TK_ESCAPE:
       Saga.Stages.SetStage(stQuestLog);
   end;
 end;
@@ -1166,7 +1165,11 @@ end;
 
 procedure TStageAboutMenu.Render;
 begin
-  Saga.Engine.TitleOut(Top, __('About'));
+  Saga.Engine.TitleOut(Top, __('Forgotten Saga'));
+  Saga.Engine.FontColor(cLtGray);
+  Saga.Engine.TextOut(0, Top + 2,
+    'github.com/devapromix/forgotten-saga', aCenter);
+  Saga.Engine.TextOut(0, Top + 3, Copyright, aCenter);
   Saga.Engine.KeyOut(0, Top + 5, __('Back to main menu'), 'ESC', aCenter);
 end;
 

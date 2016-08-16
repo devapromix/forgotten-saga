@@ -27,7 +27,6 @@ begin
   try
     Saga.Init;
     terminal_set(Format('window.title=%s', [__('Forgotten Saga')]));
-    terminal_set('$40: resources\char.png, align=center');
     Saga.Stages.Render;
     terminal_refresh();
     repeat

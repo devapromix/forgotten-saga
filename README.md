@@ -1,4 +1,4 @@
-# forgotten-saga
+# Forgotten Saga
 
 Copyright (C) 2016 Sergiy Tkach (DevApromix)
 

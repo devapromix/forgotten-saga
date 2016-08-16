@@ -1,7 +1,7 @@
 Forgotten Saga=Забытая Сага
 New game=Новая игра
 High scores table=Таблица рекордов
-About=Об авторах
+About FS=Об авторах ЗС
 Quit=Выход
 Continue=Продолжить
 Save game=Сохранить игру

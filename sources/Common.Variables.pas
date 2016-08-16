@@ -7,6 +7,7 @@ uses
 
 const
   FSVersion = '0.0.3';              // Версия
+  Copyright = 'Copyright (C) 2016 by Sergiy Tkach (DevApromix)';
 
 var
   PanelWidth: Byte = 40;            // Ширина панели
