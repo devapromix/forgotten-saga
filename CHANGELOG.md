@@ -3,7 +3,8 @@
    **Version 0.0.3**
 
  - Added configuration file config.ini.
-
+ - Library BearLibTerminal updated to version 0.14.4.
+ 
 ---
 
 

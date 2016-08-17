@@ -204,8 +204,8 @@ type
     property Map: Byte read FMap write FMap;
     function GetRaceName: string;
     function GetFullName: string;
-    procedure LoadFromFile(FileName: string);
-    procedure SaveToFile(FileName: string);
+    procedure LoadFromFile(AFileName: string);
+    procedure SaveToFile(AFileName: string);
     procedure Move(AX, AY: ShortInt);
     property Look: TLook read FLook write FLook;
     property Inventory: TInventor read FInventory write FInventory;
@@ -763,14 +763,14 @@ begin
   Result := Saga.Race[TRaceEnum(Race)].Name;
 end;
 
-procedure TPlayer.LoadFromFile(FileName: string);
+procedure TPlayer.LoadFromFile(AFileName: string);
 var
   S: string;
   F: TIniFile;
   X, Y: Integer;
   I: TInvByte;
 begin
-  F := TIniFile.Create(FileName);
+  F := TIniFile.Create(AFileName);
   try
     // Character
     S := 'Player';
@@ -830,13 +830,13 @@ begin
   inherited Move(AX, AY);
 end;
 
-procedure TPlayer.SaveToFile(FileName: string);
+procedure TPlayer.SaveToFile(AFileName: string);
 var
   S: string;
   F: TIniFile;
   I: TInvByte;
 begin
-  F := TIniFile.Create(FileName);
+  F := TIniFile.Create(AFileName);
   try
     // Character
     S := 'Player';
@@ -867,7 +867,7 @@ begin
   finally
     F.Free;
   end;
-  // Inventory.SaveToFile(ChangeFileExt(FileName, '.inv'));
+  // Inventory.SaveToFile(ChangeFileExt(AFileName, '.inv'));
 end;
 
 procedure TPlayer.Pickup;

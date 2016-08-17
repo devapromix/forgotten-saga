@@ -144,7 +144,13 @@ type
 implementation
 
 uses
-  BearLibTerminal, Windows, Graphics, Classes, SysUtils, Common.Color, Common.Utils;
+  BearLibTerminal,
+{$IFNDEF FPC}
+  Windows,
+{$ELSE}
+  LCLIntf, LCLType, LazUTF8,
+{$ENDIF}
+  Graphics, Classes, SysUtils, Common.Color;
 
 constructor TEngine.Create(AWidth, AHeight: Integer);
 begin

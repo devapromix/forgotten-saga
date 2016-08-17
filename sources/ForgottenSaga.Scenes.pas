@@ -598,17 +598,12 @@ begin
 end;
 
 procedure TStageMainMenu.Render;
-// var
-// I: string;
 begin
   inherited Render;
   Saga.Engine.FontColor(cLtGray);
   Saga.Engine.TextOut(0, Saga.Engine.Window.Height - 1, Copyright, aCenter);
   Saga.Engine.TextOut(0, Saga.Engine.Window.Height - 1,
     'v.' + FSVersion, aRight);
-  // I := terminal_get('ini.settings.tile-size', '0');
-  // Saga.Engine.TextOut(0, Saga.Engine.Window.Height - 1,
-  // 'tile-size=' + I, aLeft);
 end;
 
 procedure TStageMainMenu.Update(var Key: Word);
@@ -900,7 +895,6 @@ end;
 
 procedure TStageBattle.Timer;
 begin
-  inherited;
 
 end;
 
@@ -1021,17 +1015,16 @@ end;
 
 procedure TStageDialog.Answer(var Key: Word);
 var
-  ID: string;
+  S: string;
 begin
   Saga.Log[lgDialog].Clear;
-  ID := Trim(LinkList.GetName(Key - TK_1));
+  S := Trim(LinkList.GetName(Key - TK_1));
   LinkList.Clear;
-  Dialog.Next(ID);
+  Dialog.Next(S);
 end;
 
 procedure TStageDialog.Timer;
 begin
-  inherited;
 
 end;
 
@@ -1149,7 +1142,6 @@ end;
 
 procedure TStageQuestInfo.Timer;
 begin
-  inherited;
 
 end;
 
@@ -1239,13 +1231,11 @@ end;
 
 procedure TStageInv.Timer;
 begin
-  inherited;
 
 end;
 
 procedure TStageInv.Update(var Key: Word);
 begin
-  inherited;
   case Key of
     TK_ESCAPE:
       Saga.Stages.SetStage(stGame);
@@ -1283,7 +1273,6 @@ end;
 
 procedure TStageItems.Timer;
 begin
-  inherited;
 
 end;
 
@@ -1292,7 +1281,6 @@ var
   C, I: Integer;
   K: Word;
 begin
-  inherited;
   case Key of
     TK_ESCAPE:
       Saga.Stages.SetStage(stGame);

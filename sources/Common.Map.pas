@@ -33,8 +33,8 @@ type
     procedure FillLayer(LayerID: Byte; Tile: TTile);
     constructor Create;
     destructor Destroy; override;
-    procedure LoadFromFile(FileName: string);
-    procedure SaveToFile(FileName: string);
+    procedure LoadFromFile(AFileName: string);
+    procedure SaveToFile(AFileName: string);
     function CellInMap(X, Y: Integer): Boolean;
     function GetTopTileChar(X, Y: Integer): Char;
     procedure SetTile(X, Y, Z: Integer; Tile: TTile);
@@ -89,13 +89,13 @@ begin
   inherited;
 end;
 
-procedure TMap.LoadFromFile(FileName: string);
+procedure TMap.LoadFromFile(AFileName: string);
 var
   X, Y, Z, I: Integer;
   L: TStringList;
 begin
   L := TStringList.Create;
-  L.LoadFromFile(FileName);
+  L.LoadFromFile(AFileName);
   for Z := 0 to Layers - 1 do
   begin
     I := L.IndexOf(Format('[%d]', [Z])) + 1;
@@ -106,7 +106,7 @@ begin
   L.Free;
 end;
 
-procedure TMap.SaveToFile(FileName: string);
+procedure TMap.SaveToFile(AFileName: string);
 var
   X, Y, Z: Integer;
   L: TStringList;
@@ -124,7 +124,7 @@ begin
       L.Append(S);
     end;
   end;
-  L.SaveToFile(FileName);
+  L.SaveToFile(AFileName);
   L.Free;
 end;
 
