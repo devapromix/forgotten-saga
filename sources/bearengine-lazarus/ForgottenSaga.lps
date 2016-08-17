@@ -9,7 +9,7 @@
         <Filename Value="ForgottenSaga.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <CursorPos X="24" Y="4"/>
+        <CursorPos X="28" Y="4"/>
         <UsageCount Value="21"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -23,8 +23,7 @@
       <Unit2>
         <Filename Value="..\Common.Color.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="28"/>
-        <CursorPos X="12" Y="41"/>
+        <CursorPos X="104" Y="11"/>
         <UsageCount Value="10"/>
       </Unit2>
       <Unit3>
@@ -62,8 +61,8 @@
       <Unit8>
         <Filename Value="..\ForgottenSaga.Creature.pas"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="57"/>
-        <CursorPos X="24" Y="69"/>
+        <TopLine Value="415"/>
+        <CursorPos X="20" Y="426"/>
         <UsageCount Value="10"/>
       </Unit8>
       <Unit9>
@@ -76,14 +75,15 @@
       <Unit10>
         <Filename Value="..\ForgottenSaga.Inv.pas"/>
         <EditorIndex Value="-1"/>
-        <CursorPos X="22" Y="188"/>
+        <TopLine Value="94"/>
+        <CursorPos X="34" Y="54"/>
         <UsageCount Value="10"/>
       </Unit10>
       <Unit11>
         <Filename Value="..\ForgottenSaga.Script.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="40"/>
-        <CursorPos X="22" Y="54"/>
+        <CursorPos X="16" Y="51"/>
         <UsageCount Value="10"/>
       </Unit11>
       <Unit12>

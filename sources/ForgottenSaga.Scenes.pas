@@ -448,7 +448,7 @@ begin
   Saga.Engine.TextOut(81, 2, __('Honor') + ' ' + IntToStr(Saga.Player.Score));
   for I := Low(TAtrEnum) to High(TAtrEnum) do
     Saga.Engine.TextOut(81, ord(I) + 3, __(AtrStr[I]) + ' ' + Saga.Player.Atr[I]
-      .ToString);
+      .ToText);
 end;
 
 procedure TStageGame.Timer;
@@ -883,11 +883,11 @@ begin
 
   Saga.Engine.FontColor(Saga.Player.Color);
   Saga.Engine.TextOut(90, 6, Saga.Player.Name + ' (' + Saga.Player.Atr[atLife]
-    .ToString + ')');
+    .ToText + ')');
   Saga.Engine.FontColor(Saga.World.CurrentCreatures.Get(Saga.Battle.ID).Color);
   Saga.Engine.TextOut(90, 7, Saga.World.CurrentCreatures.Get(Saga.Battle.ID)
     .Name + ' (' + Saga.World.CurrentCreatures.Get(Saga.Battle.ID).Atr[atLife]
-    .ToString + ')');
+    .ToText + ')');
 
   Saga.Engine.FontColor(clSplText);
   Saga.Log[lgBattle].Render(35, 6, 55);

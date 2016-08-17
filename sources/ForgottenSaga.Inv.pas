@@ -45,7 +45,7 @@ type
   private
     FList: TStringList;
   public
-    function ToString(I: TInvByte): string;
+    function ToText(I: TInvByte): string;
     procedure SaveToFile(FileName: string);
     procedure LoadFromFile(FileName: string);
     function Equip(I: Integer): Boolean;
@@ -285,7 +285,7 @@ begin
   FList.SaveToFile(FileName);
 end;
 
-function TInventory.ToString(I: TInvByte): string;
+function TInventory.ToText(I: TInvByte): string;
 begin
   with FItem[I] do
     Result := Format('%s/%d/%d/%d/%s', [ID, Count, Weight, Tough,

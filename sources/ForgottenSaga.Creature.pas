@@ -65,7 +65,7 @@ type
     property Max: Integer read GetMax write SetMax;
     property Adv: Integer read GetAdv write SetAdv;
     procedure Add(Values: string);
-    function ToString: string;
+    function ToText: string;
     procedure SetToMin;
     procedure SetToMax;
   end;
@@ -422,7 +422,7 @@ begin
   Cur := 0;
 end;
 
-function TBar.ToString: string;
+function TBar.ToText: string;
 begin
   Result := Format(BarFmt, [Cur, Max]);
 end;
