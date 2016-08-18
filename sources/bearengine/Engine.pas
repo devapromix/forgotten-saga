@@ -129,15 +129,15 @@ type
     procedure TitleOut(Y: Integer; Text: string);
     procedure TextOut(X, Y: Integer; Text: string;
       Align: TAlign = aLeft); overload;
+    function TextOut(aText: string; aRect: TRect): Integer; overload;
     procedure FontColor(Color: Integer);
     procedure FontBackColor(Color: Integer);
-    function TextOut(aText: string; aRect: TRect; Align: TAlign = aLeft)
-      : Integer; overload;
     function LightColor(Color: Integer; Percent: Byte): Integer;
     function DarkColor(Color: Integer; Percent: Byte): Integer;
     property Window: TSize read FWindow write FWindow;
     property Char: TSize read FChar write FChar;
     function GetColor(Color: Integer): Cardinal;
+    function GetTextLength(Text: string): Integer;
     procedure Close;
   end;
 
@@ -187,7 +187,7 @@ procedure TEngine.TitleOut(Y: Integer; Text: string);
 begin
   FontColor(clTitle);
   TextOut(0, Y - 1, Text, aCenter);
-  TextOut(0, Y, StringOfChar('=', Length(Text)), aCenter);
+  TextOut(0, Y, StringOfChar('=', GetTextLength(Text)), aCenter);
 end;
 
 procedure TEngine.CharOut(X, Y: Integer; Symbol: System.Char; Color: Integer);
@@ -218,7 +218,7 @@ begin
     FontColor(DarkColor(clHotKey, 60));
   TextOut(X, Y, S);
   FontColor(clButton);
-  TextOut(X + Length(S) + 1, Y, Caption);
+  TextOut(X + GetTextLength(S) + 1, Y, Caption);
 end;
 
 procedure TEngine.KeyOut(X, Y: Integer; Caption: string; Key: string;
@@ -234,7 +234,7 @@ begin
       begin
         S := '<' + Key + '> ' + Caption;
         L := ((((Char.Width * Window.Width) + (X * Char.Width)) div 2)) -
-          ((Length(S) * Char.Width) div 2);
+          ((GetTextLength(S) * Char.Width) div 2);
         KeyOut(L div Char.Width, Y, Caption, Key, Active);
       end;
     aRight:
@@ -250,67 +250,16 @@ begin
     aLeft:
       terminal_print(X, Y, Text);
     aCenter:
-      terminal_print((Window.Width div 2) - (Length(Text) div 2), Y, Text);
+      terminal_print((Window.Width div 2) - (GetTextLength(Text) div 2), Y, Text);
     aRight:
-      terminal_print(Window.Width - Length(Text), Y, Text);
+      terminal_print(Window.Width - GetTextLength(Text), Y, Text);
   end;
 end;
 
-function TEngine.TextOut(aText: string; aRect: TRect;
-  Align: TAlign = aLeft): Integer;
-var
-  I, C, L: Word;
-  SL: TStringList;
-  S: string;
-
-  procedure AddRow(Text: string);
-  begin
-    TextOut(aRect.Left div Char.Width, (L * Char.Height + aRect.Top)
-      div Char.Height, Text, Align);
-  end;
-
-  function AddLine(astr, aword: string): Boolean;
-  begin
-    Result := Length(astr + aword) * FChar.Width >= aRect.Right;
-    if Result then
-    begin
-      AddRow(astr);
-      Inc(L)
-    end;
-  end;
-
-  procedure WordDivider;
-  begin
-    SL := TStringList.Create;
-    StringReplace(aText, '  ', ' ', [rfReplaceAll]);
-    SL.Delimiter := ' ';
-    SL.DelimitedText := aText;
-  end;
-
+function TEngine.TextOut(aText: string; aRect: TRect): Integer;
 begin
-  Result := 0;
-  if (aText = '') then
-    Exit;
-  WordDivider;
-  L := 0;
-  S := '';
-  C := SL.Count - 1;
-  aRect.Top := aRect.Top * Char.Height;
-  aRect.Left := aRect.Left * Char.Width;
-  aRect.Right := aRect.Right * Char.Width;
-  for I := 0 to C do
-  begin
-    if AddLine(S, SL[I]) then
-      S := '';
-    S := S + SL[I] + ' ';
-    if (I = C) and (S <> '') then
-    begin
-      AddRow(S);
-      Inc(L);
-    end;
-  end;
-  Result := L;
-  SL.Free;
+  Result := terminal_print(aRect.Left, aRect.Top, Format('[bbox=%dx%d][align=left-top]%s',
+    [aRect.Right, aRect.Bottom, aText]));
 end;
 
 function TEngine.DarkColor(Color: Integer; Percent: Byte): Integer;
@@ -353,6 +302,15 @@ begin
   G := GetGValue(C);
   B := GetBValue(C);
   Result := color_from_argb(255, R, G, B);
+end;
+
+function TEngine.GetTextLength(Text: string): Integer;
+begin
+{$IFNDEF FPC}
+  Result := Length(Text);
+{$ELSE}
+  Result := LengthUTF8(Text);
+{$ENDIF}
 end;
 
 end.

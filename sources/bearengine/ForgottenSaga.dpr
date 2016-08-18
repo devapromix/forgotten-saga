@@ -1,7 +1,7 @@
 ﻿program ForgottenSaga;
 
 uses
-  SysUtils, {$IFDEF FPC}Interfaces,{$ENDIF}
+  SysUtils,
   Engine in 'Engine.pas',
   BearLibTerminal in 'BearLibTerminal.pas',
   ForgottenSaga.Game in '..\ForgottenSaga.Game.pas',

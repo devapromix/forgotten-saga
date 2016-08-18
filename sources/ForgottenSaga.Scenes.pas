@@ -993,7 +993,7 @@ begin
     N := LinkList.GetLabel(I);
     N := SysUtils.StringReplace(N, '(' + Dialog.CloseTag + ')', Close,
       [SysUtils.rfIgnoreCase]);
-    if (Copy(Trim(LinkList.GetName(I)), 1, Length(Dialog.CloseTag))
+    if (Copy(Trim(LinkList.GetName(I)), 1, Saga.Engine.GetTextLength(Dialog.CloseTag))
       = Dialog.CloseTag) then
       S := Close;
     Saga.Engine.KeyOut(35, I + 25, Trim(N + ' ' + S), Format('%d', [I + 1]));

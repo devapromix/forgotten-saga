@@ -311,7 +311,7 @@ begin
   ID := Saga.World.CurrentMap.Map[Dir];
   if (ID > -1) then
   begin
-    Saga.Log[lgGame].Add(Format(__('Ты вошел в %s.'),
+    Saga.Log[lgGame].Add(Format(__('Ты вошел в [color=light blue]%s.[/color]'),
       [Saga.World.GetMap(ID).Name]));
     Saga.Player.Map := ID;
     Result := True;
@@ -531,9 +531,9 @@ begin
     FLogStr := Text + ' ' + FLogStr
   else
     FLogStr := FLogStr + ' ' + Text;
-  if (Length(FLogStr) > FLen) then
+  if (Saga.Engine.GetTextLength(FLogStr) > FLen) then
   begin
-    Delete(FLogStr, FLen, Length(FLogStr));
+    Delete(FLogStr, FLen, Saga.Engine.GetTextLength(FLogStr));
     FLogStr := FLogStr + '...';
   end;
 end;
@@ -583,7 +583,7 @@ end;
 procedure TLog.Render(Left, Top, Width: Word);
 begin
   Saga.Engine.FontColor(clSplText);
-  Saga.Engine.TextOut(Get, Rect(Left, Top, Width, 0), aLeft);
+  Saga.Engine.TextOut(Get, Rect(Left, Top, Width, 0));
 end;
 
 { TQuest }
@@ -677,7 +677,7 @@ var
   N: string;
 begin
   S := Saga.Engine.Window.Width - 55;
-  L := Length(Saga.Player.GetFullName);
+  L := Saga.Engine.GetTextLength(Saga.Player.GetFullName);
   if (L < S) then N := StringOfChar(#32, S - L) else N := '';
   Saga.List[Slot] := Format('%s%d', [Saga.Player.GetFullName + N, Saga.Player.Score]);
   Saga.List.SaveToFile(FFileName);
@@ -705,7 +705,7 @@ begin
   begin
     if (Saga.List[Slot] <> '') then
     begin
-      Score := StrToIntDef(Trim(Copy(Saga.List[Slot], Pos(#32#32, Saga.List[Slot]), Length(Saga.List[Slot]))), 0);
+      Score := StrToIntDef(Trim(Copy(Saga.List[Slot], Pos(#32#32, Saga.List[Slot]), Saga.Engine.GetTextLength(Saga.List[Slot]))), 0);
       if (Score < Saga.Player.Score) then
       begin
         if (Slot < 9) then
@@ -762,7 +762,7 @@ begin
       S := Trim(SL[I]);
       J := Pos('=', S);
       Self.FID.Append(Trim(Copy(S, 1, J - 1)));
-      Self.FValue.Append(Trim(Copy(S, J + 1, Length(S))));
+      Self.FValue.Append(Trim(Copy(S, J + 1, Saga.Engine.GetTextLength(S))));
     end;
   finally
     SL.Free;

@@ -87,7 +87,7 @@ begin
       Continue;
     end;
     if (Pos(';', S) > 0) then
-      Delete(S, Pos(';', S), Length(S));
+      Delete(S, Pos(';', S), Saga.Engine.GetTextLength(S));
     FList[I] := S;
   end;
   // ShowMessage(SL.Text);
@@ -127,7 +127,7 @@ begin
   P := Pos('(', Link);
   if (P > 0) then
   begin
-    Code := Trim(Copy(Link, P + 1, Length(Link) - P - 1));
+    Code := Trim(Copy(Link, P + 1, Saga.Engine.GetTextLength(Link) - P - 1));
     Link := Trim(Copy(Link, 1, P - 1));
   end;
   if (Code <> '') then
@@ -177,7 +177,7 @@ var
 
   function GetLastCode(Tag: string; Code: string): string;
   begin
-    Result := Trim(Copy(Code, Length(Tag) + 2, Length(Code)));
+    Result := Trim(Copy(Code, Saga.Engine.GetTextLength(Tag) + 2, Saga.Engine.GetTextLength(Code)));
   end;
 
   procedure SetNext(Flag: Boolean);
@@ -192,7 +192,7 @@ var
   begin
     ACode := Trim(ACode);
     if (ACode = '') then
-      R := Copy(Code, 1, Length(Tag))
+      R := Copy(Code, 1, Saga.Engine.GetTextLength(Tag))
     else
       R := ACode;
     Result := R = Tag;
@@ -205,7 +205,7 @@ var
   begin
     Result := False;
     N := AnsiLowerCase(Trim(Copy(S, 1, Pos(K, S) - 1)));
-    Val(Trim(Copy(S, Pos(K, S) + 1, Length(S))), V, A);
+    Val(Trim(Copy(S, Pos(K, S) + 1, Saga.Engine.GetTextLength(S))), V, A);
     if (Vars.Has(N)) then
       A := Vars.GetInt(N)
     else
@@ -268,7 +268,7 @@ begin
   if (Pos('=', Code) > 0) and not IsTag('if') and not IsTag('btn') then
   begin
     S := AnsiLowerCase(Trim(Copy(Code, 1, Pos('=', Code) - 1)));
-    L := Trim(Copy(Code, Pos('=', Code) + 1, Length(Code)));
+    L := Trim(Copy(Code, Pos('=', Code) + 1, Saga.Engine.GetTextLength(Code)));
     Vars.SetStr(S, L);
     // Box(S + '=>' + L);
   end;
@@ -418,7 +418,7 @@ begin
       S := Trim(A[I]);
       J := Pos(',', S);
       Self.FID.Append(Trim(Copy(S, 1, J - 1)));
-      Self.FValue.Append(Trim(Copy(S, J + 1, Length(S))));
+      Self.FValue.Append(Trim(Copy(S, J + 1, Saga.Engine.GetTextLength(S))));
     end;
   finally
     A.Free;
