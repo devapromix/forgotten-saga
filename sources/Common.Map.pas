@@ -186,6 +186,7 @@ function TMap.GetTopTileChar(X, Y: Integer): Char;
 var
   N, Z: Integer;
 begin
+  Result := ' ';
   for Z := Layers - 1 downto 0 do
     if (GetTile(X, Y, Z) <> tNone) then
     begin
