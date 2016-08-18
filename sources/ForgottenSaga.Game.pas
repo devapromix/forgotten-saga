@@ -2,7 +2,8 @@ unit ForgottenSaga.Game;
 
 interface
 
-uses Classes, Types, Engine, ForgottenSaga.Scenes, Common.Map, ForgottenSaga.Creature, Common.Map.Tiles, ForgottenSaga.Battle;
+uses Classes, Types, Engine, ForgottenSaga.Scenes, Common.Map,
+  ForgottenSaga.Creature, Common.Map.Tiles, ForgottenSaga.Battle;
 
 function __(S: string): string;
 
@@ -93,6 +94,7 @@ type
   public
     constructor Create(Len: Word);
     procedure Clear;
+    procedure ClearTags;
     procedure Add(Text: string; Flag: Boolean = True);
     function Get: string;
     procedure LoadFromFile(FileName: string);
@@ -154,8 +156,8 @@ type
     procedure LoadSlots;
     procedure ClearLogs;
     procedure ClearSlots;
-    procedure AddRace(ID: TRaceEnum; Name: string; Life, Mana: Word; Pos: TPoint;
-      Map: Byte; Color: Integer);
+    procedure AddRace(ID: TRaceEnum; Name: string; Life, Mana: Word;
+      Pos: TPoint; Map: Byte; Color: Integer);
     function GetSlotData(Slot: Byte): string;
     function GetSlotPath(Slot: Byte): string;
     function LoadFromSlot(Slot: Byte): Boolean;
@@ -185,7 +187,8 @@ uses SysUtils, IniFiles, Common.Color, Common.Utils;
 function __(S: string): string;
 begin
   Result := '';
-  if (S = '') then Exit;
+  if (S = '') then
+    Exit;
   Result := Saga.Lg.Get(S);
 end;
 { TWorld }
@@ -291,7 +294,7 @@ begin
   end;
 end;
 
-procedure TWorld.SaveToDir(Dir: string);    
+procedure TWorld.SaveToDir(Dir: string);
 var
   I: Byte;
 begin
@@ -311,7 +314,7 @@ begin
   ID := Saga.World.CurrentMap.Map[Dir];
   if (ID > -1) then
   begin
-    Saga.Log[lgGame].Add(Format(__('Ты вошел в [color=light blue]%s.[/color]'),
+    Saga.Log[lgGame].Add(Format(__('You walked in %s.'),
       [Saga.World.GetMap(ID).Name]));
     Saga.Player.Map := ID;
     Result := True;
@@ -388,8 +391,8 @@ begin
   Lg.LoadFromFile(GetPath('resources') + Lg.Current + '.tiles.txt');
 
   AddRace(rcGoblin, __('Goblin'), 90, 100, Point(40, 20), 0, $00882295);
-  AddRace(rcOrc,    __('Orc'), 120, 100, Point(40, 20), 0, $0063C3C6);
-  AddRace(rcTroll,  __('Troll'), 150, 100, Point(40, 20), 0, $00664567);
+  AddRace(rcOrc, __('Orc'), 120, 100, Point(40, 20), 0, $0063C3C6);
+  AddRace(rcTroll, __('Troll'), 150, 100, Point(40, 20), 0, $00664567);
 end;
 
 destructor TSaga.Destroy;
@@ -426,7 +429,8 @@ end;
 
 function TSaga.GetSlotPath(Slot: Byte): string;
 begin
-  Result := IncludeTrailingPathDelimiter(Format('%s%d', [GetPath('save'), Slot]));
+  Result := IncludeTrailingPathDelimiter
+    (Format('%s%d', [GetPath('save'), Slot]));
 end;
 
 function TSaga.GetLog(I: TLogEnum): TLog;
@@ -449,7 +453,7 @@ begin
   Player.Clear;
   Saga.ClearLogs;
   World.LoadFromDir(GetPath('resources'));
-  //World.Gen(0); // Пока вместо редактора
+  // World.Gen(0); // Пока вместо редактора
   Stages.SetStage(stGame);
   Saga.Notification.Add('Создан новый мир');
 end;
@@ -466,7 +470,8 @@ begin
   TStageDialog(Saga.Stages.GetStage(stDialog)).Dialog.Vars.LoadFromFile
     (GetSlotPath(Slot) + 'vars.txt');
   Result := True;
-  if Result then Saga.Notification.Add('Игра успешно загружена');
+  if Result then
+    Saga.Notification.Add('Игра успешно загружена');
 end;
 
 procedure TSaga.SaveToSlot(Slot: Byte);
@@ -493,8 +498,8 @@ begin
   FRace[I] := Value;
 end;
 
-procedure TSaga.AddRace(ID: TRaceEnum; Name: string; Life, Mana: Word; Pos: TPoint;
-  Map: Byte; Color: Integer);
+procedure TSaga.AddRace(ID: TRaceEnum; Name: string; Life, Mana: Word;
+  Pos: TPoint; Map: Byte; Color: Integer);
 begin
   Race[ID].Color := Color;
   Race[ID].Name := Name;
@@ -527,6 +532,7 @@ begin
   Text := Trim(Text);
   if (Text = '') then
     Exit;
+  ClearTags;
   if Flag then
     FLogStr := Text + ' ' + FLogStr
   else
@@ -541,6 +547,27 @@ end;
 procedure TLog.Clear;
 begin
   FLogStr := '';
+end;
+
+procedure TLog.ClearTags;
+var
+  I: Integer;
+  F: Boolean;
+begin
+  F := False;
+  for I := 1 to Saga.Engine.GetTextLength(FLogStr) do
+  begin
+    if (FLogStr[I] = '[') then
+      F := True;
+    if (FLogStr[I] = ']') then
+    begin
+      FLogStr[I] := '/';
+      F := False;
+    end;
+    if F then
+      FLogStr[I] := '/';
+  end;
+  FLogStr := StringReplace(FLogStr, '/', '', [rfReplaceAll]);
 end;
 
 constructor TLog.Create(Len: Word);
@@ -678,8 +705,12 @@ var
 begin
   S := Saga.Engine.Window.Width - 55;
   L := Saga.Engine.GetTextLength(Saga.Player.GetFullName);
-  if (L < S) then N := StringOfChar(#32, S - L) else N := '';
-  Saga.List[Slot] := Format('%s%d', [Saga.Player.GetFullName + N, Saga.Player.Score]);
+  if (L < S) then
+    N := StringOfChar(#32, S - L)
+  else
+    N := '';
+  Saga.List[Slot] := Format('%s%d', [Saga.Player.GetFullName + N,
+    Saga.Player.Score]);
   Saga.List.SaveToFile(FFileName);
 end;
 
@@ -691,7 +722,8 @@ end;
 procedure TRecs.Load;
 begin
   Saga.ClearSlots;
-  if FileExists(FFileName) then Saga.List.LoadFromFile(FFileName);
+  if FileExists(FFileName) then
+    Saga.List.LoadFromFile(FFileName);
 end;
 
 procedure TRecs.Save;
@@ -699,22 +731,29 @@ var
   Slot, I: Byte;
   Score: Word;
 begin
-  if (Saga.Player.Score = 0) then Exit;
+  if (Saga.Player.Score = 0) then
+    Exit;
   Self.Load;
   for Slot := 0 to 9 do
   begin
     if (Saga.List[Slot] <> '') then
     begin
-      Score := StrToIntDef(Trim(Copy(Saga.List[Slot], Pos(#32#32, Saga.List[Slot]), Saga.Engine.GetTextLength(Saga.List[Slot]))), 0);
+      Score := StrToIntDef(Trim(Copy(Saga.List[Slot],
+        Pos(#32#32, Saga.List[Slot]),
+        Saga.Engine.GetTextLength(Saga.List[Slot]))), 0);
       if (Score < Saga.Player.Score) then
       begin
         if (Slot < 9) then
-        for I := 9 downto Slot + 1 do
+          for I := 9 downto Slot + 1 do
             Saga.List[I] := Saga.List[I - 1];
         Add(Slot);
         Break;
-      end else Continue;
-    end else begin
+      end
+      else
+        Continue;
+    end
+    else
+    begin
       Add(Slot);
       Break;
     end;
@@ -730,14 +769,17 @@ var
 begin
   S := Trim(S);
   I := FID.IndexOf(S);
-  if (I < 0) or (FValue[I] = '') then Result := S else Result := FValue[I];
+  if (I < 0) or (FValue[I] = '') then
+    Result := S
+  else
+    Result := FValue[I];
 end;
 
 constructor TLanguage.Create;
 begin
   FID := TStringList.Create;
   FValue := TStringList.Create;
-  //FCurrent := 'russian';
+  // FCurrent := 'russian';
 end;
 
 destructor TLanguage.Destroy;
@@ -753,7 +795,8 @@ var
   I, J: Integer;
   S: string;
 begin
-  if not FileExists(FileName) then Exit;
+  if not FileExists(FileName) then
+    Exit;
   SL := TStringList.Create;
   SL.LoadFromFile(FileName);
   try
