@@ -38,5 +38,5 @@ Empty slot=Пустой слот
 The new quest is added to the log.=Новое задание добавлено в журнал.
 You have completed the quest.=Ты выполнил задание.
 I have completed this quest.=Я выполнил это задание.
-You walked in %s.=Ты вошел в %s.
+You walked in <RED>%s.</>=Ты вошел в <RED>%s.</>
 

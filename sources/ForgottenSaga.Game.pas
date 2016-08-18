@@ -314,7 +314,7 @@ begin
   ID := Saga.World.CurrentMap.Map[Dir];
   if (ID > -1) then
   begin
-    Saga.Log[lgGame].Add(Format(__('You walked in %s.'),
+    Saga.Log[lgGame].Add(Format(__('You walked in <RED>%s.</>'),
       [Saga.World.GetMap(ID).Name]));
     Saga.Player.Map := ID;
     Result := True;
@@ -773,13 +773,18 @@ begin
     Result := S
   else
     Result := FValue[I];
+
+  Result := StringReplace(Result, '<RED>', '[color=red]', [rfReplaceAll]);
+  Result := StringReplace(Result, '<GREEN>', '[color=green]', [rfReplaceAll]);
+  Result := StringReplace(Result, '<BLUE>', '[color=blue]', [rfReplaceAll]);
+  Result := StringReplace(Result, '</>', '[/color]', [rfReplaceAll]);
 end;
 
 constructor TLanguage.Create;
 begin
   FID := TStringList.Create;
   FValue := TStringList.Create;
-  // FCurrent := 'russian';
+  //FCurrent := 'russian';
 end;
 
 destructor TLanguage.Destroy;
