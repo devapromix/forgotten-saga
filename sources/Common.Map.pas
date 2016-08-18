@@ -95,7 +95,7 @@ var
   L: TStringList;
 begin
   L := TStringList.Create;
-  L.LoadFromFile(AFileName);
+  L.LoadFromFile(AFileName, TEncoding.UTF8);
   for Z := 0 to Layers - 1 do
   begin
     I := L.IndexOf(Format('[%d]', [Z])) + 1;
@@ -124,7 +124,7 @@ begin
       L.Append(S);
     end;
   end;
-  L.SaveToFile(AFileName);
+  L.SaveToFile(AFileName, TEncoding.UTF8);
   L.Free;
 end;
 

@@ -183,7 +183,7 @@ begin
   if (ACount <= 0) then
     Exit;
   I := IndexOf(ID);
-  if (I = 0) or not AStack then 
+  if (I = 0) or not AStack then
   begin
     I := IndexOf('');
     if (I = 0) then
@@ -252,11 +252,11 @@ end;
 procedure TInventory.LoadFromFile(FileName: string);
 var
   P, I: Integer;
-  E: TStringList;  
+  E: TStringList;
 begin
   P := 1;
   Clear(MaxCount, MaxWeight);
-  FList.LoadFromFile(FileName);
+  FList.LoadFromFile(FileName, TEncoding.UTF8);
   for I := 0 to FList.Count - 1 do
   begin
     E := ExplodeString('/', FList[I]);
@@ -282,7 +282,7 @@ begin
     with FItem[I] do
       FList.Append(Format('%s/%d/%d/%d/%s', [ID, Count, Weight, Tough,
         BoolToStr(Doll)]));
-  FList.SaveToFile(FileName);
+  FList.SaveToFile(FileName, TEncoding.UTF8);
 end;
 
 function TInventory.ToText(I: TInvByte): string;

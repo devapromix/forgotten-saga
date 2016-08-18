@@ -1,5 +1,5 @@
 [0]
-Name=Боевой Топор
+Name=Battle Axe
 Category=Axe
 Material=Metal
 Level=2
@@ -11,7 +11,7 @@ Color=6220500
 Count=1
 
 [1]
-Name=Короткое Копье
+Name=Short Spear
 Category=Spear
 Material=Wood
 Level=1
@@ -23,7 +23,7 @@ Color=8782471
 Count=1
 
 [2]
-Name=Орочий Меч
+Name=Bone Sword
 Category=Sword
 Material=Bone
 Level=2

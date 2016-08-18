@@ -40,3 +40,8 @@ You have completed the quest.=Ты выполнил задание.
 I have completed this quest.=Я выполнил это задание.
 You walked in <RED>%s.</>=Ты вошел в <RED>%s.</>
 
+Battle Axe=Боевой Топор
+Short Spear=Короткое Копье
+Bone Sword=Костяной Меч
+
+Goblin Virn=Гоблин Вирн

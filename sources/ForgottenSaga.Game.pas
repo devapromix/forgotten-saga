@@ -377,7 +377,7 @@ begin
     F := GetPath('resources') + Lg.Current + '.intro.txt';
     if (FileExists(F)) then
     begin
-      S.LoadFromFile(F);
+      S.LoadFromFile(F, TEncoding.UTF8);
       for I := 0 to S.Count - 1 do
         Log[lgIntro].Add(__(S[I]), False);
     end;
@@ -484,7 +484,7 @@ begin
     (GetSlotPath(Slot) + 'vars.txt');
   FList[Slot] := Format('%s %s - %s', [DateTimeToStr(Now), Player.GetFullName,
     World.GetMap(Player.Map).Name]);
-  FList.SaveToFile(GetPath('save') + 'list.txt');
+  FList.SaveToFile(GetPath('save') + 'list.txt', TEncoding.UTF8);
   Saga.Notification.Add('Игра успешно сохранена');
 end;
 
@@ -516,7 +516,7 @@ begin
   ClearSlots;
   F := GetPath('save') + 'list.txt';
   if FileExists(F) then
-    FList.LoadFromFile(F);
+    FList.LoadFromFile(F, TEncoding.UTF8);
 end;
 
 procedure TSaga.ClearLogs;
@@ -587,7 +587,7 @@ var
 begin
   S := TStringList.Create;
   try
-    S.LoadFromFile(FileName);
+    S.LoadFromFile(FileName, TEncoding.UTF8);
     FLogStr := S.Text;
   finally
     S.Free;
@@ -601,7 +601,7 @@ begin
   S := TStringList.Create;
   try
     S.Text := FLogStr;
-    S.SaveToFile(FileName);
+    S.SaveToFile(FileName, TEncoding.UTF8);
   finally
     S.Free;
   end;
@@ -660,12 +660,12 @@ end;
 
 procedure TQuest.LoadFromFile(FileName: string);
 begin
-  FList.LoadFromFile(FileName);
+  FList.LoadFromFile(FileName, TEncoding.UTF8);
 end;
 
 procedure TQuest.SaveToFile(FileName: string);
 begin
-  FList.SaveToFile(FileName);
+  FList.SaveToFile(FileName, TEncoding.UTF8);
 end;
 
 { TNotification }
@@ -711,7 +711,7 @@ begin
     N := '';
   Saga.List[Slot] := Format('%s%d', [Saga.Player.GetFullName + N,
     Saga.Player.Score]);
-  Saga.List.SaveToFile(FFileName);
+  Saga.List.SaveToFile(FFileName, TEncoding.UTF8);
 end;
 
 constructor TRecs.Create(FileName: string);
@@ -723,7 +723,7 @@ procedure TRecs.Load;
 begin
   Saga.ClearSlots;
   if FileExists(FFileName) then
-    Saga.List.LoadFromFile(FFileName);
+    Saga.List.LoadFromFile(FFileName, TEncoding.UTF8);
 end;
 
 procedure TRecs.Save;

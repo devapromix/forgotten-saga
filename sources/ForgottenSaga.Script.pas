@@ -77,7 +77,7 @@ var
   I: Integer;
   S: string;
 begin
-  FList.LoadFromFile(FileName);
+  FList.LoadFromFile(FileName, TEncoding.UTF8);
   for I := FList.Count - 1 downto 0 do
   begin
     S := Trim(FList[I]);
@@ -412,7 +412,7 @@ begin
   A := TStringList.Create;
   try
     Self.Clear;
-    A.LoadFromFile(FileName);
+    A.LoadFromFile(FileName, TEncoding.UTF8);
     for I := 0 to A.Count - 1 do
     begin
       S := Trim(A[I]);
@@ -433,7 +433,7 @@ begin
   S := TStringList.Create;
   for I := 0 to FID.Count - 1 do
     S.Append(FID[I] + ',' + FValue[I]);
-  S.SaveToFile(FileName);
+  S.SaveToFile(FileName, TEncoding.UTF8);
   S.Free;
 end;
 

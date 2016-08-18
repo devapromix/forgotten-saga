@@ -906,7 +906,7 @@ var
     I := Saga.World.CurrentCreatures.Has(Pos.X, Pos.Y);
     if (I > -1) then
       Result := Format(KeyFmt, [Saga.World.CurrentCreatures.Get(I).Symbol,
-        Saga.World.CurrentCreatures.Get(I).Name]);
+        __(Saga.World.CurrentCreatures.Get(I).Name)]);
     if (Saga.Player.Has(Pos.X, Pos.Y)) then
       Result := Format(KeyFmt, ['@', Saga.Player.GetFullName]);
   end;

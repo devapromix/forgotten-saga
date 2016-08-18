@@ -65,7 +65,7 @@ Dialog=0
 NPC=1
 
 [6]
-Name=Гоблин Вирн
+Name=Goblin Virn
 X=40
 Y=23
 Life=100/100
