@@ -1,1 +1,6 @@
 Orc Camp=Лагерь Орков
+Forest of Boars=Лес Кабанов
+Black Cave=Черная Пещера
+Pit=Яма
+Plain of Bones=Равнина Костей
+Far Cave=Дальняя Пещера
