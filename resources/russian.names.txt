@@ -1,8 +1,8 @@
-Avgu,Leo,Tan,Sho,Penr,Lok,Gron,Lar,Midr=Авгу,Лео,Тан,Шо,Пенр,Лок,Грон,Лар,Мидр
-sin,neg,zar,kar,tun,rel,bal,rin,kon=син,нег,зар,кар,тун,рел,бал,рин,кон
-or,fin,shog,tal,rod,pin,ol,kan,on=ор,фин,шог,тал,род,пин,ол,кан,он
-Had,Rod,Shag,Dor,Lid,Tar,Kreg,Bron,Shung=Хад,Род,Шаг,Дор,Лид,Тар,Крэг,Брон,Шунг
-Garum,Turum,Ur,Utak,Udoom,Ud,Urak,Doon,Vuug=Гарум,Турум,Ур,Утак,Удум,Уд,Урак,Дун,Вууг
-Kat,Shak,Gir,Bood,Dreg,Din,Grok,Rig,Sadr=Кат,Шак,Гир,Буд,Дрэг,Дин,Грок,Риг,Садр
-Blind,Glad,Proud,Sharp-sighted,Powerful,Dancer,Guarding,Thunderous,Night=Слепой,Яростный,Гордый,Зоркий,Могучий,Танцующий,Стерегущий,Громовой,Ночной
-Wolfhound,Wood-goblin,Destroyer,Crusher,Pathfinder,Astrologer,Bootes,Caretaker,Befouler=Волкодав,Моховик,Обрушитель,Крушитель,Следопыт,Звездочет,Волопас,Смотритель,Осквернитель
+Avgu,Leo,Tan,Sho,Penr,Lok,Gron,Lar,Midr=РђРІРіСѓ,Р›РµРѕ,РўР°РЅ,РЁРѕ,РџРµРЅСЂ,Р›РѕРє,Р“СЂРѕРЅ,Р›Р°СЂ,РњРёРґСЂ
+sin,neg,zar,kar,tun,rel,bal,rin,kon=СЃРёРЅ,РЅРµРі,Р·Р°СЂ,РєР°СЂ,С‚СѓРЅ,СЂРµР»,Р±Р°Р»,СЂРёРЅ,РєРѕРЅ
+or,fin,shog,tal,rod,pin,ol,kan,on=РѕСЂ,С„РёРЅ,С€РѕРі,С‚Р°Р»,СЂРѕРґ,РїРёРЅ,РѕР»,РєР°РЅ,РѕРЅ
+Had,Rod,Shag,Dor,Lid,Tar,Kreg,Bron,Shung=РҐР°Рґ,Р РѕРґ,РЁР°Рі,Р”РѕСЂ,Р›РёРґ,РўР°СЂ,РљСЂСЌРі,Р‘СЂРѕРЅ,РЁСѓРЅРі
+Garum,Turum,Ur,Utak,Udoom,Ud,Urak,Doon,Vuug=Р“Р°СЂСѓРј,РўСѓСЂСѓРј,РЈСЂ,РЈС‚Р°Рє,РЈРґСѓРј,РЈРґ,РЈСЂР°Рє,Р”СѓРЅ,Р’СѓСѓРі
+Kat,Shak,Gir,Bood,Dreg,Din,Grok,Rig,Sadr=РљР°С‚,РЁР°Рє,Р“РёСЂ,Р‘СѓРґ,Р”СЂСЌРі,Р”РёРЅ,Р“СЂРѕРє,Р РёРі,РЎР°РґСЂ
+Blind,Glad,Proud,Sharp-sighted,Powerful,Dancer,Guarding,Thunderous,Night=РЎР»РµРїРѕР№,РЇСЂРѕСЃС‚РЅС‹Р№,Р“РѕСЂРґС‹Р№,Р—РѕСЂРєРёР№,РњРѕРіСѓС‡РёР№,РўР°РЅС†СѓСЋС‰РёР№,РЎС‚РµСЂРµРіСѓС‰РёР№,Р“СЂРѕРјРѕРІРѕР№,РќРѕС‡РЅРѕР№
+Wolfhound,Wood-goblin,Destroyer,Crusher,Pathfinder,Astrologer,Bootes,Caretaker,Befouler=Р’РѕР»РєРѕРґР°РІ,РњРѕС…РѕРІРёРє,РћР±СЂСѓС€РёС‚РµР»СЊ,РљСЂСѓС€РёС‚РµР»СЊ,РЎР»РµРґРѕРїС‹С‚,Р—РІРµР·РґРѕС‡РµС‚,Р’РѕР»РѕРїР°СЃ,РЎРјРѕС‚СЂРёС‚РµР»СЊ,РћСЃРєРІРµСЂРЅРёС‚РµР»СЊ

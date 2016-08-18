@@ -309,7 +309,7 @@ begin
 {$IFNDEF FPC}
   Result := Length(Text);
 {$ELSE}
-  Result := LengthUTF8(Text);
+  Result := UTF8Length(Text);
 {$ENDIF}
 end;
 

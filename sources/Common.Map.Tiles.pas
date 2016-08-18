@@ -1,10 +1,10 @@
-unit Common.Map.Tiles;
+п»їunit Common.Map.Tiles;
 
 interface
 
 uses Engine;
 
-// Размер карты
+// Р Р°Р·РјРµСЂ РєР°СЂС‚С‹
 const
   MapWidth = 80;
   MapHeight = 40;

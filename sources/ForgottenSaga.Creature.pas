@@ -1,4 +1,4 @@
-unit ForgottenSaga.Creature;
+п»їunit ForgottenSaga.Creature;
 
 interface
 
@@ -925,7 +925,7 @@ var
         Saga.World.CurrentItems.GetItemPropStr(Item)]));
       C := Saga.World.CurrentItems.Count(Pos.X, Pos.Y);
       if (C > 1) then
-        Result := Format(__('<%s> Несколько (%dx) предметов (%s)'),
+        Result := Format(__('<%s> РќРµСЃРєРѕР»СЊРєРѕ (%dx) РїСЂРµРґРјРµС‚РѕРІ (%s)'),
           [Saga.World.CurrentItems.Get(I).Symbol, C,
           Saga.World.CurrentItems.Get(I).Name]);
     end;

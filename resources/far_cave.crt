@@ -1,5 +1,5 @@
 [0]
-Name=Кабан
+Name=РљР°Р±Р°РЅ
 X=24
 Y=12
 Life=100/100
@@ -9,7 +9,7 @@ Color=343
 Dialog=0
 NPC=0
 [1]
-Name=Кабан
+Name=РљР°Р±Р°РЅ
 X=22
 Y=25
 Life=100/100
@@ -19,7 +19,7 @@ Color=343
 Dialog=0
 NPC=0
 [2]
-Name=Кабан
+Name=РљР°Р±Р°РЅ
 X=10
 Y=14
 Life=100/100
@@ -29,7 +29,7 @@ Color=343
 Dialog=0
 NPC=0
 [3]
-Name=Волк
+Name=Р’РѕР»Рє
 X=16
 Y=19
 Life=100/100

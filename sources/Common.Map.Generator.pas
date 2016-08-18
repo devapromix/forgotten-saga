@@ -1,4 +1,4 @@
-unit Common.Map.Generator;
+﻿unit Common.Map.Generator;
 
 interface
 

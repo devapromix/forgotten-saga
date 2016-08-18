@@ -1,7 +1,8 @@
 program ForgottenSaga;
 
 uses
-  SysUtils, Interfaces,
+  SysUtils,
+  Interfaces,
   Engine in 'Engine.pas',
   BearLibTerminal in 'BearLibTerminal.pas',
   ForgottenSaga.Game in '..\ForgottenSaga.Game.pas',
@@ -18,8 +19,8 @@ uses
   Common.Variables in '..\Common.Variables.pas';
 
 var
-  Key: Word = 0;
-  Tick: Integer = 0;
+  Key: word = 0;
+  Tick: integer = 0;
 
 begin
   terminal_open();

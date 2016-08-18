@@ -1,4 +1,4 @@
-unit Common.Utils;
+﻿unit Common.Utils;
 
 interface
 

@@ -1,6 +1,6 @@
-Orc Camp=Лагерь Орков
-Forest of Boars=Лес Кабанов
-Black Cave=Черная Пещера
-Pit=Яма
-Plain of Bones=Равнина Костей
-Far Cave=Дальняя Пещера
+Orc Camp=Р›Р°РіРµСЂСЊ РћСЂРєРѕРІ
+Forest of Boars=Р›РµСЃ РљР°Р±Р°РЅРѕРІ
+Black Cave=Р§РµСЂРЅР°СЏ РџРµС‰РµСЂР°
+Pit=РЇРјР°
+Plain of Bones=Р Р°РІРЅРёРЅР° РљРѕСЃС‚РµР№
+Far Cave=Р”Р°Р»СЊРЅСЏСЏ РџРµС‰РµСЂР°

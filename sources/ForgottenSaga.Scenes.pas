@@ -1,4 +1,4 @@
-unit ForgottenSaga.Scenes;
+п»їunit ForgottenSaga.Scenes;
 
 interface
 
@@ -519,7 +519,7 @@ begin
     TK_G:
       Saga.Player.Pickup;
     TK_H:
-      Saga.World.CurrentItems.Add('|', cDkBrown, 1, 'Посох Шамана', mtBone,
+      Saga.World.CurrentItems.Add('|', cDkBrown, 1, 'РџРѕСЃРѕС… РЁР°РјР°РЅР°', mtBone,
         ctStaff, 15);
     TK_L:
       begin
@@ -749,8 +749,8 @@ end;
 
 procedure TStageTextMenu.Render;
 begin
-  Saga.Engine.TitleOut(13, 'Как все начиналось...');
-  Saga.Engine.KeyOut(0, 25, 'Начать игру...', 'ENTER', aCenter);
+  Saga.Engine.TitleOut(13, 'РљР°Рє РІСЃРµ РЅР°С‡РёРЅР°Р»РѕСЃСЊ...');
+  Saga.Engine.KeyOut(0, 25, 'РќР°С‡Р°С‚СЊ РёРіСЂСѓ...', 'ENTER', aCenter);
   Saga.Engine.FontColor(clSplText);
   Saga.Log[lgIntro].Render(15, 15, 85);
 end;
@@ -877,9 +877,9 @@ end;
 
 procedure TStageBattle.Render;
 begin
-  Saga.Engine.TitleOut(5, 'Поединок');
-  Saga.Engine.KeyOut(15, 6, 'Атаковать', '1');
-  Saga.Engine.KeyOut(15, 7, 'Отступить', '2');
+  Saga.Engine.TitleOut(5, 'РџРѕРµРґРёРЅРѕРє');
+  Saga.Engine.KeyOut(15, 6, 'РђС‚Р°РєРѕРІР°С‚СЊ', '1');
+  Saga.Engine.KeyOut(15, 7, 'РћС‚СЃС‚СѓРїРёС‚СЊ', '2');
 
   Saga.Engine.FontColor(Saga.Player.Color);
   Saga.Engine.TextOut(90, 6, Saga.Player.Name + ' (' + Saga.Player.Atr[atLife]
@@ -901,13 +901,13 @@ end;
 procedure TStageBattle.Update(var Key: Word);
 begin
   case Key of
-    TK_1: // Атаковать
+    TK_1: // РђС‚Р°РєРѕРІР°С‚СЊ
       begin
         Saga.Battle.PlayerMove();
       end;
-    TK_2: // Отступить
+    TK_2: // РћС‚СЃС‚СѓРїРёС‚СЊ
       begin
-        Saga.Log[lgBattle].Add(__('Ты пытаешься уклониться от поединка.'));
+        Saga.Log[lgBattle].Add(__('РўС‹ РїС‹С‚Р°РµС€СЊСЃСЏ СѓРєР»РѕРЅРёС‚СЊСЃСЏ РѕС‚ РїРѕРµРґРёРЅРєР°.'));
         if (Math.RandomRange(1, 5) = 1) then
           Saga.Battle.Finish()
         else
@@ -1034,7 +1034,7 @@ procedure TStageVictory.Render;
 begin
   Saga.Engine.TitleOut(Top, __('Victory!'));
   Saga.Engine.FontColor(clGoldText);
-  Saga.Engine.TextOut(0, Top + 2, Format('%s поверг всех врагов',
+  Saga.Engine.TextOut(0, Top + 2, Format('%s РїРѕРІРµСЂРі РІСЃРµС… РІСЂР°РіРѕРІ',
     [Saga.Player.GetFullName]), aCenter);
   Saga.Engine.TextOut(0, Top + 3,
     Format('%s %d', [__('Honor'), Saga.Player.Score]), aCenter);
@@ -1058,7 +1058,7 @@ procedure TStageDefeat.Render;
 begin
   Saga.Engine.TitleOut(Top, __('Defeat!'));
   Saga.Engine.FontColor(clAlertText);
-  Saga.Engine.TextOut(0, Top + 2, Format('%s повержен!',
+  Saga.Engine.TextOut(0, Top + 2, Format('%s РїРѕРІРµСЂР¶РµРЅ!',
     [Saga.Player.GetFullName]), aCenter);
   Saga.Engine.TextOut(0, Top + 3,
     Format('%s %d', [__('Honor'), Saga.Player.Score]), aCenter);

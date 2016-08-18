@@ -1,4 +1,4 @@
-unit ForgottenSaga.Battle;
+п»їunit ForgottenSaga.Battle;
 
 interface
 
@@ -36,7 +36,7 @@ end;
 
 procedure TBattle.EnemyMove;
 begin
-  Saga.Log[lgBattle].Add(Format('%s атакует тебя (%d).', [EnemyName, 5]));
+  Saga.Log[lgBattle].Add(Format('%s Р°С‚Р°РєСѓРµС‚ С‚РµР±СЏ (%d).', [EnemyName, 5]));
 end;
 
 function TBattle.EnemyName: string;
@@ -47,12 +47,12 @@ end;
 procedure TBattle.Finish;
 begin
   Saga.Stages.SetStage(stGame);
-  Saga.Log[lgGame].Add('Ты вышел из боя.');
+  Saga.Log[lgGame].Add('РўС‹ РІС‹С€РµР» РёР· Р±РѕСЏ.');
 end;
 
 procedure TBattle.PlayerMove;
 begin
-  Saga.Log[lgBattle].Add(Format('Ты атакуешь %s (%d)', [EnemyName, 5]));
+  Saga.Log[lgBattle].Add(Format('РўС‹ Р°С‚Р°РєСѓРµС€СЊ %s (%d)', [EnemyName, 5]));
   EnemyMove();
 end;
 
@@ -62,11 +62,11 @@ begin
   Saga.Log[lgBattle].Clear;
   if (Math.RandomRange(1, 3) = 1) then
   begin
-    Saga.Log[lgBattle].Add('Твои навыки позволяют тебе атаковать первым.');
+    Saga.Log[lgBattle].Add('РўРІРѕРё РЅР°РІС‹РєРё РїРѕР·РІРѕР»СЏСЋС‚ С‚РµР±Рµ Р°С‚Р°РєРѕРІР°С‚СЊ РїРµСЂРІС‹Рј.');
   end
   else
   begin
-    Saga.Log[lgBattle].Add(Format('%s неожиданно нападает на тебя первым.', [EnemyName]));
+    Saga.Log[lgBattle].Add(Format('%s РЅРµРѕР¶РёРґР°РЅРЅРѕ РЅР°РїР°РґР°РµС‚ РЅР° С‚РµР±СЏ РїРµСЂРІС‹Рј.', [EnemyName]));
     EnemyMove();
   end;
 end;

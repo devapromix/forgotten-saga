@@ -1,10 +1,10 @@
-unit Common.Color;
+п»їunit Common.Color;
 
 interface
 
 uses Graphics;
 
-// Цвета
+// Р¦РІРµС‚Р°
 const
 {0}cBlack   = $00000000; {0}cWhite    = $00ffffff; {0}cWhiteYel = $008efbfb; {0}cWhiteGre = $0088ff88;
 {1}cGray    = $00808080; {1}cLtGray   = $00c0c0c0; {1}cDkGray   = $00303030; {1}cRdGray   = $00706060;
@@ -17,29 +17,29 @@ const
 {8}cSkyBlue = $00eed9ba; {8}cLtNavy   = $00d38f4b; {8}cDkNavy   = $00330000; {8}
 {9}                      {9}cLtTeal   = $0072AEA5; {9}cDkTeal   = $004d622d; {9}cRdTeal   = $00243226;
 
-  clClear     = -1;        // Прозрачный цвет
+  clClear     = -1;        // РџСЂРѕР·СЂР°С‡РЅС‹Р№ С†РІРµС‚
 
-  clTitle     = clYellow;  // Цвет заголовка
-  clButton    = clGreen;   // Цвет кнопки
-  clHotKey    = clSkyBlue; // Цвет активной кнопки
-  clSplText   = clSilver;  // Цвет простого текста
-  clMenuAct   = 50650;     // Цвет акт. пункта меню
+  clTitle     = clYellow;  // Р¦РІРµС‚ Р·Р°РіРѕР»РѕРІРєР°
+  clButton    = clGreen;   // Р¦РІРµС‚ РєРЅРѕРїРєРё
+  clHotKey    = clSkyBlue; // Р¦РІРµС‚ Р°РєС‚РёРІРЅРѕР№ РєРЅРѕРїРєРё
+  clSplText   = clSilver;  // Р¦РІРµС‚ РїСЂРѕСЃС‚РѕРіРѕ С‚РµРєСЃС‚Р°
+  clMenuAct   = 50650;     // Р¦РІРµС‚ Р°РєС‚. РїСѓРЅРєС‚Р° РјРµРЅСЋ
   clNotification = cLtYellow;
-  clMenuDef   = $00567390; // Цвет деф. пункта меню
-  clAlertText = clRed;     // Цвет сигн. сообщ.
+  clMenuDef   = $00567390; // Р¦РІРµС‚ РґРµС„. РїСѓРЅРєС‚Р° РјРµРЅСЋ
+  clAlertText = clRed;     // Р¦РІРµС‚ СЃРёРіРЅ. СЃРѕРѕР±С‰.
   clEPMText   = clMaroon;  //
   clGoldText  = $0068c9c8; //
-  clTileEnt   = cLtBrown;  // Вход и выход из подземелья
+  clTileEnt   = cLtBrown;  // Р’С…РѕРґ Рё РІС‹С…РѕРґ РёР· РїРѕРґР·РµРјРµР»СЊСЏ
 
-  clDirt      = $00234567; // Грязь
-  clStone     = $00234123; // Камень #1
-  clStone2    = $00444444; // Камень #2
-  clStone3    = $00343044; // Камень #3
-  clStone4    = $00233228; // Камень #4
-  clGrass     = $00005500; // Трава
-  clPlant     = $00006633; // Растение #1
-  clLtPlant   = $00007800; // Растение #2
-  clDkPlant   = clGreen;   // Растение #3
+  clDirt      = $00234567; // Р“СЂСЏР·СЊ
+  clStone     = $00234123; // РљР°РјРµРЅСЊ #1
+  clStone2    = $00444444; // РљР°РјРµРЅСЊ #2
+  clStone3    = $00343044; // РљР°РјРµРЅСЊ #3
+  clStone4    = $00233228; // РљР°РјРµРЅСЊ #4
+  clGrass     = $00005500; // РўСЂР°РІР°
+  clPlant     = $00006633; // Р Р°СЃС‚РµРЅРёРµ #1
+  clLtPlant   = $00007800; // Р Р°СЃС‚РµРЅРёРµ #2
+  clDkPlant   = clGreen;   // Р Р°СЃС‚РµРЅРёРµ #3
 
   clDkGray    = clGray;    //
 

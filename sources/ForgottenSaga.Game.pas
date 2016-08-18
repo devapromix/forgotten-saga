@@ -1,4 +1,4 @@
-unit ForgottenSaga.Game;
+п»їunit ForgottenSaga.Game;
 
 interface
 
@@ -453,9 +453,9 @@ begin
   Player.Clear;
   Saga.ClearLogs;
   World.LoadFromDir(GetPath('resources'));
-  // World.Gen(0); // Пока вместо редактора
+  // World.Gen(0); // РџРѕРєР° РІРјРµСЃС‚Рѕ СЂРµРґР°РєС‚РѕСЂР°
   Stages.SetStage(stGame);
-  Saga.Notification.Add('Создан новый мир');
+  Saga.Notification.Add('РЎРѕР·РґР°РЅ РЅРѕРІС‹Р№ РјРёСЂ');
 end;
 
 function TSaga.LoadFromSlot(Slot: Byte): Boolean;
@@ -471,7 +471,7 @@ begin
     (GetSlotPath(Slot) + 'vars.txt');
   Result := True;
   if Result then
-    Saga.Notification.Add('Игра успешно загружена');
+    Saga.Notification.Add('РРіСЂР° СѓСЃРїРµС€РЅРѕ Р·Р°РіСЂСѓР¶РµРЅР°');
 end;
 
 procedure TSaga.SaveToSlot(Slot: Byte);
@@ -485,7 +485,7 @@ begin
   FList[Slot] := Format('%s %s - %s', [DateTimeToStr(Now), Player.GetFullName,
     World.GetMap(Player.Map).Name]);
   FList.SaveToFile(GetPath('save') + 'list.txt');
-  Saga.Notification.Add('Игра успешно сохранена');
+  Saga.Notification.Add('РРіСЂР° СѓСЃРїРµС€РЅРѕ СЃРѕС…СЂР°РЅРµРЅР°');
 end;
 
 procedure TSaga.SetLog(I: TLogEnum; const Value: TLog);
@@ -784,7 +784,7 @@ constructor TLanguage.Create;
 begin
   FID := TStringList.Create;
   FValue := TStringList.Create;
-  //FCurrent := 'russian';
+  FCurrent := 'russian';
 end;
 
 destructor TLanguage.Destroy;
@@ -803,7 +803,7 @@ begin
   if not FileExists(FileName) then
     Exit;
   SL := TStringList.Create;
-  SL.LoadFromFile(FileName);
+  SL.LoadFromFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
   try
     for I := 0 to SL.Count - 1 do
     begin

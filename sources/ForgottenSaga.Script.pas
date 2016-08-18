@@ -1,4 +1,4 @@
-unit ForgottenSaga.Script;
+ï»¿unit ForgottenSaga.Script;
 
 interface
 
@@ -284,7 +284,7 @@ begin
       FIsIf := GetIf('<', S);
   end;
 
-  // Êàðòà:Îáúåêò:Äèàëîã
+  // ÐšÐ°Ñ€Ñ‚Ð°:ÐžÐ±ÑŠÐµÐºÑ‚:Ð”Ð¸Ð°Ð»Ð¾Ð³
   if IsTag('dialog') then
   begin
     S := GetLastCode('dialog', Code);

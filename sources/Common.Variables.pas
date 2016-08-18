@@ -1,4 +1,4 @@
-unit Common.Variables;
+п»їunit Common.Variables;
 
 interface
 
@@ -6,11 +6,11 @@ uses
   ForgottenSaga.Game;
 
 const
-  FSVersion = '0.0.3';              // Версия
+  FSVersion = '0.0.3';              // Р’РµСЂСЃРёСЏ
   Copyright = 'Copyright (C) 2016 by Sergiy Tkach (DevApromix)';
 
 var
-  PanelWidth: Byte = 40;            // Ширина панели
+  PanelWidth: Byte = 40;            // РЁРёСЂРёРЅР° РїР°РЅРµР»Рё
 
 const
   RaceName: array [TRaceEnum] of string =
