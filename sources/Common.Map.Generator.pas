@@ -71,10 +71,10 @@ begin
           px := random(x) + 1;
         if (py = 0) then
           py := random(y) + 1;
-        if ((px > 1) and (Saga.World.CurrentMap.HasTile(Tile ,px - 1, py))) or
-          ((py > 1) and (Saga.World.CurrentMap.HasTile(Tile ,px, py - 1))) or
-          ((px < x) and (Saga.World.CurrentMap.HasTile(Tile ,px + 1, py))) or
-          ((py < y) and (Saga.World.CurrentMap.HasTile(Tile ,px, py + 1))) then
+        if ((px > 1) and (Saga.World.CurrentMap.HasTile(Tile, px - 1, py))) or
+          ((py > 1) and (Saga.World.CurrentMap.HasTile(Tile, px, py - 1))) or
+          ((px < x) and (Saga.World.CurrentMap.HasTile(Tile, px + 1, py))) or
+          ((py < y) and (Saga.World.CurrentMap.HasTile(Tile, px, py + 1))) then
           if (px <> 0) and (px <> MapWidth - 1) and (py <> 0) and
             (py <> MapHeight - 1) then
           begin

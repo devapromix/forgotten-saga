@@ -17,7 +17,7 @@ type
     property ID: Integer read FID write FID;
   end;
 
-implementation  
+implementation
 
 uses SysUtils, Math, Engine, ForgottenSaga.Game, ForgottenSaga.Scenes;
 
@@ -66,7 +66,8 @@ begin
   end
   else
   begin
-    Saga.Log[lgBattle].Add(Format('%s неожиданно нападает на тебя первым.', [EnemyName]));
+    Saga.Log[lgBattle].Add(Format('%s неожиданно нападает на тебя первым.',
+      [EnemyName]));
     EnemyMove();
   end;
 end;

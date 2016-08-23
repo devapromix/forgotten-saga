@@ -88,7 +88,6 @@
         <DCCReference Include="..\Common.Map.pas"/>
         <DCCReference Include="..\Common.Map.Generator.pas"/>
         <DCCReference Include="..\Common.Map.Tiles.pas"/>
-        <DCCReference Include="..\Common.Color.pas"/>
         <DCCReference Include="..\Common.Variables.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

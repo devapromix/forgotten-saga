@@ -3,12 +3,11 @@ program WorldEditor;
 uses
   Forms,
   Engine in '..\VCLEngine\Engine.pas',
-  WorldEditor.MainForm in 'WorldEditor.MainForm.pas' {fMain},
+  WorldEditor.MainForm in 'WorldEditor.MainForm.pas' {fMain} ,
   WorldEditor.Classes in 'WorldEditor.Classes.pas',
   ForgottenSaga.Game in '..\ForgottenSaga.Game.pas',
   ForgottenSaga.Scenes in '..\ForgottenSaga.Scenes.pas',
   ForgottenSaga.Script in '..\ForgottenSaga.Script.pas',
-  Common.Color in '..\Common.Color.pas',
   Common.Map.Tiles in '..\Common.Map.Tiles.pas',
   Common.Map in '..\Common.Map.pas',
   Common.Utils in '..\Common.Utils.pas',
@@ -25,4 +24,5 @@ begin
   Application.Title := 'Forgotten Saga WorldEditor';
   Application.CreateForm(TfMain, fMain);
   Application.Run;
+
 end.

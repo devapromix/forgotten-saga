@@ -749,8 +749,15 @@ object fMain: TfMain
       ImageIndex = 0
       OnClick = ToolButton1Click
     end
-    object ToolButton2: TToolButton
+    object ToolButton4: TToolButton
       Left = 24
+      Top = 0
+      Caption = 'ToolButton4'
+      ImageIndex = 0
+      OnClick = ToolButton4Click
+    end
+    object ToolButton2: TToolButton
+      Left = 48
       Top = 0
       Width = 8
       Caption = 'ToolButton2'
@@ -758,39 +765,35 @@ object fMain: TfMain
       Style = tbsSeparator
     end
     object btTerrain: TToolButton
-      Left = 32
+      Left = 56
       Top = 0
-      Down = True
       ImageIndex = 1
       Style = tbsCheck
       OnClick = FormPaint
     end
     object btObjects: TToolButton
-      Left = 56
+      Left = 80
       Top = 0
-      Down = True
       ImageIndex = 2
       Style = tbsCheck
       OnClick = FormPaint
     end
     object btItems: TToolButton
-      Left = 80
+      Left = 104
       Top = 0
-      Down = True
       ImageIndex = 3
       Style = tbsCheck
       OnClick = FormPaint
     end
     object btCreatures: TToolButton
-      Left = 104
+      Left = 128
       Top = 0
-      Down = True
       ImageIndex = 4
       Style = tbsCheck
       OnClick = FormPaint
     end
     object ToolButton3: TToolButton
-      Left = 128
+      Left = 152
       Top = 0
       Width = 8
       Caption = 'ToolButton3'
@@ -798,16 +801,15 @@ object fMain: TfMain
       Style = tbsSeparator
     end
     object brTerrain: TToolButton
-      Left = 136
+      Left = 160
       Top = 0
-      Down = True
       Grouped = True
       ImageIndex = 5
       Style = tbsCheck
       OnClick = brTerrainClick
     end
     object brObjects: TToolButton
-      Left = 160
+      Left = 184
       Top = 0
       Grouped = True
       ImageIndex = 6
@@ -815,7 +817,7 @@ object fMain: TfMain
       OnClick = FormPaint
     end
     object brItems: TToolButton
-      Left = 184
+      Left = 208
       Top = 0
       Grouped = True
       ImageIndex = 7
@@ -823,12 +825,20 @@ object fMain: TfMain
       OnClick = FormPaint
     end
     object brCreatures: TToolButton
-      Left = 208
+      Left = 232
       Top = 0
       Grouped = True
       ImageIndex = 8
       Style = tbsCheck
       OnClick = FormPaint
+    end
+    object ToolButton5: TToolButton
+      Left = 256
+      Top = 0
+      Width = 8
+      Caption = 'ToolButton5'
+      ImageIndex = 9
+      Style = tbsSeparator
     end
   end
   object StatusBar: TStatusBar
@@ -842,7 +852,7 @@ object fMain: TfMain
     Left = 24
     Top = 48
     Bitmap = {
-      494C010101000300040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010101000300200010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -985,18 +995,18 @@ object fMain: TfMain
     DefaultExt = 'map'
     FileName = 'noname'
     Filter = 'Map|*.map'
-    InitialDir = 'data'
+    InitialDir = 'resources'
     Options = [ofOverwritePrompt, ofHideReadOnly, ofNoChangeDir, ofEnableSizing]
-    Left = 56
-    Top = 48
+    Left = 24
+    Top = 96
   end
   object SD: TSaveDialog
     DefaultExt = 'map'
     FileName = 'noname'
     Filter = 'Map|*.map'
-    InitialDir = 'data'
+    InitialDir = 'resources'
     Options = [ofOverwritePrompt, ofHideReadOnly, ofNoChangeDir, ofEnableSizing]
-    Left = 88
-    Top = 48
+    Left = 24
+    Top = 144
   end
 end

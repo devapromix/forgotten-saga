@@ -84,7 +84,6 @@
         <DCCReference Include="..\ForgottenSaga.Game.pas"/>
         <DCCReference Include="..\ForgottenSaga.Scenes.pas"/>
         <DCCReference Include="..\ForgottenSaga.Script.pas"/>
-        <DCCReference Include="..\Common.Color.pas"/>
         <DCCReference Include="..\Common.Map.Tiles.pas"/>
         <DCCReference Include="..\Common.Map.pas"/>
         <DCCReference Include="..\Common.Utils.pas"/>

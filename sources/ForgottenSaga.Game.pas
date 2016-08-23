@@ -23,6 +23,23 @@ type
   end;
 
 type
+  TColorsEnum = (ceBlack, ceRed, ceGreen, ceBlue, ceGray, ceLGray,
+    ceYellow, ceWhite);
+
+const
+  ColorsStr: array [TColorsEnum] of string = ('BLACK', 'RED', 'GREEN', 'BLUE',
+    'GRAY', 'LGRAY', 'YELLOW', 'WHITE');
+
+type
+  TColors = class(TObject)
+  private
+    FColors: array [TColorsEnum] of Integer;
+  public
+    procedure LoadFromFile(FileName: string);
+    function GetColor(Color: TColorsEnum): Integer;
+  end;
+
+type
   TNotification = class(TObject)
   private
     FMessage: string;
@@ -140,6 +157,7 @@ type
     FQuest: TQuest;
     FRecs: TRecs;
     FLg: TLanguage;
+    FColors: TColors;
     FNotification: TNotification;
     FLog: array [TLogEnum] of TLog;
     FRace: array [TRaceEnum] of TRace;
@@ -175,6 +193,7 @@ type
     property List: TStringList read FList write FList;
     property Recs: TRecs read FRecs write FRecs;
     property Lg: TLanguage read FLg write FLg;
+    property Colors: TColors read FColors write FColors;
   end;
 
 var
@@ -182,7 +201,7 @@ var
 
 implementation
 
-uses SysUtils, IniFiles, Common.Color, Common.Utils;
+uses SysUtils, IniFiles, Common.Utils, Common.Variables;
 
 function __(S: string): string;
 begin
@@ -356,6 +375,8 @@ begin
   for R := Low(TRaceEnum) to High(TRaceEnum) do
     Race[R] := TRace.Create;
 
+  FColors := TColors.Create;
+
   FBattle := TBattle.Create;
   FQuest := TQuest.Create;
   FTiles := TTiles.Create;
@@ -372,6 +393,7 @@ var
   F: string;
   I: Integer;
 begin
+  // Load intro
   S := TStringList.Create;
   try
     F := GetPath('resources') + Lg.Current + '.intro.txt';
@@ -385,11 +407,26 @@ begin
     S.Free;
   end;
 
+  // Localization
   Lg.Clear;
   Lg.LoadFromFile(GetPath('resources') + Lg.Current + '.txt');
   Lg.LoadFromFile(GetPath('resources') + Lg.Current + '.world.txt');
   Lg.LoadFromFile(GetPath('resources') + Lg.Current + '.tiles.txt');
 
+  // Colors
+  Colors.LoadFromFile(GetPath('resources') + 'colors.ini');
+
+  clNotification := Saga.Colors.GetColor(ceYellow);
+  clTitle := Saga.Colors.GetColor(ceYellow);
+  clHotKey := Saga.Colors.GetColor(ceGreen);
+  clButton := Saga.Colors.GetColor(ceLGray);
+  clSplText := Saga.Colors.GetColor(ceLGray);
+  clGoldText := Saga.Colors.GetColor(ceYellow);
+  clAlertText := Saga.Colors.GetColor(ceRed);
+  clMenuAct := Saga.Colors.GetColor(ceYellow);
+  clMenuDef := Saga.Colors.GetColor(ceLGray);
+
+  // Races
   AddRace(rcGoblin, __('Goblin'), 90, 100, Point(40, 20), 0, $00882295);
   AddRace(rcOrc, __('Orc'), 120, 100, Point(40, 20), 0, $0063C3C6);
   AddRace(rcTroll, __('Troll'), 150, 100, Point(40, 20), 0, $00664567);
@@ -406,6 +443,7 @@ begin
     Self.Log[L].Free;
   FNotification.Free;
   FLg.Free;
+  FColors.Free;
   FRecs.Free;
   FList.Free;
   FPlayer.Free;
@@ -821,6 +859,33 @@ procedure TLanguage.Clear;
 begin
   FID.Clear;
   FValue.Clear;
+end;
+
+{ TColors }
+
+function TColors.GetColor(Color: TColorsEnum): Integer;
+begin
+  Result := FColors[Color];
+end;
+
+procedure TColors.LoadFromFile(FileName: string);
+var
+  I: TColorsEnum;
+  F: TIniFile;
+  R, G, B: Byte;
+begin
+  F := TIniFile.Create(FileName);
+  try
+    for I := Low(TColorsEnum) to High(TColorsEnum) do
+    begin
+      R := F.ReadInteger(ColorsStr[I], 'R', 0);
+      G := F.ReadInteger(ColorsStr[I], 'G', 0);
+      B := F.ReadInteger(ColorsStr[I], 'B', 0);
+      FColors[I] := (R or (G shl 8) or (B shl 16));
+    end;
+  finally
+    F.Free;
+  end;
 end;
 
 end.

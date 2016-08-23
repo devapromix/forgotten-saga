@@ -141,6 +141,9 @@ type
     procedure Close;
   end;
 
+const
+  clClear = -1;
+
 implementation
 
 uses
@@ -150,7 +153,7 @@ uses
 {$ELSE}
   LCLIntf, LCLType, LazUTF8,
 {$ENDIF}
-  Graphics, Classes, SysUtils, Common.Color;
+  Classes, SysUtils, Common.Variables;
 
 constructor TEngine.Create(AWidth, AHeight: Integer);
 begin
@@ -250,7 +253,8 @@ begin
     aLeft:
       terminal_print(X, Y, Text);
     aCenter:
-      terminal_print((Window.Width div 2) - (GetTextLength(Text) div 2), Y, Text);
+      terminal_print((Window.Width div 2) -
+        (GetTextLength(Text) div 2), Y, Text);
     aRight:
       terminal_print(Window.Width - GetTextLength(Text), Y, Text);
   end;
@@ -258,7 +262,8 @@ end;
 
 function TEngine.TextOut(aText: string; aRect: TRect): Integer;
 begin
-  Result := terminal_print(aRect.Left, aRect.Top, Format('[bbox=%dx%d][align=left-top]%s',
+  Result := terminal_print(aRect.Left, aRect.Top,
+    Format('[bbox=%dx%d][align=left-top]%s',
     [aRect.Right, aRect.Bottom, aText]));
 end;
 
@@ -267,7 +272,10 @@ var
   R, G, B: Byte;
   C: Integer;
 begin
-  C := ColorToRGB(Color);
+  if Color < 0 then
+    C := GetSysColor(Color and $000000FF)
+  else
+    C := Color;
   R := GetRValue(C);
   G := GetGValue(C);
   B := GetBValue(C);
@@ -282,7 +290,10 @@ var
   R, G, B: Byte;
   C: Integer;
 begin
-  C := ColorToRGB(Color);
+  if Color < 0 then
+    C := GetSysColor(Color and $000000FF)
+  else
+    C := Color;
   R := GetRValue(C);
   G := GetGValue(C);
   B := GetBValue(C);
@@ -297,7 +308,10 @@ var
   R, G, B: Byte;
   C: Integer;
 begin
-  C := ColorToRGB(Color);
+  if Color < 0 then
+    C := GetSysColor(Color and $000000FF)
+  else
+    C := Color;
   R := GetRValue(C);
   G := GetGValue(C);
   B := GetBValue(C);

@@ -9,7 +9,7 @@ const
   MapWidth = 80;
   MapHeight = 40;
 
-const  
+const
   Layers = 2;
 
 const
@@ -40,12 +40,11 @@ type
   public
     constructor Create;
     function GetTile(Tile: TTile): TTileProp;
+    procedure LoadFromFile(FileName: string);
     procedure Render(Engine: TEngine; X, Y, Z: Integer; Tile: TTile);
   end;
 
 implementation
-
-uses Common.Color, ForgottenSaga.Game;
 
 { TTiles }
 
@@ -63,21 +62,26 @@ begin
   Result := FTiles[Tile];
 end;
 
+procedure TTiles.LoadFromFile(FileName: string);
+begin
+
+end;
+
 constructor TTiles.Create;
 begin
-  FTiles[tNone] := Add('None', ' ', False, cBlack);
-  FTiles[tDirt] := Add('Dirt', '.', True, clDirt);
-  FTiles[tGrass] := Add('Grass', '"', True, clGrass);
-  FTiles[tGrass2] := Add('Grass', '"', True, clPlant);
-  FTiles[tSmallTree] := Add('Tree', 't', False, clLtPlant);
-  FTiles[tTree] := Add('Tree', 'T', False, clDkPlant);
-  FTiles[tStDn] := Add('Entrance to dungeon', '>', True, clTileEnt);
-  FTiles[tStUp] := Add('Out of the dungeon', '<', True, clTileEnt);
-  FTiles[tStoneWall] := Add('Stone wall', '#', False, clStone2);
-  FTiles[tStoneWall2] := Add('Stone wall', '#', False, clStone4);
-  FTiles[tStone] := Add('Stone floor', '.', True, clStone);
-  FTiles[tStone2] := Add('Stone floor', '.', True, clStone3);
-  FTiles[tStone3] := Add('Stone floor', '.', True, cDkGray);
+  FTiles[tNone] := Add('None', ' ', False, 0);
+  FTiles[tDirt] := Add('Dirt', '.', True, $00FFFFFF);
+  FTiles[tGrass] := Add('Grass', '"', True, $00FFFFFF);
+  FTiles[tGrass2] := Add('Grass', '"', True, $00FFFFFF);
+  FTiles[tSmallTree] := Add('Tree', 't', False, $00FFFFFF);
+  FTiles[tTree] := Add('Tree', 'T', False, $00FFFFFF);
+  FTiles[tStDn] := Add('Entrance to dungeon', '>', True, $00FFFFFF);
+  FTiles[tStUp] := Add('Out of the dungeon', '<', True, $00FFFFFF);
+  FTiles[tStoneWall] := Add('Stone wall', '#', False, $00FFFFFF);
+  FTiles[tStoneWall2] := Add('Stone wall', '#', False, $00FFFFFF);
+  FTiles[tStone] := Add('Stone floor', '.', True, $00FFFFFF);
+  FTiles[tStone2] := Add('Stone floor', '.', True, $00FFFFFF);
+  FTiles[tStone3] := Add('Stone floor', '.', True, $00FFFFFF);
 end;
 
 procedure TTiles.Render(Engine: TEngine; X, Y, Z: Integer; Tile: TTile);

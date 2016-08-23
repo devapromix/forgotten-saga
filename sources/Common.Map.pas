@@ -48,7 +48,7 @@ type
 implementation
 
 uses Engine, Classes, SysUtils, Math, Common.Utils, Common.Map.Generator,
-  Common.Color, ForgottenSaga.Game;
+  ForgottenSaga.Game;
 
 const
   Offset = 40;

@@ -27,6 +27,8 @@ type
     Label1: TLabel;
     OD: TOpenDialog;
     SD: TSaveDialog;
+    ToolButton4: TToolButton;
+    ToolButton5: TToolButton;
     procedure FormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -37,8 +39,10 @@ type
     procedure brTerrainClick(Sender: TObject);
     procedure ListBoxClick(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
+    procedure ToolButton4Click(Sender: TObject);
   private
     { Private declarations }
+    procedure UpdateCaption;
   public
     { Public declarations }
   end;
@@ -48,7 +52,7 @@ var
 
 implementation
 
-uses WorldEditor.Classes, Common.Map.Tiles;
+uses WorldEditor.Classes, Common.Map.Tiles, Common.Utils;
 
 {$R *.dfm}
 
@@ -71,6 +75,13 @@ begin
     StatusBar.Height;
   Left := (Screen.Width div 2) - (Width div 2);
   Top := (Screen.Height div 2) - (Height div 2);
+  btTerrain.Down := True;
+  btObjects.Down := True;
+  btItems.Down := True;
+  btCreatures.Down := True;
+  brTerrain.Click;
+  brTerrain.Down := True;
+  UpdateCaption;
 end;
 
 procedure TfMain.FormMouseMove(Sender: TObject; Shift: TShiftState;
@@ -113,6 +124,7 @@ procedure TfMain.FormMouseDown(Sender: TObject; Button: TMouseButton;
 begin
   Editor.MouseDown(Button, X, Y);
   FormPaint(Sender);
+  UpdateCaption;
 end;
 
 procedure TfMain.FormKeyDown(Sender: TObject; var Key: Word;
@@ -120,6 +132,7 @@ procedure TfMain.FormKeyDown(Sender: TObject; var Key: Word;
 begin
   Editor.KeyDown(Key);
   FormPaint(Sender);
+  UpdateCaption;
 end;
 
 procedure TfMain.brTerrainClick(Sender: TObject);
@@ -146,9 +159,37 @@ procedure TfMain.ToolButton1Click(Sender: TObject);
 begin
   if OD.Execute then
   begin
-    Editor.Map.LoadFromFile(OD.FileName);
-
+    Editor.CurrentMapFile := OD.FileName;
+    Editor.Map.LoadFromFile(Editor.CurrentMapFile);
+    Editor.Creatures.LoadFromFile(ChangeFileExt(Editor.CurrentMapFile, '.crt'));
+    Editor.Items.LoadFromFile(ChangeFileExt(Editor.CurrentMapFile, '.itm'));
+    UpdateCaption;
   end;
+end;
+
+procedure TfMain.ToolButton4Click(Sender: TObject);
+begin
+  if (Editor.CurrentMapFile <> '') then
+  begin
+    Editor.Map.SaveToFile(Editor.CurrentMapFile);
+    Editor.Modified := False;
+    UpdateCaption;
+  end;
+end;
+
+procedure TfMain.UpdateCaption;
+var
+  S: string;
+begin
+  if Editor.Modified then
+    S := '*'
+  else
+    S := '';
+  if (Editor.CurrentMapFile = '') then
+    Caption := Application.Title
+  else
+    Caption := Format('%s%s - %s', [ExtractFileName(Editor.CurrentMapFile), S,
+      Application.Title]);
 end;
 
 end.

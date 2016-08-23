@@ -278,7 +278,7 @@ type
 
 implementation
 
-uses SysUtils, Math, Engine, ForgottenSaga.Game, Common.Color,
+uses SysUtils, Math, Engine, ForgottenSaga.Game,
   Common.Utils, ForgottenSaga.Creature, Common.Map.Tiles, ForgottenSaga.Inv,
   Common.Variables;
 
@@ -447,8 +447,8 @@ begin
   Saga.Engine.TextOut(81, 1, Saga.Player.GetFullName);
   Saga.Engine.TextOut(81, 2, __('Honor') + ' ' + IntToStr(Saga.Player.Score));
   for I := Low(TAtrEnum) to High(TAtrEnum) do
-    Saga.Engine.TextOut(81, ord(I) + 3, __(AtrStr[I]) + ' ' + Saga.Player.Atr[I]
-      .ToText);
+    Saga.Engine.TextOut(81, ord(I) + 3, __(AtrStr[I]) + ' ' + Saga.Player.Atr
+      [I].ToText);
 end;
 
 procedure TStageGame.Timer;
@@ -519,7 +519,7 @@ begin
     TK_G:
       Saga.Player.Pickup;
     TK_H:
-      Saga.World.CurrentItems.Add('|', cDkBrown, 1, 'Посох Шамана', mtBone,
+      Saga.World.CurrentItems.Add('|', $00AAFF88, 1, 'Посох Шамана', mtBone,
         ctStaff, 15);
     TK_L:
       begin
@@ -569,7 +569,7 @@ begin
     Saga.Engine.FontColor(clTitle);
     if (I = MenuPos) then
     begin
-      RenderCursor(I + Top + 2, cDkGray);
+      RenderCursor(I + Top + 2, Saga.Colors.GetColor(ceGray));
       Saga.Engine.FontColor(clMenuAct);
     end
     else
@@ -600,7 +600,7 @@ end;
 procedure TStageMainMenu.Render;
 begin
   inherited Render;
-  Saga.Engine.FontColor(cLtGray);
+  Saga.Engine.FontColor(Saga.Colors.GetColor(ceLGray));
   Saga.Engine.TextOut(0, Saga.Engine.Window.Height - 1, Copyright, aCenter);
   Saga.Engine.TextOut(0, Saga.Engine.Window.Height - 1,
     'v.' + FSVersion, aRight);
@@ -691,7 +691,7 @@ begin
   begin
     Saga.Engine.FontColor(clTitle);
     if (ord(R) = MenuPos) then
-      RenderCursor(ord(R) + Top + 2, cDkGray);
+      RenderCursor(ord(R) + Top + 2, Saga.Colors.GetColor(ceGray));
     Saga.Engine.FontColor(Saga.Race[R].Color);
     Saga.Engine.TextOut(0, ord(R) + Top + 2, Saga.Race[R].Name, aCenter);
   end;
@@ -777,7 +777,7 @@ procedure TStageStorageMenu.RenderNum;
 var
   I, H: ShortInt;
 begin
-  Saga.Engine.FontColor(cLtGray);
+  Saga.Engine.FontColor(Saga.Colors.GetColor(ceLGray));
   for I := 0 to 9 do
   begin
     if (I < 9) then
@@ -797,7 +797,7 @@ begin
     Saga.Engine.FontColor(clTitle);
     if (I = MenuPos) then
     begin
-      RenderCursor(I + Top + 2, cDkGray);
+      RenderCursor(I + Top + 2, Saga.Colors.GetColor(ceGray));
       Saga.Engine.FontColor(clMenuAct);
     end
     else
@@ -809,7 +809,7 @@ begin
     else
     begin
       if (I <> MenuPos) then
-        Saga.Engine.FontColor(clEPMText);
+        Saga.Engine.FontColor(clSplText);
       Saga.Engine.TextOut(25, Top + I + 2, __('Empty slot'), aLeft);
     end;
   end;
@@ -980,7 +980,8 @@ var
   S, N, Close: string;
 begin
   Saga.Engine.FontColor(Saga.World.CurrentCreatures.Get(ID).Color);
-  Saga.Engine.TextOut(0, 9, Saga.World.CurrentCreatures.Get(ID).Name, aCenter);
+  Saga.Engine.TextOut(0, 9, __(Saga.World.CurrentCreatures.Get(ID)
+    .Name), aCenter);
   Saga.Engine.FontColor(Saga.Player.Color);
   Saga.Engine.TextOut(0, 24, Saga.Player.GetRaceName + ' ' +
     Saga.Player.Name, aCenter);
@@ -993,8 +994,8 @@ begin
     N := LinkList.GetLabel(I);
     N := SysUtils.StringReplace(N, '(' + Dialog.CloseTag + ')', Close,
       [SysUtils.rfIgnoreCase]);
-    if (Copy(Trim(LinkList.GetName(I)), 1, Saga.Engine.GetTextLength(Dialog.CloseTag))
-      = Dialog.CloseTag) then
+    if (Copy(Trim(LinkList.GetName(I)), 1,
+      Saga.Engine.GetTextLength(Dialog.CloseTag)) = Dialog.CloseTag) then
       S := Close;
     Saga.Engine.KeyOut(35, I + 25, Trim(N + ' ' + S), Format('%d', [I + 1]));
   end;
@@ -1088,7 +1089,7 @@ begin
     Saga.Engine.FontColor(clTitle);
     if (I = MenuPos) then
     begin
-      RenderCursor(I + Top + 2, cDkGray);
+      RenderCursor(I + Top + 2, Saga.Colors.GetColor(ceGray));
       Saga.Engine.FontColor(clMenuAct);
     end
     else
@@ -1100,7 +1101,7 @@ begin
     else
     begin
       if (I <> MenuPos) then
-        Saga.Engine.FontColor(clEPMText);
+        Saga.Engine.FontColor(clSplText);
       Saga.Engine.TextOut(25, Top + I + 2, __('Empty slot'), aLeft);
     end;
   end;
@@ -1158,7 +1159,7 @@ end;
 procedure TStageAboutMenu.Render;
 begin
   Saga.Engine.TitleOut(Top, __('Forgotten Saga'));
-  Saga.Engine.FontColor(cLtGray);
+  Saga.Engine.FontColor(Saga.Colors.GetColor(ceLGray));
   Saga.Engine.TextOut(0, Top + 2,
     'github.com/devapromix/forgotten-saga', aCenter);
   Saga.Engine.TextOut(0, Top + 3, Copyright, aCenter);
@@ -1190,8 +1191,8 @@ begin
       begin
         if (Saga.Player.Score > 0) then
         begin
-          RenderCursor(RecPos + Top + 2, cDkRed);
-          Saga.Engine.FontColor(cWhiteYel);
+          RenderCursor(RecPos + Top + 2, Saga.Colors.GetColor(ceRed));
+          Saga.Engine.FontColor(Saga.Colors.GetColor(ceWhite));
           Saga.Engine.TextOut(25, RecPos + Top + 2,
             Saga.GetSlotData(RecPos), aLeft);
           Self.RenderNum;

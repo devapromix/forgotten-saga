@@ -177,7 +177,8 @@ var
 
   function GetLastCode(Tag: string; Code: string): string;
   begin
-    Result := Trim(Copy(Code, Saga.Engine.GetTextLength(Tag) + 2, Saga.Engine.GetTextLength(Code)));
+    Result := Trim(Copy(Code, Saga.Engine.GetTextLength(Tag) + 2,
+      Saga.Engine.GetTextLength(Code)));
   end;
 
   procedure SetNext(Flag: Boolean);

@@ -1,11 +1,11 @@
 :0
 proc источник
 if quest1=1 then     
-btn close (proc вода), Набрать воды из источника.
+btn close (proc water), Набрать воды из источника.
 endif
 end
 
-:вода
+:water
 dialog 0:3:1
 quest1=2
 qlog 1:Я нашел источник и набрал воды из него. Нужно побыстрее отнести ее шаману.
