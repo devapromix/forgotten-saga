@@ -29,6 +29,7 @@ type
     SD: TSaveDialog;
     ToolButton4: TToolButton;
     ToolButton5: TToolButton;
+    ToolButton6: TToolButton;
     procedure FormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -40,9 +41,11 @@ type
     procedure ListBoxClick(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
     procedure ToolButton4Click(Sender: TObject);
+    procedure ToolButton6Click(Sender: TObject);
   private
     { Private declarations }
     procedure UpdateCaption;
+    function GetCurrentLayer(): Byte;
   public
     { Public declarations }
   end;
@@ -52,7 +55,7 @@ var
 
 implementation
 
-uses WorldEditor.Classes, Common.Map.Tiles, Common.Utils;
+uses WorldEditor.Classes, Common.Map, Common.Utils;
 
 {$R *.dfm}
 
@@ -87,7 +90,7 @@ end;
 procedure TfMain.FormMouseMove(Sender: TObject; Shift: TShiftState;
   X, Y: Integer);
 begin
-  Editor.MouseMove(X, Y);
+  Editor.MouseMove(GetCurrentLayer, X, Y);
   FormPaint(Sender);
   Label1.Caption := Format('%d:%d', [Editor.Pos.X, Editor.Pos.Y]);
 end;
@@ -114,6 +117,14 @@ begin
   Canvas.Draw(0, Editor.ToolBarHeight, Editor.Engine.Surface);
 end;
 
+function TfMain.GetCurrentLayer: Byte;
+begin
+  if brTerrain.Down then Result := 0;
+  if brObjects.Down then Result := 1;
+  if brItems.Down then Result := 2;
+  if brCreatures.Down then Result := 3;
+end;
+
 procedure TfMain.FormDestroy(Sender: TObject);
 begin
   Editor.Free;
@@ -122,7 +133,7 @@ end;
 procedure TfMain.FormMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-  Editor.MouseDown(Button, X, Y);
+  Editor.MouseDown(GetCurrentLayer, Button, X, Y);
   FormPaint(Sender);
   UpdateCaption;
 end;
@@ -137,10 +148,10 @@ end;
 
 procedure TfMain.brTerrainClick(Sender: TObject);
 var
-  I: TTile;
+  I: TTileEnum;
 begin
   ListBox.Clear;
-  for I := Low(TTile) to High(TTile) do
+  for I := Low(TTileEnum) to High(TTileEnum) do
   begin
     ListBox.Items.Append(Format('[%s] %s', [Editor.Tiles.GetTile(I).Symbol,
       Editor.Tiles.GetTile(I).Name]));
@@ -152,7 +163,7 @@ end;
 
 procedure TfMain.ListBoxClick(Sender: TObject);
 begin
-  Editor.Tile := TTile(ListBox.ItemIndex);
+  Editor.Tile := TTileEnum(ListBox.ItemIndex);
 end;
 
 procedure TfMain.ToolButton1Click(Sender: TObject);
@@ -175,6 +186,11 @@ begin
     Editor.Modified := False;
     UpdateCaption;
   end;
+end;
+
+procedure TfMain.ToolButton6Click(Sender: TObject);
+begin
+  // Map properties
 end;
 
 procedure TfMain.UpdateCaption;

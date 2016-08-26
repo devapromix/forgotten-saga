@@ -112,6 +112,7 @@ type
     property Force: TForce read FForce write FForce;
     property Dialog: Integer read FDialog write FDialog;
     property FileName: string read FFileName write FFileName;
+    function BackColor: Integer;
     procedure Move(AX, AY: ShortInt);
     procedure Render;
   end;
@@ -141,6 +142,7 @@ type
     procedure Render;
     procedure Assign(Value: TItem);
     procedure Calc;
+    function BackColor: Integer;
     property Count: Integer read FCount write FCount;
     property Category: TCategory read FCategory write FCategory;
     property Material: TMaterial read FMaterial write FMaterial;
@@ -148,7 +150,7 @@ type
   end;
 
 type
-  TAdvIniFile = class(TIniFile)
+  TIniFile = class(System.IniFiles.TIniFile)
   public
     function ReadCategory(Section, Ident: string; DefaultValue: TCategory)
       : TCategory;
@@ -267,7 +269,7 @@ const
 
 implementation
 
-uses SysUtils, Math, Engine, ForgottenSaga.Game, Common.Map.Tiles,
+uses SysUtils, Math, Engine, ForgottenSaga.Game, Common.Map,
   Common.Utils, ForgottenSaga.Scenes, Common.Variables;
 
 const
@@ -525,14 +527,19 @@ begin
     SetPosition(Pos.X + AX, Pos.Y + AY);
 end;
 
-procedure TCreature.Render;
+function TCreature.BackColor: Integer;
 begin
   case Force of
     fcEnemy:
-      Saga.Engine.FontBackColor($000022);
+      Result := $000022;
     fcAlly:
-      Saga.Engine.FontBackColor($002200);
+      Result := $002200;
   end;
+end;
+
+procedure TCreature.Render;
+begin
+  Saga.Engine.FontBackColor(BackColor());
   Saga.Engine.CharOut(Pos.X, Pos.Y, Symbol, Color);
 end;
 
@@ -589,12 +596,12 @@ end;
 procedure TCreatures.LoadFromFile(FileName: string);
 var
   I, L: Integer;
-  F: TAdvIniFile;
+  F: TIniFile;
   B: Boolean;
   S, N: string;
 begin
   Self.Clear;
-  F := TAdvIniFile.Create(FileName);
+  F := TIniFile.Create(FileName);
   try
     for I := 0 to 99 do
     begin
@@ -602,7 +609,6 @@ begin
       if (F.SectionExists(S)) then
       begin
         L := Count;
-        //Box(L);
         SetLength(FCreature, L + 1);
         FCreature[L] := TCreature.Create;
         FCreature[L].Name := F.ReadString(S, 'Name', '');
@@ -611,9 +617,7 @@ begin
         FCreature[L].Atr[atLife].Add(F.ReadString(S, 'Life',
           Format(BarFmt, [100, 100])));
         FCreature[L].Symbol := F.ReadString(S, 'Symbol', '?')[1];
-        // Box(FCreature[L].Symbol);
-        // FCreature[L].Color := F.ReadInteger(S, 'Color', $00FFFF00);
-        FCreature[L].Color := F.ReadColor(S, 'RGB', '255,255,255');
+        FCreature[L].Color := F.ReadColor(S, 'Color', '255,255,255');
         FCreature[L].Dialog := F.ReadInteger(S, 'Dialog', 0);
         FCreature[L].Level := F.ReadInteger(S, 'Level', 1);
         FCreature[L].FileName := F.ReadString(S, 'File', '');
@@ -658,7 +662,7 @@ begin
       F.WriteInteger(S, 'Level', FCreature[I].Level);
       F.WriteString(S, 'Symbol', FCreature[I].Symbol);
       F.WriteString(S, 'File', FCreature[I].FileName);
-      F.WriteInteger(S, 'Color', FCreature[I].Color);
+      F.WriteColor(S, 'Color', FCreature[I].Color);
       F.WriteInteger(S, 'Dialog', FCreature[I].Dialog);
       F.WriteBool(S, 'NPC', FCreature[I].Force = fcAlly);
     end;
@@ -901,7 +905,7 @@ end;
 
 procedure TLook.Render;
 var
-  T: TTile;
+  T: TTileEnum;
 
   function GetCreatures: string;
   var
@@ -971,6 +975,11 @@ begin
   Durability.Cur := Value.Durability.Cur;
 end;
 
+function TItem.BackColor: Integer;
+begin
+  Result := $00002200;
+end;
+
 procedure TItem.Calc;
 begin
   Durability.Max := (Ord(Category) + Ord(Material)) * (Level + 5);
@@ -997,6 +1006,7 @@ end;
 
 procedure TItem.Render;
 begin
+  Saga.Engine.FontBackColor(BackColor);
   Saga.Engine.CharOut(Pos.X, Pos.Y, Symbol, Color);
 end;
 
@@ -1123,18 +1133,18 @@ end;
 procedure TItems.LoadFromFile(FileName: string);
 var
   I, L: Integer;
-  F: TAdvIniFile;
+  F: TIniFile;
   S: string;
 begin
   Self.Clear;
-  F := TAdvIniFile.Create(FileName);
+  F := TIniFile.Create(FileName);
   try
     for I := 0 to 99 do
     begin
       S := Format('%d', [I]);
       if (F.SectionExists(S)) then
       begin
-        L := Count;
+        L := Count;   
         SetLength(FItem, L + 1);
         FItem[L] := TItem.Create;
         FItem[L].Active := True;
@@ -1143,7 +1153,7 @@ begin
         FItem[L].Category := F.ReadCategory(S, 'Category', ctNone);
         FItem[L].Material := F.ReadMaterial(S, 'Material', mtNone);
         FItem[L].Symbol := F.ReadString(S, 'Symbol', '/')[1];
-        FItem[L].Color := F.ReadInteger(S, 'Color', $00FFFF00);
+        FItem[L].Color := F.ReadColor(S, 'Color', '255,255,255');
         FItem[L].Count := F.ReadInteger(S, 'Count', 1);
         FItem[L].SetPosition(Point(F.ReadInteger(S, 'X', 0),
           F.ReadInteger(S, 'Y', 0)));
@@ -1161,9 +1171,9 @@ procedure TItems.SaveToFile(FileName: string);
 var
   I, C: Integer;
   S: string;
-  F: TAdvIniFile;
+  F: TIniFile;
 begin
-  F := TAdvIniFile.Create(FileName);
+  F := TIniFile.Create(FileName);
   try
     C := 0;
     for I := 0 to Count - 1 do
@@ -1175,7 +1185,7 @@ begin
         F.WriteCategory(S, 'Category', FItem[I].Category);
         F.WriteMaterial(S, 'Material', FItem[I].Material);
         F.WriteString(S, 'Symbol', FItem[I].Symbol);
-        F.WriteInteger(S, 'Color', FItem[I].Color);
+        F.WriteColor(S, 'Color', FItem[I].Color);
         F.WriteInteger(S, 'Count', FItem[I].Count);
         F.WriteInteger(S, 'X', FItem[I].Pos.X);
         F.WriteInteger(S, 'Y', FItem[I].Pos.Y);
@@ -1210,10 +1220,10 @@ begin
   end;
 end;
 
-{ TAdvIniFile }
+{ TIniFile }
 
-function TAdvIniFile.ReadCategory(Section, Ident: string;
-  DefaultValue: TCategory): TCategory;
+function TIniFile.ReadCategory(Section, Ident: string; DefaultValue: TCategory)
+  : TCategory;
 var
   S: string;
   C: TCategory;
@@ -1230,7 +1240,7 @@ begin
     end;
 end;
 
-function TAdvIniFile.ReadColor(Section, Ident, DefaultValue: string): Integer;
+function TIniFile.ReadColor(Section, Ident, DefaultValue: string): Integer;
 var
   S: string;
   R, G, B: Byte;
@@ -1241,14 +1251,15 @@ begin
   if (S = '') then
     Exit;
   SL := ExplodeString(',', S);
-  R := StrToIntDef(SL[0], 255);
-  G := StrToIntDef(SL[1], 255);
-  B := StrToIntDef(SL[2], 255);
+  if (SL.Count = 0) then Exit;
+  if (SL.Count > 0) then R := StrToIntDef(SL[0], 255) else R := 255;
+  if (SL.Count > 1) then G := StrToIntDef(SL[1], 255) else G := 255;
+  if (SL.Count > 2) then B := StrToIntDef(SL[2], 255) else B := 255;
   Result := (R or (G shl 8) or (B shl 16))
 end;
 
-function TAdvIniFile.ReadMaterial(Section, Ident: string;
-  DefaultValue: TMaterial): TMaterial;
+function TIniFile.ReadMaterial(Section, Ident: string; DefaultValue: TMaterial)
+  : TMaterial;
 var
   S: string;
   M: TMaterial;
@@ -1265,20 +1276,20 @@ begin
     end;
 end;
 
-procedure TAdvIniFile.WriteCategory(Section, Ident: string; Value: TCategory);
+procedure TIniFile.WriteCategory(Section, Ident: string; Value: TCategory);
 begin
   if (Value = ctNone) then
     Exit;
   WriteString(Section, Ident, CatStr[Value]);
 end;
 
-procedure TAdvIniFile.WriteColor(Section, Ident: string; Value: Integer);
+procedure TIniFile.WriteColor(Section, Ident: string; Value: Integer);
 begin
   WriteString(Section, Ident, Format('%d,%d,%d',
     [Byte(Value), Byte(Value shr 8), Byte(Value shr 16)]));
 end;
 
-procedure TAdvIniFile.WriteMaterial(Section, Ident: string; Value: TMaterial);
+procedure TIniFile.WriteMaterial(Section, Ident: string; Value: TMaterial);
 begin
   if (Value = mtNone) then
     Exit;

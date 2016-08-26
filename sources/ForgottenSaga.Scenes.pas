@@ -278,9 +278,8 @@ type
 
 implementation
 
-uses SysUtils, Math, Engine, ForgottenSaga.Game,
-  Common.Utils, ForgottenSaga.Creature, Common.Map.Tiles, ForgottenSaga.Inv,
-  Common.Variables;
+uses SysUtils, Math, Engine, Common.Utils, Common.Map, Common.Variables,
+  ForgottenSaga.Game, ForgottenSaga.Creature, ForgottenSaga.Inv;
 
 { TStages }
 

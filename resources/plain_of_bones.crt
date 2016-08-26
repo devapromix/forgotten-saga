@@ -1,3 +1,5 @@
+;Plain of Bones
+
 [0]
 Name=Вожак Стаи
 X=24
@@ -5,7 +7,7 @@ Y=8
 Life=100/100
 Symbol=W
 File=
-Color=343
+Color=255,255,255
 Dialog=0
 NPC=0
 [1]
@@ -15,7 +17,7 @@ Y=26
 Life=100/100
 Symbol=W
 File=
-Color=343
+Color=255,255,255
 Dialog=0
 NPC=0
 [2]
@@ -25,7 +27,7 @@ Y=14
 Life=100/100
 Symbol=W
 File=
-Color=343
+Color=255,255,255
 Dialog=0
 NPC=0
 [3]
@@ -35,7 +37,7 @@ Y=19
 Life=100/100
 Symbol=w
 File=
-Color=945
+Color=255,255,255
 Dialog=0
 NPC=0
 [4]
@@ -45,7 +47,7 @@ Y=32
 Life=100/100
 Symbol=w
 File=
-Color=945
+Color=255,255,255
 Dialog=0
 NPC=0
 [5]
@@ -55,7 +57,7 @@ Y=11
 Life=100/100
 Symbol=w
 File=
-Color=945
+Color=255,255,255
 Dialog=0
 NPC=0
 [6]
@@ -65,7 +67,7 @@ Y=25
 Life=100/100
 Symbol=W
 File=
-Color=99945
+Color=255,255,255
 Dialog=0
 NPC=0
 [7]
@@ -75,7 +77,7 @@ Y=37
 Life=100/100
 Symbol=w
 File=
-Color=945
+Color=255,255,255
 Dialog=0
 NPC=0
 [8]
@@ -85,7 +87,7 @@ Y=21
 Life=100/100
 Symbol=w
 File=
-Color=945
+Color=255,255,255
 Dialog=0
 NPC=0
 [9]
@@ -95,7 +97,7 @@ Y=24
 Life=100/100
 Symbol=W
 File=
-Color=945
+Color=255,255,255
 Dialog=0
 NPC=0
 [10]
@@ -105,7 +107,7 @@ Y=22
 Life=100/100
 Symbol=w
 File=
-Color=945
+Color=255,255,255
 Dialog=0
 NPC=0
 [11]
@@ -115,7 +117,7 @@ Y=23
 Life=100/100
 Symbol=w
 File=
-Color=945
+Color=255,255,255
 Dialog=0
 NPC=0
 [12]
@@ -125,7 +127,7 @@ Y=25
 Life=100/100
 Symbol=W
 File=
-Color=945
+Color=255,255,255
 Dialog=0
 NPC=0
 [13]
@@ -135,7 +137,7 @@ Y=27
 Life=100/100
 Symbol=w
 File=
-Color=945
+Color=255,255,255
 Dialog=0
 NPC=0
 [14]
@@ -145,6 +147,6 @@ Y=28
 Life=100/100
 Symbol=w
 File=
-Color=945
+Color=255,255,255
 Dialog=0
 NPC=0

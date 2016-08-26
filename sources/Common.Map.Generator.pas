@@ -8,9 +8,9 @@ procedure GenTestMap();
 
 implementation
 
-uses Math, ForgottenSaga.Game, Common.Map.Tiles;
+uses Math, ForgottenSaga.Game, Common.Map;
 
-procedure Cave(Tile: TTile);
+procedure Cave(Tile: TTileEnum);
 var
   I: Integer;
   kx, ky, k, dx, dy: real;
@@ -87,7 +87,7 @@ begin
   end;
 end;
 
-procedure AddSpot(Tile: TTile);
+procedure AddSpot(Tile: TTileEnum);
 var
   I, x, y, k, L: Integer;
 begin
@@ -104,12 +104,12 @@ begin
   end;
 end;
 
-procedure AddTile(x, y: Integer; Tile: TTile); overload;
+procedure AddTile(x, y: Integer; Tile: TTileEnum); overload;
 begin
   Saga.World.CurrentMap.SetTile(x, y, lrTerrain, Tile);
 end;
 
-procedure AddTile(Tile: TTile); overload;
+procedure AddTile(Tile: TTileEnum); overload;
 var
   x, y: Integer;
 begin
@@ -132,15 +132,15 @@ begin
     AddSpot(tStone);
   for I := 1 to 50 do
     AddSpot(tGrass);
-  for I := 1 to 20 do
-    AddSpot(tGrass2);
+//  for I := 1 to 20 do
+//    AddSpot(tGrass2);
   // for I := 1 to 5 do AddSpot(tlTree);
-  for I := 1 to 5 do
-    AddSpot(tSmallTree);
+//  for I := 1 to 5 do
+//    AddSpot(tSmallTree);
   for I := 1 to 15 do
     AddSpot(tStoneWall);
-  for I := 1 to 15 do
-    AddSpot(tStoneWall2);
+//  for I := 1 to 15 do
+//    AddSpot(tStoneWall2);
   // AddTile(56, 14, tlStDn);
   // AddTile({56, 14,}33, 27, tlStUp);
   AddTile(34, 27, tStDn);
@@ -148,10 +148,10 @@ end;
 
 procedure GenDarkCave();
 begin
-  Saga.World.CurrentMap.FillLayer(lrTerrain, tStoneWall2);
-  Cave(tStone3);
-  Cave(tStone3);
-  Cave(tStone3);
+//  Saga.World.CurrentMap.FillLayer(lrTerrain, tStoneWall2);
+//  Cave(tStone3);
+//  Cave(tStone3);
+//  Cave(tStone3);
   // AddTile(56, 14, tStUp);
   // AddTile(33, 27, tStUp);
   AddTile(34, 27, tStUp);

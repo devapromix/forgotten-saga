@@ -1,3 +1,5 @@
+;Orc Camp
+
 [0]
 Name=Battle Axe
 Category=Axe
@@ -7,7 +9,7 @@ Durability=31
 X=40
 Y=22
 Symbol=)
-Color=6220500
+Color=255,255,255
 Count=1
 
 [1]
@@ -19,7 +21,7 @@ Durability=11
 X=41
 Y=22
 Symbol=)
-Color=8782471
+Color=255,255,255
 Count=1
 
 [2]
@@ -31,6 +33,6 @@ Durability=19
 X=42
 Y=22
 Symbol=)
-Color=1812422
+Color=255,255,255
 Count=1
 

@@ -1,3 +1,5 @@
+;The Pit
+
 [0]
 Name=Кабан
 X=24
@@ -5,7 +7,7 @@ Y=12
 Life=100/100
 Symbol=c
 File=
-Color=343
+Color=255,255,255
 Dialog=0
 NPC=0
 [1]
@@ -15,7 +17,7 @@ Y=25
 Life=100/100
 Symbol=c
 File=
-Color=343
+Color=255,255,255
 Dialog=0
 NPC=0
 [2]
@@ -25,7 +27,7 @@ Y=14
 Life=100/100
 Symbol=c
 File=
-Color=343
+Color=255,255,255
 Dialog=0
 NPC=0
 [3]
@@ -35,6 +37,6 @@ Y=19
 Life=100/100
 Symbol=f
 File=
-Color=945
+Color=255,255,255
 Dialog=0
 NPC=0

@@ -3,7 +3,7 @@
 interface
 
 uses Classes, Types, Engine, ForgottenSaga.Scenes, Common.Map,
-  ForgottenSaga.Creature, Common.Map.Tiles, ForgottenSaga.Battle;
+  ForgottenSaga.Creature, ForgottenSaga.Battle;
 
 function __(S: string): string;
 
@@ -425,6 +425,9 @@ begin
   clAlertText := Saga.Colors.GetColor(ceRed);
   clMenuAct := Saga.Colors.GetColor(ceYellow);
   clMenuDef := Saga.Colors.GetColor(ceLGray);
+
+  // Tiles
+  Tiles.LoadFromFile(GetPath('resources') + 'tiles.ini');
 
   // Races
   AddRace(rcGoblin, __('Goblin'), 90, 100, Point(40, 20), 0, $00882295);

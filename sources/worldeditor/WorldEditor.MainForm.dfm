@@ -756,8 +756,15 @@ object fMain: TfMain
       ImageIndex = 0
       OnClick = ToolButton4Click
     end
-    object ToolButton2: TToolButton
+    object ToolButton6: TToolButton
       Left = 48
+      Top = 0
+      Caption = 'ToolButton6'
+      ImageIndex = 9
+      OnClick = ToolButton6Click
+    end
+    object ToolButton2: TToolButton
+      Left = 72
       Top = 0
       Width = 8
       Caption = 'ToolButton2'
@@ -765,35 +772,35 @@ object fMain: TfMain
       Style = tbsSeparator
     end
     object btTerrain: TToolButton
-      Left = 56
+      Left = 80
       Top = 0
       ImageIndex = 1
       Style = tbsCheck
       OnClick = FormPaint
     end
     object btObjects: TToolButton
-      Left = 80
+      Left = 104
       Top = 0
       ImageIndex = 2
       Style = tbsCheck
       OnClick = FormPaint
     end
     object btItems: TToolButton
-      Left = 104
+      Left = 128
       Top = 0
       ImageIndex = 3
       Style = tbsCheck
       OnClick = FormPaint
     end
     object btCreatures: TToolButton
-      Left = 128
+      Left = 152
       Top = 0
       ImageIndex = 4
       Style = tbsCheck
       OnClick = FormPaint
     end
     object ToolButton3: TToolButton
-      Left = 152
+      Left = 176
       Top = 0
       Width = 8
       Caption = 'ToolButton3'
@@ -801,7 +808,7 @@ object fMain: TfMain
       Style = tbsSeparator
     end
     object brTerrain: TToolButton
-      Left = 160
+      Left = 184
       Top = 0
       Grouped = True
       ImageIndex = 5
@@ -809,7 +816,7 @@ object fMain: TfMain
       OnClick = brTerrainClick
     end
     object brObjects: TToolButton
-      Left = 184
+      Left = 208
       Top = 0
       Grouped = True
       ImageIndex = 6
@@ -817,7 +824,7 @@ object fMain: TfMain
       OnClick = FormPaint
     end
     object brItems: TToolButton
-      Left = 208
+      Left = 232
       Top = 0
       Grouped = True
       ImageIndex = 7
@@ -825,7 +832,7 @@ object fMain: TfMain
       OnClick = FormPaint
     end
     object brCreatures: TToolButton
-      Left = 232
+      Left = 256
       Top = 0
       Grouped = True
       ImageIndex = 8
@@ -833,7 +840,7 @@ object fMain: TfMain
       OnClick = FormPaint
     end
     object ToolButton5: TToolButton
-      Left = 256
+      Left = 280
       Top = 0
       Width = 8
       Caption = 'ToolButton5'
@@ -852,7 +859,7 @@ object fMain: TfMain
     Left = 24
     Top = 48
     Bitmap = {
-      494C010101000300200010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010101000300280010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

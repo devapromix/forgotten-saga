@@ -2,11 +2,62 @@
 
 interface
 
-uses Common.Map.Tiles, ForgottenSaga.Creature;
+uses Engine, ForgottenSaga.Creature;
+
+// Размер карты
+const
+  MapWidth = 80;
+  MapHeight = 40;
+
+const
+  Layers = 2;
+  TileDarkPercent = 60;
+
+const
+  lrTerrain = 0;
+  lrObjects = 1;
 
 type
-  TLayer = array [0 .. MapHeight - 1, 0 .. MapWidth - 1,
-    0 .. Layers - 1] of TTile;
+  TTileEnum = (tNone, tRes1, tRes2, tRes3, tRes4, tRes5, tDirt, tGrass, tStone,
+    tSand, tRock, tWater, tDeepWater, tLava, tRes6, tRes7, tRes8, tRes9, tRes10,
+    tWillowTree, tOakTree, tAshTree, tYewTree, tBirchTree, tAspenTree,
+    tMapleTree, tWalnutTree, tPineTree, tCedarTree, tSpruceTree, tRes11, tRes12,
+    tRes13, tRes14, tRes15, tStDn, tStUp, tRes16, tRes17, tRes18, tRes19,
+    tRes20, tStoneFloor, tStoneWall, tRes21, tRes22, tRes23, tRes24,
+    tRes25, tRoad);
+
+const
+  TileStr: array [TTileEnum] of string = ('NONE', 'RES1', 'RES2', 'RES3',
+    'RES4', 'RES5', 'DIRT', 'GRASS', 'STONE', 'SAND', 'ROCK', 'WATER',
+    'DEEP_WATER', 'LAVA', 'RES6', 'RES7', 'RES8', 'RES9', 'RES10',
+    'WILLOW_TREE', 'OAK_TREE', 'ASH_TREE', 'YEW_TREE', 'BIRCH_TREE',
+    'ASPEN_TREE', 'MAPLE_TREE', 'WALNUT_TREE', 'PINE_TREE', 'CEDAR_TREE',
+    'SPRUCE_TREE', 'RES11', 'RES12', 'RES13', 'RES14', 'RES15', 'STAIRS_DOWN',
+    'STAIRS_UP', 'RES16', 'RES17', 'RES18', 'RES19', 'RES20', 'STONE_FLOOR',
+    'STONE_WALL', 'RES21', 'RES22', 'RES23', 'RES24', 'RES25', 'ROAD');
+
+type
+  TTileProp = record
+    Name: string;
+    Symbol: System.Char;
+    Passable: Boolean;
+    Color: Integer;
+  end;
+
+type
+  TTiles = class(TObject)
+  private
+    FTiles: array [TTileEnum] of TTileProp;
+    function Add(Name: string; Char: System.Char; Passable: Boolean;
+      Color: Integer): TTileProp;
+  public
+    function GetTile(Tile: TTileEnum): TTileProp;
+    procedure LoadFromFile(FileName: string);
+  end;
+
+type
+  TLayer = array [0 .. MapHeight - 1, 0 .. MapWidth - 1, 0 .. Layers - 1]
+    of TTileEnum;
 
 type
   TCustomMap = class(TEntity)
@@ -22,6 +73,9 @@ type
   end;
 
 type
+  TDir = (drLeft, drUp, drRight, drDown, drTop, drBottom);
+
+type
   TMap = class(TCustomMap)
   private
     FMap: TLayer;
@@ -30,16 +84,16 @@ type
     Map: array [TDir] of Integer;
     procedure Clear;
     procedure ClearLayer(LayerID: Byte);
-    procedure FillLayer(LayerID: Byte; Tile: TTile);
+    procedure FillLayer(LayerID: Byte; Tile: TTileEnum);
     constructor Create;
     destructor Destroy; override;
     procedure LoadFromFile(AFileName: string);
     procedure SaveToFile(AFileName: string);
     function CellInMap(X, Y: Integer): Boolean;
     function GetTopTileChar(X, Y: Integer): Char;
-    procedure SetTile(X, Y, Z: Integer; Tile: TTile);
-    function GetTile(X, Y, Z: Integer): TTile;
-    function HasTile(Tile: TTile; X, Y: Integer;
+    procedure SetTile(X, Y, Z: Integer; Tile: TTileEnum);
+    function GetTile(X, Y, Z: Integer): TTileEnum;
+    function HasTile(Tile: TTileEnum; X, Y: Integer;
       Z: Integer = lrTerrain): Boolean;
     procedure Render;
     procedure Gen;
@@ -47,13 +101,53 @@ type
 
 implementation
 
-uses Engine, Classes, SysUtils, Math, Common.Utils, Common.Map.Generator,
+uses Classes, SysUtils, Math, Common.Utils, Common.Map.Generator,
   ForgottenSaga.Game;
 
 const
   Offset = 40;
 
-  { TCustomMap }
+  { TTiles }
+
+function TTiles.Add(Name: string; Char: Char; Passable: Boolean; Color: Integer)
+  : TTileProp;
+begin
+  Result.Name := Name;
+  Result.Symbol := Char;
+  Result.Passable := Passable;
+  Result.Color := Color;
+end;
+
+function TTiles.GetTile(Tile: TTileEnum): TTileProp;
+begin
+  Result := FTiles[Tile];
+end;
+
+procedure TTiles.LoadFromFile(FileName: string);
+var
+  I: TTileEnum;
+  S: string;
+  F: TIniFile;
+begin
+  F := TIniFile.Create(FileName);
+  try
+    for I := Low(TTileEnum) to High(TTileEnum) do
+    begin
+      S := TileStr[I];
+      if F.SectionExists(S) then
+      begin
+        FTiles[I].Name := F.ReadString(S, 'Name', '');
+        FTiles[I].Symbol := F.ReadString(S, 'Symbol', '?')[1];
+        FTiles[I].Passable := F.ReadBool(S, 'Passable', False);
+        FTiles[I].Color := F.ReadColor(S, 'Color', '100,100,100');
+      end;
+    end;
+  finally
+    F.Free;
+  end;
+end;
+
+{ TCustomMap }
 
 constructor TCustomMap.Create(Width, Height: Integer);
 begin
@@ -101,7 +195,7 @@ begin
     I := L.IndexOf(Format('[%d]', [Z])) + 1;
     for Y := 0 to Height - 1 do
       for X := 0 to Width - 1 do
-        FMap[Y][X][Z] := TTile(Ord(L[Y + I][X + 1]) - Offset);
+        FMap[Y][X][Z] := TTileEnum(Ord(L[Y + I][X + 1]) - Offset);
   end;
   L.Free;
 end;
@@ -131,20 +225,32 @@ end;
 procedure TMap.Render;
 var
   X, Y, Z: Integer;
+  TerTile, ObjTile: TTileProp;
+const
+  D = 50;
 begin
   for Z := 0 to Layers - 1 do
     for Y := 0 to Self.Height - 1 do
       for X := 0 to Self.Width - 1 do
         case Z of
           lrTerrain:
-            Saga.Tiles.Render(Saga.Engine, X, Y, Z, FMap[Y][X][Z]);
+            begin
+              TerTile := Saga.Tiles.GetTile(FMap[Y][X][Z]);
+              Saga.Engine.FontBackColor(Saga.Engine.DarkColor(TerTile.Color, TileDarkPercent));
+              Saga.Engine.CharOut(X, Y, TerTile.Symbol, TerTile.Color);
+            end;
           lrObjects:
             if not HasTile(tNone, X, Y, Z) then
-              Saga.Tiles.Render(Saga.Engine, X, Y, Z, FMap[Y][X][Z]);
+            begin
+              TerTile := Saga.Tiles.GetTile(FMap[Y][X][lrTerrain]);
+              ObjTile := Saga.Tiles.GetTile(FMap[Y][X][Z]);
+              Saga.Engine.FontBackColor(Saga.Engine.DarkColor(TerTile.Color, TileDarkPercent));
+              Saga.Engine.CharOut(X, Y, ObjTile.Symbol, ObjTile.Color);
+            end;
         end;
 end;
 
-procedure TMap.FillLayer(LayerID: Byte; Tile: TTile);
+procedure TMap.FillLayer(LayerID: Byte; Tile: TTileEnum);
 var
   X, Y: Integer;
 begin
@@ -166,18 +272,18 @@ begin
     ClearLayer(I);
 end;
 
-function TMap.HasTile(Tile: TTile; X, Y: Integer;
+function TMap.HasTile(Tile: TTileEnum; X, Y: Integer;
   Z: Integer = lrTerrain): Boolean;
 begin
   Result := FMap[Y][X][Z] = Tile
 end;
 
-procedure TMap.SetTile(X, Y, Z: Integer; Tile: TTile);
+procedure TMap.SetTile(X, Y, Z: Integer; Tile: TTileEnum);
 begin
   FMap[Y][X][Z] := Tile;
 end;
 
-function TMap.GetTile(X, Y, Z: Integer): TTile;
+function TMap.GetTile(X, Y, Z: Integer): TTileEnum;
 begin
   Result := FMap[Y][X][Z];
 end;

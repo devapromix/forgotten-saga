@@ -25,8 +25,7 @@ var
 
 implementation
 
-uses Engine, ForgottenSaga.Game, Common.Map.Tiles,
-  Common.Variables;
+uses Engine, ForgottenSaga.Game, Common.Variables, Common.Map;
 
 {$R *.dfm}
 

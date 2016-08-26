@@ -1,7 +1,8 @@
 ﻿None=Пустота
 Dirt=Грязь
 Grass=Трава
-Tree=Дерево
+Willow=Ива
+Oak=Дуб
 Entrance to dungeon=Вход в подземелье
 Out of the dungeon=Выход из подземелья
 Stone wall=Каменная стена
