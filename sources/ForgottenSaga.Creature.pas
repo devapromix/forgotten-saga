@@ -948,7 +948,7 @@ begin
     Saga.Engine.TextOut(0, 39, GetItems(Saga.Player.Pos));
     Exit;
   end;
-  Saga.Engine.FontBackColor(Saga.Colors.GetColor(ceGray));
+  Saga.Engine.FontBackColor(Saga.Colors.GetColor(ceLGray));
   Saga.Engine.CharOut(Pos.X, Pos.Y, Saga.World.CurrentMap.GetTopTileChar(Pos.X,
     Pos.Y), Saga.Colors.GetColor(ceWhite));
   T := Saga.World.CurrentMap.GetTile(Pos.X, Pos.Y, lrTerrain);

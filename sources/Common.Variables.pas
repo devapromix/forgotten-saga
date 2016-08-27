@@ -28,6 +28,7 @@ var
   clAlertText: Integer = 0;
   clMenuAct: Integer = 0;
   clMenuDef: Integer = 0;
+  clCursor: Integer = 0;
 
 implementation
 

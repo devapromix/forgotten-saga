@@ -23,12 +23,14 @@ type
   end;
 
 type
-  TColorsEnum = (ceBlack, ceRed, ceGreen, ceBlue, ceGray, ceLGray,
+  TColorsEnum = (ceBlack, ceBlue, ceGreen, ceCyan, ceRed, ceMagenta, ceBrown,
+    ceLGray, ceDGray, ceLBlue, ceLGreen, ceLCyan, ceLRed, ceLMagenta,
     ceYellow, ceWhite);
 
 const
-  ColorsStr: array [TColorsEnum] of string = ('BLACK', 'RED', 'GREEN', 'BLUE',
-    'GRAY', 'LGRAY', 'YELLOW', 'WHITE');
+  ColorsStr: array [TColorsEnum] of string = ('BLACK', 'BLUE', 'GREEN', 'CYAN',
+    'RED', 'MAGENTA', 'BROWN', 'LGRAY', 'DGRAY', 'LBLUE', 'LGREEN', 'LCYAN',
+    'LRED', 'LMAGENTA', 'YELLOW', 'WHITE');
 
 type
   TColors = class(TObject)
@@ -425,6 +427,7 @@ begin
   clAlertText := Saga.Colors.GetColor(ceRed);
   clMenuAct := Saga.Colors.GetColor(ceYellow);
   clMenuDef := Saga.Colors.GetColor(ceLGray);
+  clCursor := Saga.Colors.GetColor(ceDGray);
 
   // Tiles
   Tiles.LoadFromFile(GetPath('resources') + 'tiles.ini');

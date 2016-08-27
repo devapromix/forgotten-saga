@@ -568,7 +568,7 @@ begin
     Saga.Engine.FontColor(clTitle);
     if (I = MenuPos) then
     begin
-      RenderCursor(I + Top + 2, Saga.Colors.GetColor(ceGray));
+      RenderCursor(I + Top + 2, clCursor);
       Saga.Engine.FontColor(clMenuAct);
     end
     else
@@ -690,7 +690,7 @@ begin
   begin
     Saga.Engine.FontColor(clTitle);
     if (ord(R) = MenuPos) then
-      RenderCursor(ord(R) + Top + 2, Saga.Colors.GetColor(ceGray));
+      RenderCursor(ord(R) + Top + 2, clCursor);
     Saga.Engine.FontColor(Saga.Race[R].Color);
     Saga.Engine.TextOut(0, ord(R) + Top + 2, Saga.Race[R].Name, aCenter);
   end;
@@ -796,7 +796,7 @@ begin
     Saga.Engine.FontColor(clTitle);
     if (I = MenuPos) then
     begin
-      RenderCursor(I + Top + 2, Saga.Colors.GetColor(ceGray));
+      RenderCursor(I + Top + 2, clCursor);
       Saga.Engine.FontColor(clMenuAct);
     end
     else
@@ -1088,7 +1088,7 @@ begin
     Saga.Engine.FontColor(clTitle);
     if (I = MenuPos) then
     begin
-      RenderCursor(I + Top + 2, Saga.Colors.GetColor(ceGray));
+      RenderCursor(I + Top + 2, clCursor);
       Saga.Engine.FontColor(clMenuAct);
     end
     else
