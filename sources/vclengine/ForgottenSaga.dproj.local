@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899.12.30 00:00:00.000.915,D:\Programs\Distr\github-forgotten-saga\trunk\sources\vclengine\VCLForgottenSaga.dproj=D:\Programs\Distr\github-forgotten-saga\trunk\sources\vclengine\ForgottenSaga.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.812,D:\Programs\Distr\github-forgotten-saga\trunk\sources\vclengine\VCLForgottenSaga.dproj=D:\Programs\Distr\github-forgotten-saga\trunk\sources\vclengine\ForgottenSaga.dproj</Transaction>
     <Transaction>1899.12.30 00:00:00.000.457,D:\Programs\Distr\github-forgotten-saga\trunk\sources\Common.Color.pas=</Transaction>
-    <Transaction>1899.12.30 00:00:00.000.812,D:\Programs\Distr\github-forgotten-saga\trunk\sources\vclengine\ForgottenSaga.dproj=D:\Programs\Distr\github-forgotten-saga\trunk\sources\vclengine\VCLForgottenSaga.dproj</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.915,D:\Programs\Distr\github-forgotten-saga\trunk\sources\vclengine\ForgottenSaga.dproj=D:\Programs\Distr\github-forgotten-saga\trunk\sources\vclengine\VCLForgottenSaga.dproj</Transaction>
   </Transactions>
 </BorlandProject>

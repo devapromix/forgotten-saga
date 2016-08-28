@@ -38,7 +38,8 @@ type
     FColors: array [TColorsEnum] of Integer;
   public
     procedure LoadFromFile(FileName: string);
-    function GetColor(Color: TColorsEnum): Integer;
+    function GetColor(Color: TColorsEnum): Integer; overload;
+    function GetColor(Color: string): Integer; overload;
   end;
 
 type
@@ -872,6 +873,19 @@ end;
 function TColors.GetColor(Color: TColorsEnum): Integer;
 begin
   Result := FColors[Color];
+end;
+
+function TColors.GetColor(Color: string): Integer;
+var
+  I: TColorsEnum;
+begin
+  Result := $00FFFFFF;
+  for I := Low(TColorsEnum) to High(TColorsEnum) do
+    if (ColorsStr[I] = Color) then
+    begin
+      Result := GetColor(I);
+      Exit;
+    end;
 end;
 
 procedure TColors.LoadFromFile(FileName: string);

@@ -1144,7 +1144,7 @@ begin
       S := Format('%d', [I]);
       if (F.SectionExists(S)) then
       begin
-        L := Count;   
+        L := Count;
         SetLength(FItem, L + 1);
         FItem[L] := TItem.Create;
         FItem[L].Active := True;
@@ -1245,16 +1245,39 @@ var
   S: string;
   R, G, B: Byte;
   SL: TStringList;
+  C: TColors;
 begin
   Result := $00FFFFFF;
-  S := LowerCase(Trim(ReadString(Section, Ident, DefaultValue)));
+  S := UpperCase(Trim(ReadString(Section, Ident, DefaultValue)));
   if (S = '') then
     Exit;
+  if (Pos(',', S) = 0) then
+  begin
+    C := TColors.Create;
+    try
+      C.LoadFromFile(GetPath('resources') + 'colors.ini');
+      Result := C.GetColor(S);
+    finally
+      C.Free;
+    end;
+    Exit;
+  end;
+
   SL := ExplodeString(',', S);
-  if (SL.Count = 0) then Exit;
-  if (SL.Count > 0) then R := StrToIntDef(SL[0], 255) else R := 255;
-  if (SL.Count > 1) then G := StrToIntDef(SL[1], 255) else G := 255;
-  if (SL.Count > 2) then B := StrToIntDef(SL[2], 255) else B := 255;
+  if (SL.Count = 0) then
+    Exit;
+  if (SL.Count > 0) then
+    R := StrToIntDef(SL[0], 255)
+  else
+    R := 255;
+  if (SL.Count > 1) then
+    G := StrToIntDef(SL[1], 255)
+  else
+    G := 255;
+  if (SL.Count > 2) then
+    B := StrToIntDef(SL[2], 255)
+  else
+    B := 255;
   Result := (R or (G shl 8) or (B shl 16))
 end;
 
