@@ -718,7 +718,7 @@ object fMain: TfMain
       Anchors = [akLeft, akBottom]
       Caption = 'Label1'
     end
-    object ListBox: TListBox
+    object TerListBox: TListBox
       Left = 0
       Top = 0
       Width = 200
@@ -726,7 +726,7 @@ object fMain: TfMain
       Align = alTop
       ItemHeight = 15
       TabOrder = 0
-      OnClick = ListBoxClick
+      OnClick = TerListBoxClick
     end
   end
   object ToolBar: TToolBar
@@ -859,7 +859,7 @@ object fMain: TfMain
     Left = 24
     Top = 48
     Bitmap = {
-      494C010101000300280010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010101000300300010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

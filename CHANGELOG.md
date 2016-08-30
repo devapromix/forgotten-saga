@@ -2,6 +2,8 @@
 
    **Version 0.0.3**
 
+ - Improved World Editor.
+ - Some cleanup of the code.
  - Added configuration file config.ini.
  - Library BearLibTerminal updated to version 0.14.4.
  

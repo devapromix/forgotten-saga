@@ -14,7 +14,8 @@ uses
   ForgottenSaga.Creature in '..\ForgottenSaga.Creature.pas',
   ForgottenSaga.Battle in '..\ForgottenSaga.Battle.pas',
   ForgottenSaga.Inv in '..\ForgottenSaga.Inv.pas',
-  Common.Variables in '..\Common.Variables.pas';
+  Common.Variables in '..\Common.Variables.pas',
+  WorldEditor.NewMapForm in 'WorldEditor.NewMapForm.pas' {fNew};
 
 {$R *.res}
 
@@ -22,6 +23,7 @@ begin
   Application.Initialize;
   Application.Title := 'Forgotten Saga WorldEditor';
   Application.CreateForm(TfMain, fMain);
+  Application.CreateForm(TfNew, fNew);
   Application.Run;
 
 end.

@@ -23,7 +23,7 @@ type
     brObjects: TToolButton;
     brItems: TToolButton;
     brCreatures: TToolButton;
-    ListBox: TListBox;
+    TerListBox: TListBox;
     Label1: TLabel;
     OD: TOpenDialog;
     SD: TSaveDialog;
@@ -38,16 +38,16 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure brTerrainClick(Sender: TObject);
-    procedure ListBoxClick(Sender: TObject);
+    procedure TerListBoxClick(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
     procedure ToolButton4Click(Sender: TObject);
     procedure ToolButton6Click(Sender: TObject);
   private
     { Private declarations }
-    procedure UpdateCaption;
-    function GetCurrentLayer(): Byte;
   public
     { Public declarations }
+    procedure UpdateCaption;
+    function GetCurrentLayer(): Byte;
   end;
 
 var
@@ -55,7 +55,7 @@ var
 
 implementation
 
-uses WorldEditor.Classes, Common.Map, Common.Utils;
+uses WorldEditor.Classes, Common.Map, Common.Utils, WorldEditor.NewMapForm;
 
 {$R *.dfm}
 
@@ -70,6 +70,8 @@ begin
 end;
 
 procedure TfMain.FormCreate(Sender: TObject);
+var
+  I: TTileEnum;
 begin
   Editor := TEditor.Create;
   Editor.ToolBarHeight := ToolBar.Height;
@@ -85,6 +87,15 @@ begin
   brTerrain.Click;
   brTerrain.Down := True;
   UpdateCaption;
+  TerListBox.Clear;
+  for I := Low(TTileEnum) to High(TTileEnum) do
+  begin
+    TerListBox.Items.Append(Format('[%s] %s', [Editor.Tiles.GetTile(I).Symbol,
+      Editor.Tiles.GetTile(I).Name]));
+  end;
+  TerListBox.ItemIndex := 0;
+  Editor.Tile := tNone;
+  FormPaint(Sender);
 end;
 
 procedure TfMain.FormMouseMove(Sender: TObject; Shift: TShiftState;
@@ -119,10 +130,14 @@ end;
 
 function TfMain.GetCurrentLayer: Byte;
 begin
-  if brTerrain.Down then Result := 0;
-  if brObjects.Down then Result := 1;
-  if brItems.Down then Result := 2;
-  if brCreatures.Down then Result := 3;
+  if brTerrain.Down then
+    Result := 0;
+  if brObjects.Down then
+    Result := 1;
+  if brItems.Down then
+    Result := 2;
+  if brCreatures.Down then
+    Result := 3;
 end;
 
 procedure TfMain.FormDestroy(Sender: TObject);
@@ -147,23 +162,13 @@ begin
 end;
 
 procedure TfMain.brTerrainClick(Sender: TObject);
-var
-  I: TTileEnum;
 begin
-  ListBox.Clear;
-  for I := Low(TTileEnum) to High(TTileEnum) do
-  begin
-    ListBox.Items.Append(Format('[%s] %s', [Editor.Tiles.GetTile(I).Symbol,
-      Editor.Tiles.GetTile(I).Name]));
-  end;
-  ListBox.ItemIndex := 0;
-  Editor.Tile := tNone;
   FormPaint(Sender);
 end;
 
-procedure TfMain.ListBoxClick(Sender: TObject);
+procedure TfMain.TerListBoxClick(Sender: TObject);
 begin
-  Editor.Tile := TTileEnum(ListBox.ItemIndex);
+  Editor.Tile := TTileEnum(TerListBox.ItemIndex);
 end;
 
 procedure TfMain.ToolButton1Click(Sender: TObject);
@@ -190,7 +195,12 @@ end;
 
 procedure TfMain.ToolButton6Click(Sender: TObject);
 begin
-  // Map properties
+  fNew.Left := Self.Left + ((Self.Width div 2) - (fNew.Width div 2));
+  fNew.Top := Self.Top + ((Self.Height div 2) - (fNew.Height div 2));
+  brTerrain.Click;
+  fNew.cbxTiles.Items.Assign(Self.TerListBox.Items);
+  fNew.cbxTiles.ItemIndex := Self.TerListBox.ItemIndex;
+  fNew.ShowModal;
 end;
 
 procedure TfMain.UpdateCaption;

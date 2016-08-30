@@ -11,7 +11,7 @@ const
 
 const
   Layers = 2;
-  TileDarkPercent = 60;
+  TileDarkPercent = 40;
 
 const
   lrTerrain = 0;
@@ -189,7 +189,7 @@ var
   L: TStringList;
 begin
   L := TStringList.Create;
-  L.LoadFromFile(AFileName, TEncoding.UTF8);
+  L.LoadFromFile(AFileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
   for Z := 0 to Layers - 1 do
   begin
     I := L.IndexOf(Format('[%d]', [Z])) + 1;
@@ -207,6 +207,7 @@ var
   S: string;
 begin
   L := TStringList.Create;
+  L.Append(Format('; %s', [ExtractFileName(AFileName)]));
   for Z := 0 to Layers - 1 do
   begin
     L.Append(Format('[%d]', [Z]));
@@ -218,7 +219,7 @@ begin
       L.Append(S);
     end;
   end;
-  L.SaveToFile(AFileName, TEncoding.UTF8);
+  L.SaveToFile(AFileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
   L.Free;
 end;
 

@@ -256,7 +256,7 @@ var
 begin
   P := 1;
   Clear(MaxCount, MaxWeight);
-  FList.LoadFromFile(FileName, TEncoding.UTF8);
+  FList.LoadFromFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
   for I := 0 to FList.Count - 1 do
   begin
     E := ExplodeString('/', FList[I]);
@@ -282,7 +282,7 @@ begin
     with FItem[I] do
       FList.Append(Format('%s/%d/%d/%d/%s', [ID, Count, Weight, Tough,
         BoolToStr(Doll)]));
-  FList.SaveToFile(FileName, TEncoding.UTF8);
+  FList.SaveToFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
 end;
 
 function TInventory.ToText(I: TInvByte): string;

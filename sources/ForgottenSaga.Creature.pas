@@ -100,6 +100,9 @@ type
 type
   TForce = (fcAlly, fcEnemy);
 
+const
+  ForceValues: array[Boolean] of TForce = (fcAlly, fcEnemy);
+
 type
   TCreature = class(TCustomCreature)
   private
@@ -150,7 +153,7 @@ type
   end;
 
 type
-  TIniFile = class(System.IniFiles.TIniFile)
+  TIniFile = class(IniFiles.TIniFile)
   public
     function ReadCategory(Section, Ident: string; DefaultValue: TCategory)
       : TCategory;
@@ -621,11 +624,7 @@ begin
         FCreature[L].Dialog := F.ReadInteger(S, 'Dialog', 0);
         FCreature[L].Level := F.ReadInteger(S, 'Level', 1);
         FCreature[L].FileName := F.ReadString(S, 'File', '');
-        B := F.ReadBool(S, 'NPC', False);
-        if B then
-          FCreature[L].Force := fcAlly
-        else
-          FCreature[L].Force := fcEnemy;
+        FCreature[L].Force := ForceValues[not F.ReadBool(S, 'NPC', False)];
       end;
     end;
   finally

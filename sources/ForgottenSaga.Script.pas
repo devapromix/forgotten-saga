@@ -77,7 +77,7 @@ var
   I: Integer;
   S: string;
 begin
-  FList.LoadFromFile(FileName, TEncoding.UTF8);
+  FList.LoadFromFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
   for I := FList.Count - 1 downto 0 do
   begin
     S := Trim(FList[I]);
@@ -285,7 +285,7 @@ begin
       FIsIf := GetIf('<', S);
   end;
 
-  // Карта:Объект:Диалог
+  // Map:Creature:Dialog
   if IsTag('dialog') then
   begin
     S := GetLastCode('dialog', Code);
@@ -413,7 +413,7 @@ begin
   A := TStringList.Create;
   try
     Self.Clear;
-    A.LoadFromFile(FileName, TEncoding.UTF8);
+    A.LoadFromFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
     for I := 0 to A.Count - 1 do
     begin
       S := Trim(A[I]);
@@ -434,7 +434,7 @@ begin
   S := TStringList.Create;
   for I := 0 to FID.Count - 1 do
     S.Append(FID[I] + ',' + FValue[I]);
-  S.SaveToFile(FileName, TEncoding.UTF8);
+  S.SaveToFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
   S.Free;
 end;
 

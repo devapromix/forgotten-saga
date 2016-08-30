@@ -43,6 +43,14 @@ type
   end;
 
 type
+  TConfig = class(TObject)
+  private
+
+  public
+    procedure LoadFromFile(FileName: string);
+  end;
+
+type
   TNotification = class(TObject)
   private
     FMessage: string;
@@ -402,7 +410,7 @@ begin
     F := GetPath('resources') + Lg.Current + '.intro.txt';
     if (FileExists(F)) then
     begin
-      S.LoadFromFile(F, TEncoding.UTF8);
+      S.LoadFromFile(F{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
       for I := 0 to S.Count - 1 do
         Log[lgIntro].Add(__(S[I]), False);
     end;
@@ -529,7 +537,7 @@ begin
     (GetSlotPath(Slot) + 'vars.txt');
   FList[Slot] := Format('%s %s - %s', [DateTimeToStr(Now), Player.GetFullName,
     World.GetMap(Player.Map).Name]);
-  FList.SaveToFile(GetPath('save') + 'list.txt', TEncoding.UTF8);
+  FList.SaveToFile(GetPath('save') + 'list.txt'{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
   Saga.Notification.Add('Игра успешно сохранена');
 end;
 
@@ -561,7 +569,7 @@ begin
   ClearSlots;
   F := GetPath('save') + 'list.txt';
   if FileExists(F) then
-    FList.LoadFromFile(F, TEncoding.UTF8);
+    FList.LoadFromFile(F{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
 end;
 
 procedure TSaga.ClearLogs;
@@ -632,7 +640,7 @@ var
 begin
   S := TStringList.Create;
   try
-    S.LoadFromFile(FileName, TEncoding.UTF8);
+    S.LoadFromFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
     FLogStr := S.Text;
   finally
     S.Free;
@@ -646,7 +654,7 @@ begin
   S := TStringList.Create;
   try
     S.Text := FLogStr;
-    S.SaveToFile(FileName, TEncoding.UTF8);
+    S.SaveToFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
   finally
     S.Free;
   end;
@@ -705,12 +713,12 @@ end;
 
 procedure TQuest.LoadFromFile(FileName: string);
 begin
-  FList.LoadFromFile(FileName, TEncoding.UTF8);
+  FList.LoadFromFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
 end;
 
 procedure TQuest.SaveToFile(FileName: string);
 begin
-  FList.SaveToFile(FileName, TEncoding.UTF8);
+  FList.SaveToFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
 end;
 
 { TNotification }
@@ -756,7 +764,7 @@ begin
     N := '';
   Saga.List[Slot] := Format('%s%d', [Saga.Player.GetFullName + N,
     Saga.Player.Score]);
-  Saga.List.SaveToFile(FFileName, TEncoding.UTF8);
+  Saga.List.SaveToFile(FFileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
 end;
 
 constructor TRecs.Create(FileName: string);
@@ -768,7 +776,7 @@ procedure TRecs.Load;
 begin
   Saga.ClearSlots;
   if FileExists(FFileName) then
-    Saga.List.LoadFromFile(FFileName, TEncoding.UTF8);
+    Saga.List.LoadFromFile(FFileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
 end;
 
 procedure TRecs.Save;
@@ -903,6 +911,20 @@ begin
       B := F.ReadInteger(ColorsStr[I], 'B', 0);
       FColors[I] := (R or (G shl 8) or (B shl 16));
     end;
+  finally
+    F.Free;
+  end;
+end;
+
+{ TConfig }
+
+procedure TConfig.LoadFromFile(FileName: string);
+var
+  F: TIniFile;
+begin
+  F := TIniFile.Create(FileName);
+  try
+
   finally
     F.Free;
   end;
