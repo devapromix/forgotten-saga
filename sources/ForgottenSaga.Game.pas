@@ -421,6 +421,7 @@ begin
   // Localization
   Lg.Clear;
   Lg.LoadFromFile(GetPath('resources') + Lg.Current + '.txt');
+  Lg.LoadFromFile(GetPath('resources') + Lg.Current + '.names.txt');
   Lg.LoadFromFile(GetPath('resources') + Lg.Current + '.world.txt');
   Lg.LoadFromFile(GetPath('resources') + Lg.Current + '.tiles.txt');
 
