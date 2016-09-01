@@ -19,7 +19,7 @@ type
 
 implementation
 
-uses SysUtils, Math, Engine, ForgottenSaga.Game, ForgottenSaga.Scenes;
+uses SysUtils, Math, ForgottenSaga.Game, ForgottenSaga.Scenes;
 
 { TBattle }
 

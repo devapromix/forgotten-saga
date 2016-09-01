@@ -2,7 +2,7 @@
 
 interface
 
-uses Types, Classes, IniFiles;
+uses {$IFNDEF FPC}Types, {$ENDIF}Classes, IniFiles;
 
 type
   TBaseEntity = class(TObject)
@@ -231,7 +231,6 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Add(const ID: Integer);
     function Get(N: Integer): TCreature;
     function Has(X, Y: Integer): Integer;
     procedure LoadFromFile(FileName: string);
@@ -548,11 +547,6 @@ end;
 
 { TCreatures }
 
-procedure TCreatures.Add(const ID: Integer);
-begin
-
-end;
-
 procedure TCreatures.Clear;
 var
   I: Integer;
@@ -600,8 +594,7 @@ procedure TCreatures.LoadFromFile(FileName: string);
 var
   I, L: Integer;
   F: TIniFile;
-  B: Boolean;
-  S, N: string;
+  S: string;
 begin
   Self.Clear;
   F := TIniFile.Create(FileName);
@@ -1152,7 +1145,7 @@ begin
         FItem[L].Category := F.ReadCategory(S, 'Category', ctNone);
         FItem[L].Material := F.ReadMaterial(S, 'Material', mtNone);
         FItem[L].Symbol := F.ReadString(S, 'Symbol', '/')[1];
-        FItem[L].Color := F.ReadColor(S, 'Color', '255,255,255');
+        FItem[L].Color := F.ReadColor(S, 'Color', '200,200,200');
         FItem[L].Count := F.ReadInteger(S, 'Count', 1);
         FItem[L].SetPosition(Point(F.ReadInteger(S, 'X', 0),
           F.ReadInteger(S, 'Y', 0)));

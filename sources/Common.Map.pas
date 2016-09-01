@@ -101,8 +101,7 @@ type
 
 implementation
 
-uses Classes, SysUtils, Math, Common.Utils, Common.Map.Generator,
-  ForgottenSaga.Game;
+uses Classes, SysUtils, ForgottenSaga.Game;
 
 const
   Offset = 40;
@@ -227,8 +226,6 @@ procedure TMap.Render;
 var
   X, Y, Z: Integer;
   TerTile, ObjTile: TTileProp;
-const
-  D = 50;
 begin
   for Z := 0 to Layers - 1 do
     for Y := 0 to Self.Height - 1 do
