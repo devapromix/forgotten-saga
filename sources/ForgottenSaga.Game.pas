@@ -423,7 +423,8 @@ begin
   Lg.LoadFromFile(GetPath('resources') + Lg.Current + '.txt');
   Lg.LoadFromFile(GetPath('resources') + Lg.Current + '.names.txt');
   Lg.LoadFromFile(GetPath('resources') + Lg.Current + '.world.txt');
-  Lg.LoadFromFile(GetPath('resources') + Lg.Current + '.tiles.txt');
+  Lg.LoadFromFile(GetPath('resources') + Lg.Current + '.terrain.txt');
+  Lg.LoadFromFile(GetPath('resources') + Lg.Current + '.objects.txt');
 
   // Colors
   Colors.LoadFromFile(GetPath('resources') + 'colors.ini');
@@ -440,7 +441,8 @@ begin
   clCursor := Saga.Colors.GetColor(ceDGray);
 
   // Tiles
-  Tiles.LoadFromFile(GetPath('resources') + 'tiles.ini');
+  Tiles.LoadFromFile(GetPath('resources') + 'terrain.ini');
+//  Tiles.LoadFromFile(GetPath('resources') + 'objects.ini');
 
   // Races
   AddRace(rcGoblin, __('Goblin'), 90, 100, Point(40, 20), 0, $00882295);
