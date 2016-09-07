@@ -81,19 +81,13 @@
             <Form>fMain</Form>
         </DCCReference>
         <DCCReference Include="WorldEditor.Classes.pas"/>
-        <DCCReference Include="..\ForgottenSaga.Game.pas"/>
+        <DCCReference Include="..\ForgottenSaga.Classes.pas"/>
         <DCCReference Include="..\ForgottenSaga.Scenes.pas"/>
-        <DCCReference Include="..\ForgottenSaga.Script.pas"/>
-        <DCCReference Include="..\Common.Map.pas"/>
-        <DCCReference Include="..\Common.Utils.pas"/>
         <DCCReference Include="..\Common.Map.Generator.pas"/>
-        <DCCReference Include="..\ForgottenSaga.Creature.pas"/>
-        <DCCReference Include="..\ForgottenSaga.Battle.pas"/>
+        <DCCReference Include="..\ForgottenSaga.Entities.pas"/>
         <DCCReference Include="..\ForgottenSaga.Inv.pas"/>
-        <DCCReference Include="..\Common.Variables.pas"/>
         <DCCReference Include="WorldEditor.NewMapForm.pas">
             <Form>fNew</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

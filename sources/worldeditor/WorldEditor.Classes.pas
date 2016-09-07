@@ -2,8 +2,8 @@ unit WorldEditor.Classes;
 
 interface
 
-uses Windows, Graphics, Types, Controls, ForgottenSaga.Game, Common.Map,
-  ForgottenSaga.Creature;
+uses Windows, Graphics, Types, Controls, ForgottenSaga.Classes,
+  ForgottenSaga.Entities;
 
 type
   TEditor = class(TSaga)
@@ -43,13 +43,13 @@ var
 
 implementation
 
-uses Engine, Common.Utils;
+uses Engine;
 
 { TEditor }
 
 constructor TEditor.Create;
 begin
-  inherited Create(MapWidth, MapHeight);
+  inherited Create(TMap.MapWidth, TMap.MapHeight);
   Map := TMap.Create;
   Creatures := TCreatures.Create;
   Items := TItems.Create;
@@ -57,8 +57,8 @@ begin
   Modified := False;
   // Tiles
   Tiles := TTiles.Create;
-  Tiles.LoadFromFile(GetPath('resources') + 'terrain.ini');
-//  Tiles.LoadFromFile(GetPath('resources') + 'objects.ini');
+  Tiles.LoadFromFile(TUtils.GetPath('resources') + 'terrain.ini');
+  // Tiles.LoadFromFile(GetPath('resources') + 'objects.ini');
 end;
 
 destructor TEditor.Destroy;
@@ -113,8 +113,7 @@ begin
   for I := 0 to Creatures.Count - 1 do
   begin
     E := Creatures.Get(I);
-    Editor.Engine.FontBackColor(E.BackColor());
-    Editor.Engine.CharOut(E.Pos.X, E.Pos.Y, E.Symbol, E.Color);
+    Editor.UI.DrawChar(E.Pos.X, E.Pos.Y, E.Symbol, E.Color, E.BackColor);
   end;
 end;
 
@@ -126,15 +125,14 @@ begin
   for I := 0 to Items.Count - 1 do
   begin
     E := Items.Get(I);
-    Editor.Engine.FontBackColor(E.BackColor());
-    Editor.Engine.CharOut(E.Pos.X, E.Pos.Y, E.Symbol, E.Color);
+    Editor.UI.DrawChar(E.Pos.X, E.Pos.Y, E.Symbol, E.Color, E.BackColor);
   end;
 end;
 
 procedure TEditor.RenderObjects;
 var
   X, Y: Integer;
-  TerTile, ObjTile: TTileProp;
+  TerTile, ObjTile: TTiles.TTileProp;
 begin
   for Y := 0 to Map.Height - 1 do
     for X := 0 to Map.Width - 1 do
@@ -142,22 +140,22 @@ begin
       begin
         TerTile := Editor.Tiles.GetTile(Map.GetTile(X, Y, lrTerrain));
         ObjTile := Editor.Tiles.GetTile(Map.GetTile(X, Y, lrObjects));
-        Editor.Engine.FontBackColor(Editor.Engine.DarkColor(TerTile.Color, TileDarkPercent));
-        Editor.Engine.CharOut(X, Y, ObjTile.Symbol, ObjTile.Color);
+        Editor.UI.DrawChar(X, Y, ObjTile.Symbol, ObjTile.Color,
+          Editor.Engine.DarkColor(TerTile.Color, TTiles.TileDarkPercent));
       end;
 end;
 
 procedure TEditor.RenderTerrain;
 var
   X, Y: Integer;
-  TerTile: TTileProp;
+  TerTile: TTiles.TTileProp;
 begin
   for Y := 0 to Map.Height - 1 do
     for X := 0 to Map.Width - 1 do
     begin
       TerTile := Editor.Tiles.GetTile(Map.GetTile(X, Y, lrTerrain));
-      Editor.Engine.FontBackColor(Editor.Engine.DarkColor(TerTile.Color, TileDarkPercent));
-      Editor.Engine.CharOut(X, Y, TerTile.Symbol, TerTile.Color);
+      Editor.UI.DrawChar(X, Y, TerTile.Symbol, TerTile.Color,
+        Editor.Engine.DarkColor(TerTile.Color, TTiles.TileDarkPercent));
     end;
 end;
 

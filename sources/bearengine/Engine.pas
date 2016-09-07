@@ -121,28 +121,26 @@ type
     procedure Clear;
     constructor Create(AWidth, AHeight: Integer);
     destructor Destroy; override;
-    procedure KeyOut(X, Y: Integer; Caption: string; Key: string;
-      Active: Boolean = True); overload;
-    procedure KeyOut(X, Y: Integer; Caption: string; Key: string; Align: TAlign;
-      Active: Boolean = True); overload;
-    procedure CharOut(X, Y: Integer; Symbol: System.Char; Color: Integer);
-    procedure TitleOut(Y: Integer; Text: string);
-    procedure TextOut(X, Y: Integer; Text: string;
+    procedure Print(X, Y: Integer; S: string;
       Align: TAlign = aLeft); overload;
-    function TextOut(aText: string; aRect: TRect): Integer; overload;
-    procedure FontColor(Color: Integer);
-    procedure FontBackColor(Color: Integer);
+    function Print(S: string; R: TRect): Integer; overload;
+    procedure ForegroundColor(Color: Integer);
+    procedure BackgroundColor(Color: Integer);
     function LightColor(Color: Integer; Percent: Byte): Integer;
     function DarkColor(Color: Integer; Percent: Byte): Integer;
+    function GetColor(Color: Integer): Cardinal;
     property Window: TSize read FWindow write FWindow;
     property Char: TSize read FChar write FChar;
-    function GetColor(Color: Integer): Cardinal;
     function GetTextLength(Text: string): Integer;
     procedure Close;
   end;
 
 const
   clClear = -1;
+
+const
+  kcBegin = '{';
+  kcEnd = '}';
 
 implementation
 
@@ -153,7 +151,7 @@ uses
 {$ELSE}
   LCLIntf, LCLType, LazUTF8,
 {$ENDIF}
-  Classes, SysUtils, Common.Variables;
+  Classes, SysUtils;
 
 constructor TEngine.Create(AWidth, AHeight: Integer);
 begin
@@ -171,12 +169,12 @@ begin
   inherited;
 end;
 
-procedure TEngine.FontColor(Color: Integer);
+procedure TEngine.ForegroundColor(Color: Integer);
 begin
   terminal_color(GetColor(Color));
 end;
 
-procedure TEngine.FontBackColor(Color: Integer);
+procedure TEngine.BackgroundColor(Color: Integer);
 begin
   case Color of
     clClear:
@@ -184,19 +182,6 @@ begin
   else
     terminal_bkcolor(GetColor(Color));
   end;
-end;
-
-procedure TEngine.TitleOut(Y: Integer; Text: string);
-begin
-  FontColor(clTitle);
-  TextOut(0, Y - 1, Text, aCenter);
-  TextOut(0, Y, StringOfChar('=', GetTextLength(Text)), aCenter);
-end;
-
-procedure TEngine.CharOut(X, Y: Integer; Symbol: System.Char; Color: Integer);
-begin
-  FontColor(Color);
-  TextOut(X, Y, Symbol);
 end;
 
 procedure TEngine.Clear;
@@ -209,62 +194,24 @@ begin
   terminal_close();
 end;
 
-procedure TEngine.KeyOut(X, Y: Integer; Caption: string; Key: string;
-  Active: Boolean = True);
-var
-  S: string;
-begin
-  S := '<' + Key + '>';
-  if Active then
-    FontColor(clHotKey)
-  else
-    FontColor(DarkColor(clHotKey, 60));
-  TextOut(X, Y, S);
-  FontColor(clButton);
-  TextOut(X + GetTextLength(S) + 1, Y, Caption);
-end;
-
-procedure TEngine.KeyOut(X, Y: Integer; Caption: string; Key: string;
-  Align: TAlign; Active: Boolean = True);
-var
-  S: string;
-  L: Integer;
+procedure TEngine.Print(X, Y: Integer; S: string; Align: TAlign = aLeft);
 begin
   case Align of
     aLeft:
-      KeyOut(X, Y, Caption, Key, Active);
-    aCenter:
-      begin
-        S := '<' + Key + '> ' + Caption;
-        L := ((((Char.Width * Window.Width) + (X * Char.Width)) div 2)) -
-          ((GetTextLength(S) * Char.Width) div 2);
-        KeyOut(L div Char.Width, Y, Caption, Key, Active);
-      end;
-    aRight:
-      begin
-
-      end;
-  end;
-end;
-
-procedure TEngine.TextOut(X, Y: Integer; Text: string; Align: TAlign = aLeft);
-begin
-  case Align of
-    aLeft:
-      terminal_print(X, Y, Text);
+      terminal_print(X, Y, S);
     aCenter:
       terminal_print((Window.Width div 2) -
-        (GetTextLength(Text) div 2), Y, Text);
+        (GetTextLength(S) div 2), Y, S);
     aRight:
-      terminal_print(Window.Width - GetTextLength(Text), Y, Text);
+      terminal_print(Window.Width - GetTextLength(S), Y, S);
   end;
 end;
 
-function TEngine.TextOut(aText: string; aRect: TRect): Integer;
+function TEngine.Print(S: string; R: TRect): Integer;
 begin
-  Result := terminal_print(aRect.Left, aRect.Top,
+  Result := terminal_print(R.Left, R.Top,
     Format('[bbox=%dx%d][align=left-top]%s',
-    [aRect.Right, aRect.Bottom, aText]));
+    [R.Right, R.Bottom, S]));
 end;
 
 function TEngine.DarkColor(Color: Integer; Percent: Byte): Integer;

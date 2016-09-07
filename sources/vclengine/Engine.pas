@@ -104,18 +104,10 @@ type
     procedure Clear;
     constructor Create(AWidth, AHeight: Integer);
     destructor Destroy; override;
-    procedure KeyOut(X, Y: Integer; Caption: string; Key: string;
-      Active: Boolean = True); overload;
-    procedure KeyOut(X, Y: Integer; Caption: string; Key: string; Align: TAlign;
-      Active: Boolean = True); overload;
-    procedure CharOut(X, Y: Integer; Symbol: System.Char; Color: Integer);
-    procedure TitleOut(Y: Integer; Text: string);
-    procedure TextOut(X, Y: Integer; Text: string;
-      Align: TAlign = aLeft); overload;
-    procedure FontColor(Color: Integer);
-    procedure FontBackColor(Color: Integer);
-    function TextOut(aText: string; aRect: TRect; Align: TAlign = aLeft)
-      : Integer; overload;
+    procedure Print(X, Y: Integer; S: string; A: TAlign = aLeft); overload;
+    function Print(S: string; R: TRect; A: TAlign = aLeft): Integer; overload;
+    procedure ForegroundColor(Color: Integer);
+    procedure BackgroundColor(Color: Integer);
     function LightColor(Color: Integer; Percent: Byte): Integer;
     function DarkColor(Color: Integer; Percent: Byte): Integer;
     property Surface: TBitmap read FSurface write FSurface;
@@ -128,6 +120,10 @@ type
 const
   clClear = -1;
 
+const
+  kcBegin = '{';
+  kcEnd = '}';
+
 implementation
 
 uses
@@ -136,7 +132,7 @@ uses
 {$ELSE}
   LCLIntf, LCLType, LMessages, LazUTF8,
 {$ENDIF}
-  Forms, Classes, SysUtils, Common.Utils, Common.Variables;
+  Forms, Classes, SysUtils;
 
 constructor TEngine.Create(AWidth, AHeight: Integer);
 begin
@@ -161,7 +157,7 @@ begin
   inherited;
 end;
 
-procedure TEngine.FontColor(Color: Integer);
+procedure TEngine.ForegroundColor(Color: Integer);
 begin
   Surface.Canvas.Font.Color := Color;
 end;
@@ -171,7 +167,7 @@ begin
   Result := Length(Text);
 end;
 
-procedure TEngine.FontBackColor(Color: Integer);
+procedure TEngine.BackgroundColor(Color: Integer);
 begin
   case Color of
     clClear:
@@ -181,24 +177,11 @@ begin
   end;
 end;
 
-procedure TEngine.TitleOut(Y: Integer; Text: string);
-begin
-  FontColor(clTitle);
-  TextOut(0, Y - 1, Text, aCenter);
-  TextOut(0, Y, StringOfChar('=', Length(Text)), aCenter);
-end;
-
-procedure TEngine.CharOut(X, Y: Integer; Symbol: System.Char; Color: Integer);
-begin
-  FontColor(Color);
-  TextOut(X, Y, Symbol);
-end;
-
 procedure TEngine.Clear;
 begin
   Surface.Canvas.Brush.Color := clBlack;
   Surface.Canvas.FillRect(Rect(0, 0, Surface.Width, Surface.Height));
-  FontBackColor(clClear);
+  BackgroundColor(clClear);
 end;
 
 procedure TEngine.Close;
@@ -206,74 +189,35 @@ begin
   Application.Terminate;
 end;
 
-procedure TEngine.KeyOut(X, Y: Integer; Caption: string; Key: string;
-  Active: Boolean = True);
-var
-  K: string;
+procedure TEngine.Print(X, Y: Integer; S: string; A: TAlign = aLeft);
 begin
-  K := '<' + Key + '>';
-  if Active then
-    FontColor(clHotKey)
-  else
-    FontColor(DarkColor(clHotKey, 60));
-  TextOut(X, Y, K);
-  FontColor(clButton);
-  TextOut(X + Length(K) + 1, Y, Caption);
-end;
-
-procedure TEngine.KeyOut(X, Y: Integer; Caption: string; Key: string;
-  Align: TAlign; Active: Boolean = True);
-var
-  S: string;
-  L: Integer;
-begin
-  case Align of
+  case A of
     aLeft:
-      KeyOut(X, Y, Caption, Key, Active);
+      Surface.Canvas.TextOut(X * Char.Width, Y * Char.Height, S);
     aCenter:
-      begin
-        S := '[' + Key + '] ' + Caption;
-        L := ((((Char.Width * Window.Width) + (X * Char.Width)) div 2)) -
-          ((Length(S) * Char.Width) div 2);
-        KeyOut(L div Char.Width, Y, Caption, Key, Active);
-      end;
+      Surface.Canvas.TextOut(((Window.Width div 2) - (GetTextLength(S) div 2)) *
+        Char.Width, Y * Char.Height, S);
     aRight:
-      begin
-
-      end;
+      Surface.Canvas.TextOut((Window.Width - GetTextLength(S)) * Char.Width,
+        Y * Char.Height, S);
   end;
 end;
 
-procedure TEngine.TextOut(X, Y: Integer; Text: string; Align: TAlign = aLeft);
-begin
-  case Align of
-    aLeft:
-      Surface.Canvas.TextOut(X * Char.Width, Y * Char.Height, Text);
-    aCenter:
-      Surface.Canvas.TextOut(((Window.Width div 2) - (Length(Text) div 2)) *
-        Char.Width, Y * Char.Height, Text);
-    aRight:
-      Surface.Canvas.TextOut((Window.Width - Length(Text)) * Char.Width,
-        Y * Char.Height, Text);
-  end;
-end;
-
-function TEngine.TextOut(aText: string; aRect: TRect;
-  Align: TAlign = aLeft): Integer;
+function TEngine.Print(S: string; R: TRect; A: TAlign = aLeft): Integer;
 var
   I, C, L: Word;
   SL: TStringList;
-  S: string;
+  V: string;
 
-  procedure AddRow(Text: string);
+  procedure AddRow(S: string);
   begin
-    TextOut(aRect.Left div Char.Width, (L * Char.Height + aRect.Top)
-      div Char.Height, Text, Align);
+    Print(R.Left div Char.Width, (L * Char.Height + R.Top)
+      div Char.Height, S, A);
   end;
 
   function AddLine(astr, aword: string): Boolean;
   begin
-    Result := Surface.Canvas.TextWidth(astr + aword) >= aRect.Right;
+    Result := Surface.Canvas.TextWidth(astr + aword) >= R.Right;
     if Result then
     begin
       AddRow(astr);
@@ -284,30 +228,30 @@ var
   procedure WordDivider;
   begin
     SL := TStringList.Create;
-    StringReplace(aText, '  ', ' ', [rfReplaceAll]);
+    StringReplace(S, '  ', ' ', [rfReplaceAll]);
     SL.Delimiter := ' ';
-    SL.DelimitedText := aText;
+    SL.DelimitedText := S;
   end;
 
 begin
   Result := 0;
-  if (aText = '') then
+  if (S = '') then
     Exit;
   WordDivider;
   L := 0;
-  S := '';
+  V := '';
   C := SL.Count - 1;
-  aRect.Top := aRect.Top * Char.Height;
-  aRect.Left := aRect.Left * Char.Width;
-  aRect.Right := aRect.Right * Char.Width;
+  R.Top := R.Top * Char.Height;
+  R.Left := R.Left * Char.Width;
+  R.Right := R.Right * Char.Width;
   for I := 0 to C do
   begin
-    if AddLine(S, SL[I]) then
-      S := '';
-    S := S + SL[I] + ' ';
-    if (I = C) and (S <> '') then
+    if AddLine(V, SL[I]) then
+      V := '';
+    V := V + SL[I] + ' ';
+    if (I = C) and (V <> '') then
     begin
-      AddRow(S);
+      AddRow(V);
       Inc(L);
     end;
   end;

@@ -25,13 +25,13 @@ var
 
 implementation
 
-uses Engine, ForgottenSaga.Game, Common.Variables, Common.Map;
+uses Engine, ForgottenSaga.Classes, ForgottenSaga.Entities, ForgottenSaga.Scenes;
 
 {$R *.dfm}
 
 procedure TfMain.FormCreate(Sender: TObject);
 begin
-  Saga := TSaga.Create(MapWidth + PanelWidth, MapHeight);
+  Saga := TSaga.Create(TMap.MapWidth + TUI.PanelWidth, TMap.MapHeight);
   Saga.Init;
   ClientWidth := Saga.Engine.Surface.Width;
   ClientHeight := Saga.Engine.Surface.Height;

@@ -55,7 +55,7 @@ var
 
 implementation
 
-uses WorldEditor.Classes, Common.Map, Common.Utils, WorldEditor.NewMapForm;
+uses WorldEditor.Classes, WorldEditor.NewMapForm, ForgottenSaga.Entities;
 
 {$R *.dfm}
 

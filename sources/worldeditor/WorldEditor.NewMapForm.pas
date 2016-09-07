@@ -25,7 +25,7 @@ implementation
 
 {$R *.dfm}
 
-uses WorldEditor.Classes, Common.Map, WorldEditor.MainForm;
+uses WorldEditor.Classes, WorldEditor.MainForm, ForgottenSaga.Entities;
 
 procedure TfNew.cmdFillClick(Sender: TObject);
 begin

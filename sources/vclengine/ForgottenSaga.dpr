@@ -4,16 +4,11 @@ uses
   Forms,
   Engine in 'Engine.pas',
   ForgottenSaga.MainForm in 'ForgottenSaga.MainForm.pas' {fMain},
-  ForgottenSaga.Game in '..\ForgottenSaga.Game.pas',
+  ForgottenSaga.Classes in '..\ForgottenSaga.Classes.pas',
   ForgottenSaga.Inv in '..\ForgottenSaga.Inv.pas',
-  ForgottenSaga.Script in '..\ForgottenSaga.Script.pas',
-  ForgottenSaga.Creature in '..\ForgottenSaga.Creature.pas',
+  ForgottenSaga.Entities in '..\ForgottenSaga.Entities.pas',
   ForgottenSaga.Scenes in '..\ForgottenSaga.Scenes.pas',
-  ForgottenSaga.Battle in '..\ForgottenSaga.Battle.pas',
-  Common.Utils in '..\Common.Utils.pas',
-  Common.Map in '..\Common.Map.pas',
-  Common.Map.Generator in '..\Common.Map.Generator.pas',
-  Common.Variables in '..\Common.Variables.pas';
+  Common.Map.Generator in '..\Common.Map.Generator.pas';
 
 {$R *.res}
 
