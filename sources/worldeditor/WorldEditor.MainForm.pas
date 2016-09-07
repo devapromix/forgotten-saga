@@ -71,7 +71,7 @@ end;
 
 procedure TfMain.FormCreate(Sender: TObject);
 var
-  I: TTileEnum;
+  I: TTiles.TTileEnum;
 begin
   Editor := TEditor.Create;
   Editor.ToolBarHeight := ToolBar.Height;
@@ -88,7 +88,7 @@ begin
   brTerrain.Down := True;
   UpdateCaption;
   TerListBox.Clear;
-  for I := Low(TTileEnum) to High(TTileEnum) do
+  for I := Low(TTiles.TTileEnum) to High(TTiles.TTileEnum) do
   begin
     TerListBox.Items.Append(Format('[%s] %s', [Editor.Tiles.GetTile(I).Symbol,
       Editor.Tiles.GetTile(I).Name]));
@@ -101,7 +101,7 @@ end;
 procedure TfMain.FormMouseMove(Sender: TObject; Shift: TShiftState;
   X, Y: Integer);
 begin
-  Editor.MouseMove(GetCurrentLayer, X, Y);
+  Editor.MouseMove(TMap.TLayerEnum(GetCurrentLayer), X, Y);
   FormPaint(Sender);
   Label1.Caption := Format('%d:%d', [Editor.Pos.X, Editor.Pos.Y]);
 end;
@@ -148,7 +148,7 @@ end;
 procedure TfMain.FormMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-  Editor.MouseDown(GetCurrentLayer, Button, X, Y);
+  Editor.MouseDown(TMap.TLayerEnum(GetCurrentLayer), Button, X, Y);
   FormPaint(Sender);
   UpdateCaption;
 end;
@@ -168,7 +168,7 @@ end;
 
 procedure TfMain.TerListBoxClick(Sender: TObject);
 begin
-  Editor.Tile := TTileEnum(TerListBox.ItemIndex);
+  Editor.Tile := TTiles.TTileEnum(TerListBox.ItemIndex);
 end;
 
 procedure TfMain.ToolButton1Click(Sender: TObject);

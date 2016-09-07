@@ -12,7 +12,7 @@ type
     FPos: TPoint;
     FToolBarHeight: Integer;
     FTiles: TTiles;
-    FTile: TTileEnum;
+    FTile: TTiles.TTileEnum;
     FCurrentMapFile: string;
     FModified: Boolean;
     FCreatures: TCreatures;
@@ -24,15 +24,15 @@ type
     procedure RenderObjects;
     procedure RenderItems;
     procedure RenderCreatures;
-    procedure MouseMove(Layer: Byte; X, Y: Integer);
-    procedure MouseDown(Layer: Byte; Button: TMouseButton; X, Y: Integer);
+    procedure MouseMove(Layer: TMap.TLayerEnum; X, Y: Integer);
+    procedure MouseDown(Layer: TMap.TLayerEnum; Button: TMouseButton; X, Y: Integer);
     procedure KeyDown(var Key: Word);
     property CurrentMapFile: string read FCurrentMapFile write FCurrentMapFile;
     property Pos: TPoint read FPos write FPos;
     property ToolBarHeight: Integer read FToolBarHeight write FToolBarHeight;
     property Map: TMap read FMap write FMap;
     property Tiles: TTiles read FTiles write FTiles;
-    property Tile: TTileEnum read FTile write FTile;
+    property Tile: TTiles.TTileEnum read FTile write FTile;
     property Modified: Boolean read FModified write FModified;
     property Creatures: TCreatures read FCreatures write FCreatures;
     property Items: TItems read FItems write FItems;
@@ -75,7 +75,7 @@ begin
 
 end;
 
-procedure TEditor.MouseDown(Layer: Byte; Button: TMouseButton; X, Y: Integer);
+procedure TEditor.MouseDown(Layer: TMap.TLayerEnum; Button: TMouseButton; X, Y: Integer);
 begin
   case Button of
     mbLeft:
@@ -97,7 +97,7 @@ begin
   end;
 end;
 
-procedure TEditor.MouseMove(Layer: Byte; X, Y: Integer);
+procedure TEditor.MouseMove(Layer: TMap.TLayerEnum; X, Y: Integer);
 begin
   Pos := Point(X div Engine.Char.Width, (Y - ToolBarHeight)
     div Engine.Char.Height);
