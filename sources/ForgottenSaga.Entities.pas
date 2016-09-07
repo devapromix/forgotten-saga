@@ -4,6 +4,8 @@ interface
 
 uses {$IFNDEF FPC}Types, {$ENDIF}Classes, IniFiles;
 
+{$REGION 'Entity'}
+
 type
   TEntity = class(TObject)
   private
@@ -30,6 +32,19 @@ type
     property Level: Byte read FLevel write FLevel;
     property Active: Boolean read FActive write FActive;
   end;
+
+{$ENDREGION 'Entity'}
+{$REGION 'Look'}
+
+type
+  TLook = class(TEntity)
+  public
+    procedure Render;
+    procedure Move(AX, AY: Integer);
+  end;
+
+{$ENDREGION 'Look'}
+{$REGION 'Bar'}
 
 type
   TBar = class(TObject)
@@ -58,6 +73,30 @@ type
     procedure SetToMin;
     procedure SetToMax;
   end;
+
+{$ENDREGION 'Bar'}
+{$REGION 'Race'}
+
+type
+  TRace = class(TObject)
+  private
+    FColor: Integer;
+    FName: string;
+    FPos: TPoint;
+    FMap: Byte;
+    FLife: Word;
+    FMana: Word;
+  public
+    property Color: Integer read FColor write FColor;
+    property Name: string read FName write FName;
+    property Pos: TPoint read FPos write FPos;
+    property Map: Byte read FMap write FMap;
+    property Life: Word read FLife write FLife;
+    property Mana: Word read FMana write FMana;
+  end;
+
+{$ENDREGION 'Race'}
+{$REGION 'Creatures'}
 
 type
   TCustomCreature = class(TEntity)
@@ -106,6 +145,25 @@ type
   end;
 
 type
+  TCreatures = class(TObject)
+  private
+    FCreature: array of TCreature;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    function Get(N: Integer): TCreature;
+    function Has(X, Y: Integer): Integer;
+    procedure LoadFromFile(FileName: string);
+    procedure SaveToFile(FileName: string);
+    function Count: Integer;
+    procedure Render;
+    procedure Clear;
+  end;
+
+{$ENDREGION 'Creatures'}
+{$REGION 'Items and Inventory'}
+
+type
   TItem = class(TEntity)
   public type
     TCategory = (ctNone, ctStaff, ctSpear, ctAxe, ctSword);
@@ -134,6 +192,30 @@ type
   end;
 
 type
+  TItems = class(TObject)
+  private
+    FItem: array of TItem;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure Add(Symbol: Char; Color, Level: Integer; Name: string;
+      Material: TItem.TMaterial; Category: TItem.TCategory; Durability: Word;
+      Amount: Word = 1);
+    procedure Del(const Index: Integer);
+    function Get(N: Integer): TItem;
+    function Has(X, Y: Integer): Integer;
+    function GetIndex(N, X, Y: Integer): Integer;
+    procedure LoadFromFile(FileName: string);
+    procedure SaveToFile(FileName: string);
+    function Count: Integer; overload;
+    function Count(X, Y: Integer): Integer; overload;
+    function GetItemPropStr(Item: TItem): string;
+    procedure Pickup(I: Integer);
+    procedure Render;
+    procedure Clear;
+  end;
+
+type
   TIniFile = class(IniFiles.TIniFile)
   public
     function ReadCategory(Section, Ident: string; DefaultValue: TItem.TCategory)
@@ -144,13 +226,6 @@ type
     function ReadMaterial(Section, Ident: string; DefaultValue: TItem.TMaterial)
       : TItem.TMaterial;
     procedure WriteMaterial(Section, Ident: string; Value: TItem.TMaterial);
-  end;
-
-type
-  TLook = class(TEntity)
-  public
-    procedure Render;
-    procedure Move(AX, AY: Integer);
   end;
 
 type
@@ -171,6 +246,9 @@ type
     procedure Clear(I: TInvByte); overload;
     procedure Clear; overload;
   end;
+
+{$ENDREGION 'Items and Inventory'}
+{$REGION 'Player'}
 
 type
   TPlayer = class(TCreature)
@@ -202,45 +280,8 @@ type
     procedure AddExp(A: Word);
   end;
 
-type
-  TCreatures = class(TObject)
-  private
-    FCreature: array of TCreature;
-  public
-    constructor Create;
-    destructor Destroy; override;
-    function Get(N: Integer): TCreature;
-    function Has(X, Y: Integer): Integer;
-    procedure LoadFromFile(FileName: string);
-    procedure SaveToFile(FileName: string);
-    function Count: Integer;
-    procedure Render;
-    procedure Clear;
-  end;
-
-type
-  TItems = class(TObject)
-  private
-    FItem: array of TItem;
-  public
-    constructor Create;
-    destructor Destroy; override;
-    procedure Add(Symbol: Char; Color, Level: Integer; Name: string;
-      Material: TItem.TMaterial; Category: TItem.TCategory; Durability: Word;
-      Amount: Word = 1);
-    procedure Del(const Index: Integer);
-    function Get(N: Integer): TItem;
-    function Has(X, Y: Integer): Integer;
-    function GetIndex(N, X, Y: Integer): Integer;
-    procedure LoadFromFile(FileName: string);
-    procedure SaveToFile(FileName: string);
-    function Count: Integer; overload;
-    function Count(X, Y: Integer): Integer; overload;
-    function GetItemPropStr(Item: TItem): string;
-    procedure Pickup(I: Integer);
-    procedure Render;
-    procedure Clear;
-  end;
+{$ENDREGION 'Player'}
+{$REGION 'Map and Tiles'}
 
 type
   TTiles = class(TObject)
@@ -310,23 +351,7 @@ type
     procedure Gen;
   end;
 
-type
-  TRace = class(TObject)
-  private
-    FColor: Integer;
-    FName: string;
-    FPos: TPoint;
-    FMap: Byte;
-    FLife: Word;
-    FMana: Word;
-  public
-    property Color: Integer read FColor write FColor;
-    property Name: string read FName write FName;
-    property Pos: TPoint read FPos write FPos;
-    property Map: Byte read FMap write FMap;
-    property Life: Word read FLife write FLife;
-    property Mana: Word read FMana write FMana;
-  end;
+{$ENDREGION 'Map and Tiles'}
 
 const
   BarFmt = '%d/%d';
@@ -343,7 +368,7 @@ const
   cAdr = 75;
   cExp = 15;
 
-  { TEntity }
+{$REGION 'TEntity'}
 
 constructor TEntity.Create(Width: Integer = 1; Height: Integer = 1);
 begin
@@ -376,7 +401,8 @@ begin
   FPos := APos
 end;
 
-{ TBar }
+{$ENDREGION 'TEntity'}
+{$REGION 'TBar'}
 
 procedure TBar.Add(Values: string);
 var
@@ -477,7 +503,8 @@ begin
   Result := Format(BarFmt, [Cur, Max]);
 end;
 
-{ TCustomCreature }
+{$ENDREGION 'TBar'}
+{$REGION 'TCustomCreature'}
 
 constructor TCustomCreature.Create(MaxLife, MaxMana: Integer);
 var
@@ -547,7 +574,8 @@ begin
   FAtr[I] := Value;
 end;
 
-{ TCreature }
+{$ENDREGION 'TCustomCreature'}
+{$REGION 'TCreature'}
 
 constructor TCreature.Create;
 begin
@@ -588,7 +616,8 @@ begin
   Saga.UI.DrawChar(Pos.X, Pos.Y, Symbol, Color, BackColor);
 end;
 
-{ TCreatures }
+{$ENDREGION 'TCreature'}
+{$REGION 'TCreatures'}
 
 procedure TCreatures.Clear;
 var
@@ -707,7 +736,8 @@ begin
   end;
 end;
 
-{ TPlayer }
+{$ENDREGION 'TCreatures'}
+{$REGION 'TPlayer'}
 
 procedure TPlayer.AddExp(A: Word);
 begin
@@ -931,7 +961,8 @@ begin
   end;
 end;
 
-{ TLook }
+{$ENDREGION 'TPlayer'}
+{$REGION 'TLook'}
 
 procedure TLook.Move(AX, AY: Integer);
 begin
@@ -994,7 +1025,8 @@ begin
     GetCreatures(), GetItems(Pos)])));
 end;
 
-{ TItem }
+{$ENDREGION 'TLook'}
+{$REGION 'TItem'}
 
 procedure TItem.Assign(Value: TItem);
 begin
@@ -1044,7 +1076,8 @@ begin
   Saga.UI.DrawChar(Pos.X, Pos.Y, Symbol, Color, BackColor);
 end;
 
-{ TItems }
+{$ENDREGION 'TItem'}
+{$REGION 'TItems'}
 
 procedure TItems.Add(Symbol: Char; Color, Level: Integer; Name: string;
   Material: TItem.TMaterial; Category: TItem.TCategory; Durability: Word;
@@ -1255,7 +1288,8 @@ begin
   end;
 end;
 
-{ TIniFile }
+{$ENDREGION 'TItems'}
+{$REGION 'TIniFile'}
 
 function TIniFile.ReadCategory(Section, Ident: string;
   DefaultValue: TItem.TCategory): TItem.TCategory;
@@ -1356,7 +1390,8 @@ begin
   WriteString(Section, Ident, TItem.MatStr[Value]);
 end;
 
-{ TInventor }
+{$ENDREGION 'TIniFile'}
+{$REGION 'TInventor'}
 
 function TInventor.AddItem(Value: TItem): Boolean;
 var
@@ -1434,6 +1469,7 @@ begin
   FItem[I] := Value;
 end;
 
+{$ENDREGION 'TInventor'}
 {$REGION 'TTiles'}
 
 function TTiles.Add(Name: string; Char: Char; Passable: Boolean; Color: Integer)

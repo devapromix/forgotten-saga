@@ -6,9 +6,7 @@ interface
 
 uses Classes;
 
-const
-  FSVersion = '0.0.3'; // Версия
-  Copyright = 'Copyright (C) 2016 by Sergiy Tkach (DevApromix)';
+{$REGION 'Stages'}
 
 type
   TStageEnum = (stGame, stMainMenu, stGameMenu, stRaceMenu, stNameMenu,
@@ -42,6 +40,9 @@ type
     property PrevStage: TStageEnum read FPrevStageEnum write FPrevStageEnum;
   end;
 
+{$ENDREGION 'Stages'}
+{$REGION 'Stage Game'}
+
 type
   TStageGame = class(TStage)
   private
@@ -55,6 +56,9 @@ type
     procedure Update(var Key: Word); override;
     procedure Timer; override;
   end;
+
+{$ENDREGION 'Stage Game'}
+{$REGION 'Stages Menu'}
 
 type
   TStageCustomMenu = class(TStage)
@@ -84,6 +88,10 @@ type
 
 type
   TStageMainMenu = class(TStageMenu)
+  private const
+    FSVersion = '0.0.3'; // Версия
+  public const
+    Copyright = 'Copyright (C) 2016 by Sergiy Tkach (DevApromix)';
   private
 
   public
@@ -179,6 +187,9 @@ type
     procedure Update(var Key: Word); override;
   end;
 
+{$ENDREGION 'Stages Menu'}
+{$REGION 'Stage Battle'}
+
 type
   TStageBattle = class(TStage)
   private
@@ -188,6 +199,9 @@ type
     procedure Update(var Key: Word); override;
     procedure Timer; override;
   end;
+
+{$ENDREGION 'Stage Battle'}
+{$REGION 'Stages Inventory and Items'}
 
 type
   TStageInv = class(TStage)
@@ -209,6 +223,9 @@ type
     procedure Timer; override;
   end;
 
+{$ENDREGION 'Stages Inventory and Items'}
+{$REGION 'Stages Quests'}
+
 type
   TStageQuestLog = class(TStageStorageMenu)
   private
@@ -228,6 +245,9 @@ type
     procedure Timer; override;
     property ID: Integer read FID write FID;
   end;
+
+{$ENDREGION 'Stages Quests'}
+{$REGION 'Stage Dialog'}
 
 type
   TLinks = class
@@ -260,6 +280,9 @@ type
     property LinkList: TLinks read FLinkList write FLinkList;
   end;
 
+{$ENDREGION 'Stage Dialog'}
+{$REGION 'Stages Victory and Defeat'}
+
 type
   TStageVictory = class(TStageCustomMenu)
   private
@@ -278,12 +301,14 @@ type
     procedure Update(var Key: Word); override;
   end;
 
+{$ENDREGION 'Stages Victory and Defeat'}
+
 implementation
 
 uses SysUtils, Math, Engine,
   ForgottenSaga.Classes, ForgottenSaga.Entities, ForgottenSaga.Inv;
 
-{ TStages }
+{$REGION 'TStages'}
 
 procedure TStages.Update(var Key: Word);
 begin
@@ -381,7 +406,8 @@ begin
     FStage[Stage].Timer;
 end;
 
-{ TStageGame }
+{$ENDREGION 'TStages'}
+{$REGION 'TStageGame'}
 
 procedure TStageGame.SetNPC(ID: Byte);
 var
@@ -389,8 +415,8 @@ var
 begin
   D := TStageDialog(Saga.Stages.GetStage(stDialog));
   D.ID := ID;
-  Saga.Dialog.LoadFromFile(TUtils.GetPath('resources') + Saga.World.CurrentCreatures.Get
-    (ID).FileName);
+  Saga.Dialog.LoadFromFile(TUtils.GetPath('resources') +
+    Saga.World.CurrentCreatures.Get(ID).FileName);
   Saga.Dialog.Next(Format('%d', [Saga.World.CurrentCreatures.Get(ID).Dialog]));
 end;
 
@@ -448,8 +474,8 @@ begin
   Saga.Engine.Print(81, 1, Saga.Player.GetFullName);
   Saga.Engine.Print(81, 2, __('Honor') + ' ' + IntToStr(Saga.Player.Score));
   for I := Low(TCustomCreature.TAtrEnum) to High(TCustomCreature.TAtrEnum) do
-    Saga.Engine.Print(81, ord(I) + 3, __(TCustomCreature.AtrStr[I]) + ' ' + Saga.Player.Atr
-      [I].ToText);
+    Saga.Engine.Print(81, ord(I) + 3, __(TCustomCreature.AtrStr[I]) + ' ' +
+      Saga.Player.Atr[I].ToText);
 end;
 
 procedure TStageGame.Timer;
@@ -530,7 +556,8 @@ begin
   end;
 end;
 
-{ TStageCustomMenu }
+{$ENDREGION 'TStageGame'}
+{$REGION 'TStageCustomMenu'}
 
 constructor TStageCustomMenu.Create;
 begin
@@ -551,7 +578,8 @@ begin
 
 end;
 
-{ TStageMenu }
+{$ENDREGION 'TStageCustomMenu'}
+{$REGION 'TStageMenu'}
 
 constructor TStageMenu.Create;
 begin
@@ -575,7 +603,8 @@ begin
     end
     else
       Saga.Engine.ForegroundColor(Saga.Colors.clMenuDef);
-    Saga.Engine.Print(0, I + Top + 2, __(TUtils.GetStr('|', Items, I)), aCenter);
+    Saga.Engine.Print(0, I + Top + 2, __(TUtils.GetStr('|', Items, I)),
+      aCenter);
   end;
 end;
 
@@ -588,8 +617,8 @@ begin
       MenuPos := TUtils.Clamp(MenuPos - 1, 0, Count - 1, False);
   end;
 end;
-
-{ TStageMainMenu }
+{$ENDREGION 'TStageMenu'}
+{$REGION 'TStageMainMenu'}
 
 constructor TStageMainMenu.Create;
 begin
@@ -603,8 +632,7 @@ begin
   inherited Render;
   Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceLGray));
   Saga.Engine.Print(0, Saga.Engine.Window.Height - 1, Copyright, aCenter);
-  Saga.Engine.Print(0, Saga.Engine.Window.Height - 1,
-    'v.' + FSVersion, aRight);
+  Saga.Engine.Print(0, Saga.Engine.Window.Height - 1, 'v.' + FSVersion, aRight);
 end;
 
 procedure TStageMainMenu.Update(var Key: Word);
@@ -639,8 +667,8 @@ begin
       end;
   end;
 end;
-
-{ TStageGameMenu }
+{$ENDREGION 'TStageMainMenu'}
+{$REGION 'TStageGameMenu'}
 
 constructor TStageGameMenu.Create;
 begin
@@ -679,8 +707,8 @@ begin
       end;
   end;
 end;
-
-{ TStageRaceMenu }
+{$ENDREGION 'TStageGameMenu'}
+{$REGION 'TStageRaceMenu'}
 
 procedure TStageRaceMenu.Render;
 var
@@ -696,8 +724,8 @@ begin
     Saga.Engine.ForegroundColor(Saga.Race[R].Color);
     Saga.Engine.Print(0, ord(R) + Top + 2, Saga.Race[R].Name, aCenter);
   end;
-  Saga.UI.DrawKey(0, Top + ord(High(TSaga.TRaceEnum)) + 4, __('Back to main menu'),
-    'ESC', aCenter);
+  Saga.UI.DrawKey(0, Top + ord(High(TSaga.TRaceEnum)) + 4,
+    __('Back to main menu'), 'ESC', aCenter);
 end;
 
 procedure TStageRaceMenu.Update(var Key: Word);
@@ -722,13 +750,14 @@ begin
       end;
   end;
 end;
-
-{ TStageNameMenu }
+{$ENDREGION 'TStageRaceMenu'}
+{$REGION 'TStageNameMenu'}
 
 procedure TStageNameMenu.Render;
 begin
   Saga.UI.DrawTitle(Top, __('What is your name?'));
-  Saga.Engine.ForegroundColor(Saga.Race[TSaga.TRaceEnum(Saga.Player.Race)].Color);
+  Saga.Engine.ForegroundColor
+    (Saga.Race[TSaga.TRaceEnum(Saga.Player.Race)].Color);
   Saga.Engine.Print(0, Top + 2, Saga.Player.GetRaceName + ' <' +
     Saga.Player.Name + '>', aCenter);
   Saga.UI.DrawKey(0, Top + 4, __('Random name'), 'SPACE', aCenter);
@@ -745,8 +774,8 @@ begin
       Saga.Player.GenName;
   end;
 end;
-
-{ TStageTextMenu }
+{$ENDREGION 'TStageNameMenu'}
+{$REGION 'TStageTextMenu'}
 
 procedure TStageTextMenu.Render;
 begin
@@ -765,8 +794,8 @@ begin
       Saga.New;
   end;
 end;
-
-{ TStageStorageMenu }
+{$ENDREGION 'TStageTextMenu'}
+{$REGION 'TStageStorageMenu'}
 
 constructor TStageStorageMenu.Create;
 begin
@@ -833,7 +862,8 @@ begin
   end;
 end;
 
-{ TStageSaveMenu }
+{$ENDREGION 'TStageStorageMenu'}
+{$REGION 'TStageSaveMenu'}
 
 procedure TStageSaveMenu.Render;
 begin
@@ -854,7 +884,8 @@ begin
   end;
 end;
 
-{ TStageLoadMenu }
+{$ENDREGION 'TStageSaveMenu'}
+{$REGION 'TStageLoadMenu'}
 
 procedure TStageLoadMenu.Render;
 begin
@@ -874,7 +905,8 @@ begin
   end;
 end;
 
-{ TStageBattle }
+{$ENDREGION 'TStageLoadMenu'}
+{$REGION 'TStageBattle'}
 
 procedure TStageBattle.Render;
 begin
@@ -885,9 +917,10 @@ begin
   Saga.Engine.ForegroundColor(Saga.Player.Color);
   Saga.Engine.Print(90, 6, Saga.Player.Name + ' (' + Saga.Player.Atr[atLife]
     .ToText + ')');
-  Saga.Engine.ForegroundColor(Saga.World.CurrentCreatures.Get(Saga.Battle.ID).Color);
-  Saga.Engine.Print(90, 7, Saga.World.CurrentCreatures.Get(Saga.Battle.ID)
-    .Name + ' (' + Saga.World.CurrentCreatures.Get(Saga.Battle.ID).Atr[atLife]
+  Saga.Engine.ForegroundColor(Saga.World.CurrentCreatures.Get
+    (Saga.Battle.ID).Color);
+  Saga.Engine.Print(90, 7, Saga.World.CurrentCreatures.Get(Saga.Battle.ID).Name
+    + ' (' + Saga.World.CurrentCreatures.Get(Saga.Battle.ID).Atr[atLife]
     .ToText + ')');
 
   Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
@@ -917,7 +950,8 @@ begin
   end;
 end;
 
-{ TLinks }
+{$ENDREGION 'TStageBattle'}
+{$REGION 'TStageDialog'}
 
 procedure TLinks.Append(const ALabel, AName: string);
 begin
@@ -960,8 +994,6 @@ begin
   Result := FNameList[I];
 end;
 
-{ TStageDialog }
-
 constructor TStageDialog.Create;
 begin
   FLinkList := TLinks.Create;
@@ -979,8 +1011,8 @@ var
   S, N, Close: string;
 begin
   Saga.Engine.ForegroundColor(Saga.World.CurrentCreatures.Get(ID).Color);
-  Saga.Engine.Print(0, 9, __(Saga.World.CurrentCreatures.Get(ID)
-    .Name), aCenter);
+  Saga.Engine.Print(0, 9, __(Saga.World.CurrentCreatures.Get(ID).Name),
+    aCenter);
   Saga.Engine.ForegroundColor(Saga.Player.Color);
   Saga.Engine.Print(0, 24, Saga.Player.GetRaceName + ' ' +
     Saga.Player.Name, aCenter);
@@ -994,7 +1026,8 @@ begin
     N := SysUtils.StringReplace(N, '(' + Saga.Dialog.CloseTag + ')', Close,
       [SysUtils.rfIgnoreCase]);
     if (Copy(Trim(LinkList.GetName(I)), 1,
-      Saga.Engine.GetTextLength(Saga.Dialog.CloseTag)) = Saga.Dialog.CloseTag) then
+      Saga.Engine.GetTextLength(Saga.Dialog.CloseTag)) = Saga.Dialog.CloseTag)
+    then
       S := Close;
     Saga.UI.DrawKey(35, I + 25, Trim(N + ' ' + S), Format('%d', [I + 1]));
   end;
@@ -1028,7 +1061,8 @@ begin
 
 end;
 
-{ TStageVictory }
+{$ENDREGION 'TStageDialog'}
+{$REGION 'TStageVictory'}
 
 procedure TStageVictory.Render;
 begin
@@ -1036,8 +1070,8 @@ begin
   Saga.Engine.ForegroundColor(Saga.Colors.clGoldText);
   Saga.Engine.Print(0, Top + 2, Format('%s поверг всех врагов',
     [Saga.Player.GetFullName]), aCenter);
-  Saga.Engine.Print(0, Top + 3,
-    Format('%s %d', [__('Honor'), Saga.Player.Score]), aCenter);
+  Saga.Engine.Print(0, Top + 3, Format('%s %d', [__('Honor'), Saga.Player.Score]
+    ), aCenter);
   Saga.UI.DrawKey(0, Top + 5, __('Close'), 'ESC', aCenter);
 end;
 
@@ -1052,16 +1086,17 @@ begin
   end;
 end;
 
-{ TStageDefeat }
+{$ENDREGION 'TStageVictory'}
+{$REGION 'TStageDefeat'}
 
 procedure TStageDefeat.Render;
 begin
   Saga.UI.DrawTitle(Top, __('Defeat!'));
   Saga.Engine.ForegroundColor(Saga.Colors.clAlertText);
-  Saga.Engine.Print(0, Top + 2, Format('%s повержен!',
-    [Saga.Player.GetFullName]), aCenter);
-  Saga.Engine.Print(0, Top + 3,
-    Format('%s %d', [__('Honor'), Saga.Player.Score]), aCenter);
+  Saga.Engine.Print(0, Top + 2, Format('%s повержен!', [Saga.Player.GetFullName]
+    ), aCenter);
+  Saga.Engine.Print(0, Top + 3, Format('%s %d', [__('Honor'), Saga.Player.Score]
+    ), aCenter);
   Saga.UI.DrawKey(0, Top + 5, __('Close'), 'ESC', aCenter);
 end;
 
@@ -1076,7 +1111,8 @@ begin
   end;
 end;
 
-{ TStageQuestLog }
+{$ENDREGION 'TStageDefeat'}
+{$REGION 'TStageQuestLog'}
 
 procedure TStageQuestLog.Render;
 var
@@ -1129,8 +1165,8 @@ begin
       end;
   end;
 end;
-
-{ TStageQuestInfo }
+{$ENDREGION 'TStageQuestLog'}
+{$REGION 'TStageQuestInfo'}
 
 procedure TStageQuestInfo.Render;
 begin
@@ -1152,16 +1188,16 @@ begin
       Saga.Stages.SetStage(stQuestLog);
   end;
 end;
-
-{ TStageAboutMenu }
+{$ENDREGION 'TStageQuestInfo'}
+{$REGION 'TStageAboutMenu'}
 
 procedure TStageAboutMenu.Render;
 begin
   Saga.UI.DrawTitle(Top, __('Forgotten Saga'));
   Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceLGray));
-  Saga.Engine.Print(0, Top + 2,
-    'github.com/devapromix/forgotten-saga', aCenter);
-  Saga.Engine.Print(0, Top + 3, Copyright, aCenter);
+  Saga.Engine.Print(0, Top + 2, 'github.com/devapromix/forgotten-saga',
+    aCenter);
+  Saga.Engine.Print(0, Top + 3, TStageMainMenu.Copyright, aCenter);
   Saga.UI.DrawKey(0, Top + 5, __('Back to main menu'), 'ESC', aCenter);
 end;
 
@@ -1173,7 +1209,8 @@ begin
   end;
 end;
 
-{ TStageRecMenu }
+{$ENDREGION 'TStageAboutMenu'}
+{$REGION 'TStageRecMenu'}
 
 constructor TStageRecMenu.Create;
 begin
@@ -1210,7 +1247,8 @@ begin
   end;
 end;
 
-{ TStageInv }
+{$ENDREGION 'TStageRecMenu'}
+{$REGION 'TStageInv'}
 
 procedure TStageInv.Render;
 var
@@ -1225,8 +1263,8 @@ begin
         (Saga.Player.Inventory.Item[I]);
       Saga.UI.DrawKey(15, I + 6, F, chr(I + 64));
     end;
-  Saga.UI.DrawKey(0, Saga.Engine.Window.Height - 6, __('Close'),
-    'ESC', aCenter);
+  Saga.UI.DrawKey(0, Saga.Engine.Window.Height - 6, __('Close'), 'ESC',
+    aCenter);
 end;
 
 procedure TStageInv.Timer;
@@ -1242,7 +1280,8 @@ begin
   end;
 end;
 
-{ TStageItems }
+{$ENDREGION 'TStageInv'}
+{$REGION 'TStageItems'}
 
 procedure TStageItems.Render;
 var
@@ -1307,5 +1346,7 @@ begin
       end;
   end;
 end;
+
+{$ENDREGION 'TStageItems'}
 
 end.

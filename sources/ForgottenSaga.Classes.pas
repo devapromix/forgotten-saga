@@ -4,6 +4,7 @@ interface
 
 uses Classes, Types, Engine, ForgottenSaga.Scenes, ForgottenSaga.Entities;
 
+{$REGION 'Utils'}
 function __(S: string): string;
 
 type
@@ -20,6 +21,9 @@ type
     class function RandStr(const Separator: Char; S: string): string;
     class function GetPath(SubDir: string = ''): string;
   end;
+
+{$ENDREGION 'Utils'}
+{$REGION 'TUI'}
 
 type
   TUI = class(TObject)
@@ -38,6 +42,8 @@ type
       Align: TAlign; Active: Boolean = True); overload;
     property Engine: TEngine read FEngine write FEngine;
   end;
+
+{$ENDREGION 'TUI'}
 
 type
   TVars = class(TObject)
@@ -96,6 +102,8 @@ type
     property Current: string read FCurrent write FCurrent;
   end;
 
+{$REGION 'Colors'}
+
 type
   TColors = class(TObject)
   public type
@@ -126,6 +134,8 @@ type
     function GetColor(Color: TColorsEnum): Integer; overload;
     function GetColor(Color: string): Integer; overload;
   end;
+
+{$ENDREGION 'Colors'}
 
 type
   TConfig = class(TObject)
@@ -231,6 +241,8 @@ type
     procedure SaveToFile(FileName: string);
   end;
 
+{$REGION 'TSaga'}
+
 type
   TSaga = class(TObject)
   public type
@@ -298,9 +310,13 @@ type
 var
   Saga: TSaga;
 
+{$ENDREGION 'TSaga'}
+
 implementation
 
 uses Math, SysUtils, Dialogs, IniFiles;
+
+{$REGION 'Utils'}
 
 function __(S: string): string;
 begin
@@ -310,7 +326,78 @@ begin
   Result := Saga.Lg.Get(S);
 end;
 
-{ TWorld }
+class function TUtils.Percent(N, P: Integer): Integer;
+begin
+  Result := N * P div 100;
+end;
+
+class function TUtils.RandStr(const Separator: Char; S: string): string;
+var
+  SL: TStringlist;
+begin
+  SL := TUtils.ExplodeString(Separator, S);
+  Result := Trim(SL[Math.RandomRange(0, SL.Count)]);
+end;
+
+class procedure TUtils.Box();
+begin
+  ShowMessage('');
+end;
+
+class procedure TUtils.Box(const S: string);
+begin
+  ShowMessage(S);
+end;
+
+class function TUtils.BarWidth(CX, MX, WX: Integer): Integer;
+begin
+  Result := Round(CX / MX * WX);
+end;
+
+class procedure TUtils.Box(const I: Integer);
+begin
+  ShowMessage(Format('%d', [I]));
+end;
+
+class function TUtils.Clamp(Value, AMin, AMax: Integer; Flag: Boolean): Integer;
+begin
+  Result := Value;
+  if (Result < AMin) then
+    if Flag then
+      Result := AMin
+    else
+      Result := AMax;
+  if (Result > AMax) then
+    if Flag then
+      Result := AMax
+    else
+      Result := AMin;
+end;
+
+class function TUtils.ExplodeString(const Separator, Source: string)
+  : TStringlist;
+begin
+  Result := TStringlist.Create();
+  Result.Text := StringReplace(Source, Separator, #13, [rfReplaceAll]);
+end;
+
+class function TUtils.GetPath(SubDir: string): string;
+begin
+  Result := ExtractFilePath(ParamStr(0));
+  Result := IncludeTrailingPathDelimiter(Result + SubDir);
+end;
+
+class function TUtils.GetStr(const Separator: Char; S: string;
+  I: Integer): string;
+var
+  SL: TStringlist;
+begin
+  SL := TUtils.ExplodeString(Separator, S);
+  Result := Trim(SL[I]);
+end;
+
+{$ENDREGION 'Utils'}
+{$REGION 'TWorld'}
 
 function TWorld.Count: Byte;
 begin
@@ -446,7 +533,8 @@ begin
   FMaps[I].SaveToFile(TUtils.GetPath('resources') + '0.map');
 end;
 
-{ TSaga }
+{$ENDREGION 'TWorld'}
+{$REGION 'TSaga'}
 
 constructor TSaga.Create(AWidth, AHeight: Integer);
 const
@@ -662,7 +750,8 @@ begin
   Saga.Log[lgGame].Clear;
 end;
 
-{ TLog }
+{$ENDREGION 'TSaga'}
+{$REGION 'TLog'}
 
 procedure TLog.Add(Text: string; Flag: Boolean = True);
 begin
@@ -750,7 +839,8 @@ begin
   Saga.Engine.Print(Get, Rect(Left, Top, Width, 0));
 end;
 
-{ TQuest }
+{$ENDREGION 'TLog'}
+{$REGION 'TQuest'}
 
 procedure TQuest.Add(Slot: Byte; Data: string);
 var
@@ -805,7 +895,8 @@ begin
   FList.SaveToFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
 end;
 
-{ TNotification }
+{$ENDREGION 'TQuest'}
+{$REGION 'TNotification'}
 
 procedure TNotification.Add(S: string);
 begin
@@ -833,7 +924,8 @@ begin
     Saga.Engine.Print(Left, Top, FMessage);
 end;
 
-{ TRecs }
+{$ENDREGION 'TNotification'}
+{$REGION 'TRecs'}
 
 procedure TRecs.Add(Slot: Byte);
 var
@@ -898,7 +990,8 @@ begin
   TStageRecMenu(Saga.Stages.GetStage(stRecMenu)).RecPos := Slot;
 end;
 
-{ TLanguage }
+{$ENDREGION 'TRecs'}
+{$REGION 'TLanguage'}
 
 function TLanguage.Get(S: string): string;
 var
@@ -960,7 +1053,8 @@ begin
   FValue.Clear;
 end;
 
-{ TColors }
+{$ENDREGION 'TLanguage'}
+{$REGION 'TColors'}
 
 function TColors.GetColor(Color: TColorsEnum): Integer;
 begin
@@ -1015,7 +1109,8 @@ begin
   clCursor := GetColor(ceDGray);
 end;
 
-{ TConfig }
+{$ENDREGION 'TColors'}
+{$REGION 'TConfig'}
 
 procedure TConfig.LoadFromFile(FileName: string);
 var
@@ -1029,7 +1124,8 @@ begin
   end;
 end;
 
-{ TUI }
+{$ENDREGION 'TConfig'}
+{$REGION 'TUI'}
 
 procedure TUI.DrawChar(X, Y: Integer; Symbol: System.Char;
   ForegroundColor, BackgroundColor: Integer);
@@ -1088,6 +1184,9 @@ begin
   Engine.Print(0, Y - 1, Text, aCenter);
   Engine.Print(0, Y, StringOfChar('=', Engine.GetTextLength(Text)), aCenter);
 end;
+
+{$ENDREGION 'TUI'}
+{$REGION 'TScript'}
 
 constructor TScript.Create;
 begin
@@ -1364,7 +1463,8 @@ begin
     Saga.Stages.SetStage(stGame);
 end;
 
-{ TVars }
+{$ENDREGION 'TScript'}
+{$REGION 'TVars'}
 
 procedure TVars.Clear;
 begin
@@ -1474,16 +1574,18 @@ end;
 procedure TVars.SaveToFile(const FileName: string);
 var
   I: Integer;
-  S: TStringlist;
+  A: TStringlist;
 begin
-  S := TStringlist.Create;
+  A := TStringlist.Create;
+{$IFNDEF FPC}A.WriteBOM := False; {$ENDIF}
   for I := 0 to FID.Count - 1 do
-    S.Append(FID[I] + ',' + FValue[I]);
-  S.SaveToFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
-  S.Free;
+    A.Append(FID[I] + ',' + FValue[I]);
+  A.SaveToFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
+  A.Free;
 end;
 
-{ TBattle }
+{$ENDREGION 'TVars'}
+{$REGION 'TBattle'}
 
 constructor TBattle.Create;
 begin
@@ -1534,76 +1636,6 @@ begin
   end;
 end;
 
-{ TUtil }
-
-class function TUtils.Percent(N, P: Integer): Integer;
-begin
-  Result := N * P div 100;
-end;
-
-class function TUtils.RandStr(const Separator: Char; S: string): string;
-var
-  SL: TStringlist;
-begin
-  SL := TUtils.ExplodeString(Separator, S);
-  Result := Trim(SL[Math.RandomRange(0, SL.Count)]);
-end;
-
-class procedure TUtils.Box();
-begin
-  ShowMessage('');
-end;
-
-class procedure TUtils.Box(const S: string);
-begin
-  ShowMessage(S);
-end;
-
-class function TUtils.BarWidth(CX, MX, WX: Integer): Integer;
-begin
-  Result := Round(CX / MX * WX);
-end;
-
-class procedure TUtils.Box(const I: Integer);
-begin
-  ShowMessage(Format('%d', [I]));
-end;
-
-class function TUtils.Clamp(Value, AMin, AMax: Integer; Flag: Boolean): Integer;
-begin
-  Result := Value;
-  if (Result < AMin) then
-    if Flag then
-      Result := AMin
-    else
-      Result := AMax;
-  if (Result > AMax) then
-    if Flag then
-      Result := AMax
-    else
-      Result := AMin;
-end;
-
-class function TUtils.ExplodeString(const Separator, Source: string)
-  : TStringlist;
-begin
-  Result := TStringlist.Create();
-  Result.Text := StringReplace(Source, Separator, #13, [rfReplaceAll]);
-end;
-
-class function TUtils.GetPath(SubDir: string): string;
-begin
-  Result := ExtractFilePath(ParamStr(0));
-  Result := IncludeTrailingPathDelimiter(Result + SubDir);
-end;
-
-class function TUtils.GetStr(const Separator: Char; S: string;
-  I: Integer): string;
-var
-  SL: TStringlist;
-begin
-  SL := TUtils.ExplodeString(Separator, S);
-  Result := Trim(SL[I]);
-end;
+{$ENDREGION 'TBattle'}
 
 end.
