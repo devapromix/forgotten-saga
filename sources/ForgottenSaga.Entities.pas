@@ -1,41 +1,30 @@
-﻿unit ForgottenSaga.Creature;
+﻿unit ForgottenSaga.Entities;
 
 interface
 
 uses {$IFNDEF FPC}Types, {$ENDIF}Classes, IniFiles;
 
 type
-  TBaseEntity = class(TObject)
+  TEntity = class(TObject)
   private
     FPos: TPoint;
-  public
-    procedure SetPosition(const APos: TPoint); overload;
-    procedure SetPosition(const X, Y: Integer); overload;
-    property Pos: TPoint read FPos;
-    function Has(const APos: TPoint): Boolean; overload;
-    function Has(const X, Y: Integer): Boolean; overload;
-  end;
-
-type
-  TEntity = class(TBaseEntity)
-  private
+    FHeight: Integer;
+    FWidth: Integer;
     FName: string;
-  public
-    constructor Create();
-    destructor Destroy; override;
-    property Name: string read FName write FName;
-  end;
-
-type
-  TAdvEntity = class(TEntity)
-  private
     FColor: Integer;
     FSymbol: Char;
     FLevel: Byte;
     FActive: Boolean;
   public
-    constructor Create();
-    destructor Destroy; override;
+    constructor Create(Width: Integer = 1; Height: Integer = 1);
+    procedure SetPosition(const APos: TPoint); overload;
+    procedure SetPosition(const X, Y: Integer); overload;
+    property Pos: TPoint read FPos;
+    function Has(const APos: TPoint): Boolean; overload;
+    function Has(const X, Y: Integer): Boolean; overload;
+    property Width: Integer read FWidth;
+    property Height: Integer read FHeight;
+    property Name: string read FName write FName;
     property Color: Integer read FColor write FColor;
     property Symbol: Char read FSymbol write FSymbol;
     property Level: Byte read FLevel write FLevel;
@@ -71,13 +60,11 @@ type
   end;
 
 type
-  TAtrEnum = (atExp, atLife, atMana, atAdr);
-
-const
-  AtrStr: array [TAtrEnum] of string = ('Exp', 'Life', 'Mana', 'Adrenalin');
-
-type
-  TCustomCreature = class(TAdvEntity)
+  TCustomCreature = class(TEntity)
+  public type
+    TAtrEnum = (atExp, atLife, atMana, atAdr);
+  public const
+    AtrStr: array [TAtrEnum] of string = ('Exp', 'Life', 'Mana', 'Adrenalin');
   private
     FAtr: array [TAtrEnum] of TBar;
     FSkillPoints: Byte;
@@ -98,13 +85,11 @@ type
   end;
 
 type
-  TForce = (fcAlly, fcEnemy);
-
-const
-  ForceValues: array[Boolean] of TForce = (fcAlly, fcEnemy);
-
-type
   TCreature = class(TCustomCreature)
+  public type
+    TForce = (fcAlly, fcEnemy);
+  public const
+    ForceValues: array [Boolean] of TForce = (fcAlly, fcEnemy);
   private
     FForce: TForce;
     FFileName: string;
@@ -121,19 +106,15 @@ type
   end;
 
 type
-  TCategory = (ctNone, ctStaff, ctSpear, ctAxe, ctSword);
-
-const
-  CatStr: array [TCategory] of string = ('', 'staff', 'spear', 'axe', 'sword');
-
-type
-  TMaterial = (mtNone, mtWood, mtBone, mtStone, mtMetal);
-
-const
-  MatStr: array [TMaterial] of string = ('', 'wood', 'bone', 'stone', 'metal');
-
-type
-  TItem = class(TAdvEntity)
+  TItem = class(TEntity)
+  public type
+    TCategory = (ctNone, ctStaff, ctSpear, ctAxe, ctSword);
+    TMaterial = (mtNone, mtWood, mtBone, mtStone, mtMetal);
+  public const
+    CatStr: array [TCategory] of string = ('', 'staff', 'spear', 'axe',
+      'sword');
+    MatStr: array [TMaterial] of string = ('', 'wood', 'bone', 'stone',
+      'metal');
   private
     FCount: Integer;
     FCategory: TCategory;
@@ -155,24 +136,21 @@ type
 type
   TIniFile = class(IniFiles.TIniFile)
   public
-    function ReadCategory(Section, Ident: string; DefaultValue: TCategory)
-      : TCategory;
-    procedure WriteCategory(Section, Ident: string; Value: TCategory);
+    function ReadCategory(Section, Ident: string; DefaultValue: TItem.TCategory)
+      : TItem.TCategory;
+    procedure WriteCategory(Section, Ident: string; Value: TItem.TCategory);
     function ReadColor(Section, Ident: string; DefaultValue: string): Integer;
     procedure WriteColor(Section, Ident: string; Value: Integer);
-    function ReadMaterial(Section, Ident: string; DefaultValue: TMaterial)
-      : TMaterial;
-    procedure WriteMaterial(Section, Ident: string; Value: TMaterial);
+    function ReadMaterial(Section, Ident: string; DefaultValue: TItem.TMaterial)
+      : TItem.TMaterial;
+    procedure WriteMaterial(Section, Ident: string; Value: TItem.TMaterial);
   end;
 
 type
-  TLook = class(TBaseEntity)
-  private
-    FEnabled: Boolean;
+  TLook = class(TEntity)
   public
     procedure Render;
     procedure Move(AX, AY: Integer);
-    property Enabled: Boolean read FEnabled write FEnabled;
   end;
 
 type
@@ -248,7 +226,7 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure Add(Symbol: Char; Color, Level: Integer; Name: string;
-      Material: TMaterial; Category: TCategory; Durability: Word;
+      Material: TItem.TMaterial; Category: TItem.TCategory; Durability: Word;
       Amount: Word = 1);
     procedure Del(const Index: Integer);
     function Get(N: Integer): TItem;
@@ -264,6 +242,92 @@ type
     procedure Clear;
   end;
 
+type
+  TTiles = class(TObject)
+  public type
+    TTileEnum = (tNone, tRes1, tRes2, tRes3, tRes4, tRes5, tDirt, tGrass,
+      tStone, tSand, tRock, tWater, tDeepWater, tLava, tRes6, tRes7, tRes8,
+      tRes9, tRes10, tWillowTree, tOakTree, tAshTree, tYewTree, tBirchTree,
+      tAspenTree, tMapleTree, tWalnutTree, tPineTree, tCedarTree, tSpruceTree,
+      tRes11, tRes12, tRes13, tRes14, tRes15, tStDn, tStUp, tRes16, tRes17,
+      tRes18, tRes19, tRes20, tStoneFloor, tStoneWall, tRes21, tRes22, tRes23,
+      tRes24, tRes25, tRoad);
+  public const
+    TileDarkPercent = 40;
+    TileStr: array [TTileEnum] of string = ('NONE', 'RES1', 'RES2', 'RES3',
+      'RES4', 'RES5', 'DIRT', 'GRASS', 'STONE', 'SAND', 'ROCK', 'WATER',
+      'DEEP_WATER', 'LAVA', 'RES6', 'RES7', 'RES8', 'RES9', 'RES10',
+      'WILLOW_TREE', 'OAK_TREE', 'ASH_TREE', 'YEW_TREE', 'BIRCH_TREE',
+      'ASPEN_TREE', 'MAPLE_TREE', 'WALNUT_TREE', 'PINE_TREE', 'CEDAR_TREE',
+      'SPRUCE_TREE', 'RES11', 'RES12', 'RES13', 'RES14', 'RES15', 'STAIRS_DOWN',
+      'STAIRS_UP', 'RES16', 'RES17', 'RES18', 'RES19', 'RES20', 'STONE_FLOOR',
+      'STONE_WALL', 'RES21', 'RES22', 'RES23', 'RES24', 'RES25', 'ROAD');
+  public type
+    TTileProp = record
+      Name: string;
+      Symbol: System.Char;
+      Passable: Boolean;
+      Color: Integer;
+    end;
+  private
+    FTiles: array [TTileEnum] of TTileProp;
+    function Add(Name: string; Char: System.Char; Passable: Boolean;
+      Color: Integer): TTileProp;
+  public
+    function GetTile(Tile: TTileEnum): TTileProp;
+    procedure LoadFromFile(FileName: string);
+  end;
+
+type
+  TMap = class(TEntity)
+  public const
+    MapWidth = 80;
+    MapHeight = 40;
+  public type
+    TDir = (drLeft, drUp, drRight, drDown, drTop, drBottom);
+    TLayerEnum = (lrTerrain, lrObjects);
+    TLayer = array [0 .. MapHeight - 1, 0 .. MapWidth - 1, TLayerEnum]
+      of TTiles.TTileEnum;
+  private
+    FMap: TLayer;
+  public
+    FileName: string;
+    Map: array [TDir] of Integer;
+    procedure Clear;
+    procedure ClearLayer(Z: TLayerEnum);
+    procedure FillLayer(Z: TLayerEnum; Tile: TTiles.TTileEnum);
+    constructor Create;
+    destructor Destroy; override;
+    procedure LoadFromFile(AFileName: string);
+    procedure SaveToFile(AFileName: string);
+    function CellInMap(X, Y: Integer): Boolean;
+    function GetTopTileChar(X, Y: Integer): Char;
+    procedure SetTile(X, Y: Integer; Z: TLayerEnum; Tile: TTiles.TTileEnum);
+    function GetTile(X, Y: Integer; Z: TLayerEnum): TTiles.TTileEnum;
+    function HasTile(Tile: TTiles.TTileEnum; X, Y: Integer;
+      Z: TLayerEnum = lrTerrain): Boolean;
+    procedure Render;
+    procedure Gen;
+  end;
+
+type
+  TRace = class(TObject)
+  private
+    FColor: Integer;
+    FName: string;
+    FPos: TPoint;
+    FMap: Byte;
+    FLife: Word;
+    FMana: Word;
+  public
+    property Color: Integer read FColor write FColor;
+    property Name: string read FName write FName;
+    property Pos: TPoint read FPos write FPos;
+    property Map: Byte read FMap write FMap;
+    property Life: Word read FLife write FLife;
+    property Mana: Word read FMana write FMana;
+  end;
+
 const
   BarFmt = '%d/%d';
   InfFmt = '%s %s';
@@ -271,65 +335,45 @@ const
 
 implementation
 
-uses SysUtils, Math, Engine, ForgottenSaga.Game, Common.Map,
-  Common.Utils, ForgottenSaga.Scenes, Common.Variables;
+uses SysUtils, Math, Engine, ForgottenSaga.Classes, ForgottenSaga.Scenes;
 
 const
-  RaceNameDiv: array [TRaceEnum] of string = ('', '-', ' ');
+  Offset = 40;
+  RaceNameDiv: array [TSaga.TRaceEnum] of string = ('', '-', ' ');
   cAdr = 75;
   cExp = 15;
 
-  { TBaseEntity }
+  { TEntity }
 
-function TBaseEntity.Has(const APos: TPoint): Boolean;
+constructor TEntity.Create(Width: Integer = 1; Height: Integer = 1);
 begin
-  Result := (FPos.X = APos.X) and (FPos.Y = APos.Y)
-end;
-
-function TBaseEntity.Has(const X, Y: Integer): Boolean;
-begin
-  Result := (FPos.X = X) and (FPos.Y = Y)
-end;
-
-procedure TBaseEntity.SetPosition(const X, Y: Integer);
-begin
-  FPos := Point(X, Y)
-end;
-
-procedure TBaseEntity.SetPosition(const APos: TPoint);
-begin
-  FPos := APos
-end;
-
-{ TEntity }
-
-constructor TEntity.Create;
-begin
-  inherited Create;
+  FHeight := Height;
+  FWidth := Width;
   Name := '';
-end;
-
-destructor TEntity.Destroy;
-begin
-
-  inherited;
-end;
-
-{ TAdvEntity }
-
-constructor TAdvEntity.Create;
-begin
-  inherited Create;
   Active := True;
   Color := $00FFFFFF;
   Symbol := '?';
   Level := 1;
 end;
 
-destructor TAdvEntity.Destroy;
+function TEntity.Has(const APos: TPoint): Boolean;
 begin
+  Result := (FPos.X = APos.X) and (FPos.Y = APos.Y)
+end;
 
-  inherited;
+function TEntity.Has(const X, Y: Integer): Boolean;
+begin
+  Result := (FPos.X = X) and (FPos.Y = Y)
+end;
+
+procedure TEntity.SetPosition(const X, Y: Integer);
+begin
+  FPos := Point(X, Y)
+end;
+
+procedure TEntity.SetPosition(const APos: TPoint);
+begin
+  FPos := APos
 end;
 
 { TBar }
@@ -338,7 +382,7 @@ procedure TBar.Add(Values: string);
 var
   SL: TStringList;
 begin
-  SL := ExplodeString('/', Values);
+  SL := TUtils.ExplodeString('/', Values);
   FCur := StrToIntDef(Trim(SL[0]), 0);
   FMax := StrToIntDef(Trim(SL[1]), 0);
 end;
@@ -541,8 +585,7 @@ end;
 
 procedure TCreature.Render;
 begin
-  Saga.Engine.FontBackColor(BackColor());
-  Saga.Engine.CharOut(Pos.X, Pos.Y, Symbol, Color);
+  Saga.UI.DrawChar(Pos.X, Pos.Y, Symbol, Color, BackColor);
 end;
 
 { TCreatures }
@@ -617,7 +660,8 @@ begin
         FCreature[L].Dialog := F.ReadInteger(S, 'Dialog', 0);
         FCreature[L].Level := F.ReadInteger(S, 'Level', 1);
         FCreature[L].FileName := F.ReadString(S, 'File', '');
-        FCreature[L].Force := ForceValues[not F.ReadBool(S, 'NPC', False)];
+        FCreature[L].Force := TCreature.ForceValues
+          [not F.ReadBool(S, 'NPC', False)];
       end;
     end;
   finally
@@ -672,7 +716,7 @@ begin
     Atr[atExp].SetCur(Atr[atExp].Cur + A - Atr[atExp].Max);
     Score := Score + (Level * 10);
     Level := Level + 1;
-    Atr[atExp].SetMax(Atr[atExp].Max + Percent(Atr[atExp].Max, 20));
+    Atr[atExp].SetMax(Atr[atExp].Max + TUtils.Percent(Atr[atExp].Max, 20));
   end
   else
     Atr[atExp].Inc(A);
@@ -680,9 +724,9 @@ end;
 
 procedure TPlayer.Clear;
 var
-  R: TRaceEnum;
+  R: TSaga.TRaceEnum;
 begin
-  R := TRaceEnum(Race);
+  R := TSaga.TRaceEnum(Race);
   Color := Saga.Race[R].Color;
   SetPosition(Saga.Race[R].Pos);
   Map := Saga.Race[R].Map;
@@ -692,7 +736,7 @@ begin
   AddAtr(atAdr, cAdr, False);
   AddAtr(atLife, Saga.Race[R].Life, True);
   AddAtr(atMana, Saga.Race[R].Mana, True);
-  Look.Enabled := False;
+  Look.Active := False;
   Inventory.Clear();
   FPrevName := '';
 end;
@@ -703,9 +747,9 @@ begin
   FPrevName := '';
   Look := TLook.Create;
   Inventory := TInventor.Create();
-  Look.Enabled := False;
+  Look.Active := False;
   SetPosition(40, 20);
-  Color := clHotKey;
+  Color := $00FFFFFF;
   Symbol := '@';
   Force := fcAlly;
   Race := 0;
@@ -741,13 +785,13 @@ begin
   M := Math.RandomRange(1, 3);
   if (Race = 2) then
     M := 1;
-  R := RaceName[TRaceEnum(Race)];
-  SL := ExplodeString('|', R);
+  R := TSaga.RaceName[TSaga.TRaceEnum(Race)];
+  SL := TUtils.ExplodeString('|', R);
   for I := 0 to M do
   begin
-    Name := Name + RandStr(',', __(SL[I]));
+    Name := Name + TUtils.RandStr(',', __(SL[I]));
     if (I < M) then
-      Name := Name + RaceNameDiv[TRaceEnum(Race)];
+      Name := Name + RaceNameDiv[TSaga.TRaceEnum(Race)];
   end;
   if (FPrevName = Name) then
     GenName;
@@ -761,7 +805,7 @@ end;
 
 function TPlayer.GetRaceName: string;
 begin
-  Result := Saga.Race[TRaceEnum(Race)].Name;
+  Result := Saga.Race[TSaga.TRaceEnum(Race)].Name;
 end;
 
 procedure TPlayer.LoadFromFile(AFileName: string);
@@ -807,10 +851,10 @@ begin
   if (Pos.X = 0) and (AX = -1) then
     if Saga.World.GoLoc(drLeft) then
     begin
-      SetPosition(MapWidth - 1, Pos.Y);
+      SetPosition(TMap.MapWidth - 1, Pos.Y);
       Exit;
     end;
-  if (Pos.X = MapWidth - 1) and (AX = 1) then
+  if (Pos.X = TMap.MapWidth - 1) and (AX = 1) then
     if Saga.World.GoLoc(drRight) then
     begin
       SetPosition(0, Pos.Y);
@@ -819,10 +863,10 @@ begin
   if (Pos.Y = 0) and (AY = -1) then
     if Saga.World.GoLoc(drUp) then
     begin
-      SetPosition(Pos.X, MapHeight - 1);
+      SetPosition(Pos.X, TMap.MapHeight - 1);
       Exit;
     end;
-  if (Pos.Y = MapHeight - 1) and (AY = 1) then
+  if (Pos.Y = TMap.MapHeight - 1) and (AY = 1) then
     if Saga.World.GoLoc(drDown) then
     begin
       SetPosition(Pos.X, 0);
@@ -897,7 +941,7 @@ end;
 
 procedure TLook.Render;
 var
-  T: TTileEnum;
+  T: TTiles.TTileEnum;
 
   function GetCreatures: string;
   var
@@ -933,20 +977,19 @@ var
   end;
 
 begin
-  if not Enabled then
+  if not Active then
   begin
-    Saga.Engine.FontColor(Saga.Colors.GetColor(ceWhite));
-    Saga.Engine.FontBackColor(0);
-    Saga.Engine.TextOut(0, 39, GetItems(Saga.Player.Pos));
+    Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceWhite));
+    Saga.Engine.BackgroundColor(0);
+    Saga.Engine.Print(0, 39, GetItems(Saga.Player.Pos));
     Exit;
   end;
-  Saga.Engine.FontBackColor(Saga.Colors.GetColor(ceLGray));
-  Saga.Engine.CharOut(Pos.X, Pos.Y, Saga.World.CurrentMap.GetTopTileChar(Pos.X,
-    Pos.Y), Saga.Colors.GetColor(ceWhite));
+  Saga.UI.DrawChar(Pos.X, Pos.Y, Saga.World.CurrentMap.GetTopTileChar(Pos.X,
+    Pos.Y), Saga.Colors.GetColor(ceWhite), Saga.Colors.GetColor(ceLGray));
   T := Saga.World.CurrentMap.GetTile(Pos.X, Pos.Y, lrTerrain);
-  Saga.Engine.FontColor(Saga.Colors.GetColor(ceWhite));
-  Saga.Engine.FontBackColor(0);
-  Saga.Engine.TextOut(0, 39, Trim(Format(KeyFmt + ' ' + InfFmt,
+  Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceWhite));
+  Saga.Engine.BackgroundColor(0);
+  Saga.Engine.Print(0, 39, Trim(Format(KeyFmt + ' ' + InfFmt,
     [Saga.Tiles.GetTile(T).Symbol, __(Saga.Tiles.GetTile(T).Name),
     GetCreatures(), GetItems(Pos)])));
 end;
@@ -998,14 +1041,14 @@ end;
 
 procedure TItem.Render;
 begin
-  Saga.Engine.FontBackColor(BackColor);
-  Saga.Engine.CharOut(Pos.X, Pos.Y, Symbol, Color);
+  Saga.UI.DrawChar(Pos.X, Pos.Y, Symbol, Color, BackColor);
 end;
 
 { TItems }
 
 procedure TItems.Add(Symbol: Char; Color, Level: Integer; Name: string;
-  Material: TMaterial; Category: TCategory; Durability: Word; Amount: Word = 1);
+  Material: TItem.TMaterial; Category: TItem.TCategory; Durability: Word;
+  Amount: Word = 1);
 var
   I: Integer;
 
@@ -1214,18 +1257,18 @@ end;
 
 { TIniFile }
 
-function TIniFile.ReadCategory(Section, Ident: string; DefaultValue: TCategory)
-  : TCategory;
+function TIniFile.ReadCategory(Section, Ident: string;
+  DefaultValue: TItem.TCategory): TItem.TCategory;
 var
   S: string;
-  C: TCategory;
+  C: TItem.TCategory;
 begin
-  S := LowerCase(Trim(ReadString(Section, Ident, CatStr[DefaultValue])));
+  S := LowerCase(Trim(ReadString(Section, Ident, TItem.CatStr[DefaultValue])));
   Result := ctNone;
   if (S = '') then
     Exit;
-  for C := Low(TCategory) to High(TCategory) do
-    if (S = CatStr[C]) then
+  for C := Low(TItem.TCategory) to High(TItem.TCategory) do
+    if (S = TItem.CatStr[C]) then
     begin
       Result := C;
       Exit;
@@ -1247,7 +1290,7 @@ begin
   begin
     C := TColors.Create;
     try
-      C.LoadFromFile(GetPath('resources') + 'colors.ini');
+      C.LoadFromFile(TUtils.GetPath('resources') + 'colors.ini');
       Result := C.GetColor(S);
     finally
       C.Free;
@@ -1255,7 +1298,7 @@ begin
     Exit;
   end;
 
-  SL := ExplodeString(',', S);
+  SL := TUtils.ExplodeString(',', S);
   if (SL.Count = 0) then
     Exit;
   if (SL.Count > 0) then
@@ -1273,29 +1316,30 @@ begin
   Result := (R or (G shl 8) or (B shl 16))
 end;
 
-function TIniFile.ReadMaterial(Section, Ident: string; DefaultValue: TMaterial)
-  : TMaterial;
+function TIniFile.ReadMaterial(Section, Ident: string;
+  DefaultValue: TItem.TMaterial): TItem.TMaterial;
 var
   S: string;
-  M: TMaterial;
+  M: TItem.TMaterial;
 begin
-  S := LowerCase(Trim(ReadString(Section, Ident, MatStr[DefaultValue])));
+  S := LowerCase(Trim(ReadString(Section, Ident, TItem.MatStr[DefaultValue])));
   Result := mtNone;
   if (S = '') then
     Exit;
-  for M := Low(TMaterial) to High(TMaterial) do
-    if (S = MatStr[M]) then
+  for M := Low(TItem.TMaterial) to High(TItem.TMaterial) do
+    if (S = TItem.MatStr[M]) then
     begin
       Result := M;
       Exit;
     end;
 end;
 
-procedure TIniFile.WriteCategory(Section, Ident: string; Value: TCategory);
+procedure TIniFile.WriteCategory(Section, Ident: string;
+  Value: TItem.TCategory);
 begin
   if (Value = ctNone) then
     Exit;
-  WriteString(Section, Ident, CatStr[Value]);
+  WriteString(Section, Ident, TItem.CatStr[Value]);
 end;
 
 procedure TIniFile.WriteColor(Section, Ident: string; Value: Integer);
@@ -1304,11 +1348,12 @@ begin
     [Byte(Value), Byte(Value shr 8), Byte(Value shr 16)]));
 end;
 
-procedure TIniFile.WriteMaterial(Section, Ident: string; Value: TMaterial);
+procedure TIniFile.WriteMaterial(Section, Ident: string;
+  Value: TItem.TMaterial);
 begin
   if (Value = mtNone) then
     Exit;
-  WriteString(Section, Ident, MatStr[Value]);
+  WriteString(Section, Ident, TItem.MatStr[Value]);
 end;
 
 { TInventor }
@@ -1388,5 +1433,202 @@ procedure TInventor.SetItem(I: TInvByte; const Value: TItem);
 begin
   FItem[I] := Value;
 end;
+
+{$REGION 'TTiles'}
+
+function TTiles.Add(Name: string; Char: Char; Passable: Boolean; Color: Integer)
+  : TTileProp;
+begin
+  Result.Name := Name;
+  Result.Symbol := Char;
+  Result.Passable := Passable;
+  Result.Color := Color;
+end;
+
+function TTiles.GetTile(Tile: TTileEnum): TTileProp;
+begin
+  Result := FTiles[Tile];
+end;
+
+procedure TTiles.LoadFromFile(FileName: string);
+var
+  I: TTileEnum;
+  S: string;
+  F: TIniFile;
+begin
+  F := TIniFile.Create(FileName);
+  try
+    for I := Low(TTileEnum) to High(TTileEnum) do
+    begin
+      S := TileStr[I];
+      if F.SectionExists(S) then
+      begin
+        FTiles[I].Name := F.ReadString(S, 'Name', '');
+        FTiles[I].Symbol := F.ReadString(S, 'Symbol', '?')[1];
+        FTiles[I].Passable := F.ReadBool(S, 'Passable', False);
+        FTiles[I].Color := F.ReadColor(S, 'Color', '100,100,100');
+      end;
+    end;
+  finally
+    F.Free;
+  end;
+end;
+
+{$ENDREGION 'TTiles'}
+{$REGION 'TMap'}
+
+function TMap.CellInMap(X, Y: Integer): Boolean;
+begin
+  Result := (X >= 0) and (X < Width) and (Y >= 0) and (Y < Height);
+end;
+
+constructor TMap.Create;
+begin
+  inherited Create(MapWidth, MapHeight);
+  Clear;
+end;
+
+destructor TMap.Destroy;
+begin
+  inherited;
+end;
+
+procedure TMap.LoadFromFile(AFileName: string);
+var
+  Z: TLayerEnum;
+  X, Y, I: Integer;
+  L: TStringList;
+begin
+  L := TStringList.Create;
+  L.LoadFromFile(AFileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
+  for Z := Low(TLayerEnum) to High(TLayerEnum) do
+  begin
+    I := L.IndexOf(Format('[%d]', [Ord(Z)])) + 1;
+    for Y := 0 to Height - 1 do
+      for X := 0 to Width - 1 do
+        FMap[Y][X][Z] := TTiles.TTileEnum(Ord(L[Y + I][X + 1]) - Offset);
+  end;
+  L.Free;
+end;
+
+procedure TMap.SaveToFile(AFileName: string);
+var
+  Z: TLayerEnum;
+  X, Y: Integer;
+  L: TStringList;
+  S: string;
+begin
+  L := TStringList.Create;
+  L.Append(Format('; %s', [ExtractFileName(AFileName)]));
+  for Z := Low(TLayerEnum) to High(TLayerEnum) do
+  begin
+    L.Append(Format('[%d]', [Ord(Z)]));
+    for Y := 0 to Height - 1 do
+    begin
+      S := '';
+      for X := 0 to Width - 1 do
+        S := S + Chr(Ord(FMap[Y][X][Z]) + Offset);
+      L.Append(S);
+    end;
+  end;
+  L.SaveToFile(AFileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
+  L.Free;
+end;
+
+procedure TMap.Render;
+var
+  Z: TLayerEnum;
+  X, Y: Integer;
+  TerTile, ObjTile: TTiles.TTileProp;
+begin
+  for Z := Low(TLayerEnum) to High(TLayerEnum) do
+    for Y := 0 to Self.Height - 1 do
+      for X := 0 to Self.Width - 1 do
+        case Z of
+          lrTerrain:
+            begin
+              TerTile := Saga.Tiles.GetTile(FMap[Y][X][Z]);
+              Saga.UI.DrawChar(X, Y, TerTile.Symbol, TerTile.Color,
+                Saga.Engine.DarkColor(TerTile.Color, TTiles.TileDarkPercent));
+            end;
+          lrObjects:
+            if not HasTile(tNone, X, Y, Z) then
+            begin
+              TerTile := Saga.Tiles.GetTile(FMap[Y][X][lrTerrain]);
+              ObjTile := Saga.Tiles.GetTile(FMap[Y][X][Z]);
+              Saga.UI.DrawChar(X, Y, ObjTile.Symbol, ObjTile.Color,
+                Saga.Engine.DarkColor(TerTile.Color, TTiles.TileDarkPercent));
+            end;
+        end;
+end;
+
+procedure TMap.FillLayer(Z: TLayerEnum; Tile: TTiles.TTileEnum);
+var
+  X, Y: Integer;
+begin
+  for Y := 0 to Height - 1 do
+    for X := 0 to Width - 1 do
+      FMap[Y][X][Z] := Tile;
+end;
+
+procedure TMap.ClearLayer(Z: TLayerEnum);
+begin
+  FillLayer(Z, tNone);
+end;
+
+procedure TMap.Clear;
+var
+  Z: TLayerEnum;
+begin
+  for Z := Low(TLayerEnum) to High(TLayerEnum) do
+    ClearLayer(Z);
+end;
+
+function TMap.HasTile(Tile: TTiles.TTileEnum; X, Y: Integer;
+  Z: TLayerEnum = lrTerrain): Boolean;
+begin
+  Result := FMap[Y][X][Z] = Tile
+end;
+
+procedure TMap.SetTile(X, Y: Integer; Z: TLayerEnum; Tile: TTiles.TTileEnum);
+begin
+  FMap[Y][X][Z] := Tile;
+end;
+
+function TMap.GetTile(X, Y: Integer; Z: TLayerEnum): TTiles.TTileEnum;
+begin
+  Result := FMap[Y][X][Z];
+end;
+
+function TMap.GetTopTileChar(X, Y: Integer): Char;
+var
+  N: Integer;
+  Z: TLayerEnum;
+begin
+  Result := ' ';
+  for Z := High(TLayerEnum) downto Low(TLayerEnum) do
+    if (GetTile(X, Y, Z) <> tNone) then
+    begin
+      Result := Saga.Tiles.GetTile(GetTile(X, Y, Z)).Symbol;
+      N := Saga.World.CurrentItems.Has(X, Y);
+      if (N > -1) then
+        Result := Saga.World.CurrentItems.Get(N).Symbol;
+      N := Saga.World.CurrentCreatures.Has(X, Y);
+      if (N > -1) then
+        Result := Saga.World.CurrentCreatures.Get(N).Symbol;
+      if (Saga.Player.Has(X, Y)) then
+        Result := '@';
+      Exit;
+    end;
+end;
+
+procedure TMap.Gen;
+begin
+  // GenTestMap();
+  // GenOrcVillage();
+  // GenDarkCave();
+end;
+
+{$ENDREGION 'TMap'}
 
 end.

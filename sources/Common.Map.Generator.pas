@@ -8,17 +8,17 @@ procedure GenTestMap();
 
 implementation
 
-uses Math, ForgottenSaga.Game, Common.Map;
+uses Math, ForgottenSaga.Classes, ForgottenSaga.Entities;
 
-procedure Cave(Tile: TTileEnum);
+procedure Cave(Tile: TTiles.TTileEnum);
 var
   I: Integer;
   kx, ky, k, dx, dy: real;
   x, y, py, px: Integer;
   counter: Integer;
 begin
-  x := MapWidth; // + 20;
-  y := MapHeight; // + 20;
+  x := TMap.MapWidth; // + 20;
+  y := TMap.MapHeight; // + 20;
   Saga.World.CurrentMap.SetTile(x div 2, y div 2, lrTerrain, Tile);
   for I := 0 to (x * y div 5) do
   begin
@@ -75,8 +75,8 @@ begin
           ((py > 1) and (Saga.World.CurrentMap.HasTile(Tile, px, py - 1))) or
           ((px < x) and (Saga.World.CurrentMap.HasTile(Tile, px + 1, py))) or
           ((py < y) and (Saga.World.CurrentMap.HasTile(Tile, px, py + 1))) then
-          if (px <> 0) and (px <> MapWidth - 1) and (py <> 0) and
-            (py <> MapHeight - 1) then
+          if (px <> 0) and (px <> TMap.MapWidth - 1) and (py <> 0) and
+            (py <> TMap.MapHeight - 1) then
           begin
             Saga.World.CurrentMap.SetTile(px, py, lrTerrain, Tile);
             break;
@@ -87,7 +87,7 @@ begin
   end;
 end;
 
-procedure AddSpot(Tile: TTileEnum);
+procedure AddSpot(Tile: TTiles.TTileEnum);
 var
   I, x, y, k, L: Integer;
 begin
@@ -104,12 +104,12 @@ begin
   end;
 end;
 
-procedure AddTile(x, y: Integer; Tile: TTileEnum); overload;
+procedure AddTile(x, y: Integer; Tile: TTiles.TTileEnum); overload;
 begin
   Saga.World.CurrentMap.SetTile(x, y, lrTerrain, Tile);
 end;
 
-procedure AddTile(Tile: TTileEnum); overload;
+procedure AddTile(Tile: TTiles.TTileEnum); overload;
 var
   x, y: Integer;
 begin

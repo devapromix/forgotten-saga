@@ -56,7 +56,7 @@ type
 
 implementation
 
-uses SysUtils, Common.Utils;
+uses SysUtils, ForgottenSaga.Classes;
 
 constructor TCustomInventory.Create(AMaxCount, AMaxWeight: Integer);
 begin
@@ -259,7 +259,7 @@ begin
   FList.LoadFromFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
   for I := 0 to FList.Count - 1 do
   begin
-    E := ExplodeString('/', FList[I]);
+    E := TUtils.ExplodeString('/', FList[I]);
     if (Trim(E[0]) <> '') then
     begin
       FItem[P].ID := E[0];

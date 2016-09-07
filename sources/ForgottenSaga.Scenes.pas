@@ -4,7 +4,11 @@ interface
 
 {$I Include.inc}
 
-uses Classes, ForgottenSaga.Script;
+uses Classes;
+
+const
+  FSVersion = '0.0.3'; // Версия
+  Copyright = 'Copyright (C) 2016 by Sergiy Tkach (DevApromix)';
 
 type
   TStageEnum = (stGame, stMainMenu, stGameMenu, stRaceMenu, stNameMenu,
@@ -244,7 +248,6 @@ type
   TStageDialog = class(TStage)
   private
     FID: Integer;
-    FDialog: TScript;
     FLinkList: TLinks;
     procedure Answer(var Key: Word);
   public
@@ -254,7 +257,6 @@ type
     procedure Timer; override;
     procedure Update(var Key: Word); override;
     property ID: Integer read FID write FID;
-    property Dialog: TScript read FDialog write FDialog;
     property LinkList: TLinks read FLinkList write FLinkList;
   end;
 
@@ -278,8 +280,8 @@ type
 
 implementation
 
-uses SysUtils, Math, Engine, Common.Utils, Common.Map, Common.Variables,
-  ForgottenSaga.Game, ForgottenSaga.Creature, ForgottenSaga.Inv;
+uses SysUtils, Math, Engine,
+  ForgottenSaga.Classes, ForgottenSaga.Entities, ForgottenSaga.Inv;
 
 { TStages }
 
@@ -387,9 +389,9 @@ var
 begin
   D := TStageDialog(Saga.Stages.GetStage(stDialog));
   D.ID := ID;
-  D.Dialog.LoadFromFile(GetPath('resources') + Saga.World.CurrentCreatures.Get
+  Saga.Dialog.LoadFromFile(TUtils.GetPath('resources') + Saga.World.CurrentCreatures.Get
     (ID).FileName);
-  D.Dialog.Next(Format('%d', [Saga.World.CurrentCreatures.Get(ID).Dialog]));
+  Saga.Dialog.Next(Format('%d', [Saga.World.CurrentCreatures.Get(ID).Dialog]));
 end;
 
 procedure TStageGame.SetDialog(ID: Byte);
@@ -408,7 +410,7 @@ procedure TStageGame.PlayerMove(X, Y: Integer);
 var
   ID: Integer;
 begin
-  if Saga.Player.Look.Enabled then
+  if Saga.Player.Look.Active then
   begin
     Saga.Player.Look.Move(X, Y);
     Exit;
@@ -431,7 +433,7 @@ begin
   Saga.World.CurrentMap.Render;
   Saga.World.CurrentItems.Render;
   Saga.World.CurrentCreatures.Render;
-  Saga.Engine.FontBackColor(0);
+  Saga.Engine.BackgroundColor(0);
   RenderPlayerInfo;
   Saga.Log[lgGame].Render(81, 15, 39);
   Saga.Notification.Render(0, 0);
@@ -439,14 +441,14 @@ end;
 
 procedure TStageGame.RenderPlayerInfo;
 var
-  I: TAtrEnum;
+  I: TCustomCreature.TAtrEnum;
 begin
-  Saga.Engine.FontColor(clSplText);
-  Saga.Engine.TextOut(81, 0, __(Saga.World.CurrentMap.Name));
-  Saga.Engine.TextOut(81, 1, Saga.Player.GetFullName);
-  Saga.Engine.TextOut(81, 2, __('Honor') + ' ' + IntToStr(Saga.Player.Score));
-  for I := Low(TAtrEnum) to High(TAtrEnum) do
-    Saga.Engine.TextOut(81, ord(I) + 3, __(AtrStr[I]) + ' ' + Saga.Player.Atr
+  Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
+  Saga.Engine.Print(81, 0, __(Saga.World.CurrentMap.Name));
+  Saga.Engine.Print(81, 1, Saga.Player.GetFullName);
+  Saga.Engine.Print(81, 2, __('Honor') + ' ' + IntToStr(Saga.Player.Score));
+  for I := Low(TCustomCreature.TAtrEnum) to High(TCustomCreature.TAtrEnum) do
+    Saga.Engine.Print(81, ord(I) + 3, __(TCustomCreature.AtrStr[I]) + ' ' + Saga.Player.Atr
       [I].ToText);
 end;
 
@@ -462,9 +464,9 @@ begin
   case Key of
     TK_ESCAPE:
       begin
-        if Saga.Player.Look.Enabled then
+        if Saga.Player.Look.Active then
         begin
-          Saga.Player.Look.Enabled := False;
+          Saga.Player.Look.Active := False;
           Exit;
         end;
         Saga.Stages.SetStage(stGameMenu);
@@ -523,7 +525,7 @@ begin
     TK_L:
       begin
         Saga.Player.Look.SetPosition(Saga.Player.Pos);
-        Saga.Player.Look.Enabled := not Saga.Player.Look.Enabled;
+        Saga.Player.Look.Active := not Saga.Player.Look.Active;
       end;
   end;
 end;
@@ -538,10 +540,10 @@ end;
 
 procedure TStageCustomMenu.RenderCursor(Y: Integer; Color: Integer);
 begin
-  Saga.Engine.FontBackColor(Color);
-  Saga.Engine.TextOut(0, Y, StringOfChar(#32, Saga.Engine.Window.Width -
+  Saga.Engine.BackgroundColor(Color);
+  Saga.Engine.Print(0, Y, StringOfChar(#32, Saga.Engine.Window.Width -
     10), aCenter);
-  Saga.Engine.FontBackColor(clClear);
+  Saga.Engine.BackgroundColor(clClear);
 end;
 
 procedure TStageCustomMenu.Timer;
@@ -562,18 +564,18 @@ procedure TStageMenu.Render;
 var
   I: ShortInt;
 begin
-  Saga.Engine.TitleOut(Top, __('Forgotten Saga'));
+  Saga.UI.DrawTitle(Top, __('Forgotten Saga'));
   for I := 0 to Count - 1 do
   begin
-    Saga.Engine.FontColor(clTitle);
+    Saga.Engine.ForegroundColor(Saga.Colors.clTitle);
     if (I = MenuPos) then
     begin
-      RenderCursor(I + Top + 2, clCursor);
-      Saga.Engine.FontColor(clMenuAct);
+      RenderCursor(I + Top + 2, Saga.Colors.clCursor);
+      Saga.Engine.ForegroundColor(Saga.Colors.clMenuAct);
     end
     else
-      Saga.Engine.FontColor(clMenuDef);
-    Saga.Engine.TextOut(0, I + Top + 2, __(GetStr('|', Items, I)), aCenter);
+      Saga.Engine.ForegroundColor(Saga.Colors.clMenuDef);
+    Saga.Engine.Print(0, I + Top + 2, __(TUtils.GetStr('|', Items, I)), aCenter);
   end;
 end;
 
@@ -581,9 +583,9 @@ procedure TStageMenu.Update(var Key: Word);
 begin
   case Key of
     TK_DOWN:
-      MenuPos := Clamp(MenuPos + 1, 0, Count - 1, False);
+      MenuPos := TUtils.Clamp(MenuPos + 1, 0, Count - 1, False);
     TK_UP:
-      MenuPos := Clamp(MenuPos - 1, 0, Count - 1, False);
+      MenuPos := TUtils.Clamp(MenuPos - 1, 0, Count - 1, False);
   end;
 end;
 
@@ -599,9 +601,9 @@ end;
 procedure TStageMainMenu.Render;
 begin
   inherited Render;
-  Saga.Engine.FontColor(Saga.Colors.GetColor(ceLGray));
-  Saga.Engine.TextOut(0, Saga.Engine.Window.Height - 1, Copyright, aCenter);
-  Saga.Engine.TextOut(0, Saga.Engine.Window.Height - 1,
+  Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceLGray));
+  Saga.Engine.Print(0, Saga.Engine.Window.Height - 1, Copyright, aCenter);
+  Saga.Engine.Print(0, Saga.Engine.Window.Height - 1,
     'v.' + FSVersion, aRight);
 end;
 
@@ -682,19 +684,19 @@ end;
 
 procedure TStageRaceMenu.Render;
 var
-  R: TRaceEnum;
+  R: TSaga.TRaceEnum;
 begin
-  Saga.Engine.TitleOut(Top, __('Select race'));
+  Saga.UI.DrawTitle(Top, __('Select race'));
 
-  for R := Low(TRaceEnum) to High(TRaceEnum) do
+  for R := Low(TSaga.TRaceEnum) to High(TSaga.TRaceEnum) do
   begin
-    Saga.Engine.FontColor(clTitle);
+    Saga.Engine.ForegroundColor(Saga.Colors.clTitle);
     if (ord(R) = MenuPos) then
-      RenderCursor(ord(R) + Top + 2, clCursor);
-    Saga.Engine.FontColor(Saga.Race[R].Color);
-    Saga.Engine.TextOut(0, ord(R) + Top + 2, Saga.Race[R].Name, aCenter);
+      RenderCursor(ord(R) + Top + 2, Saga.Colors.clCursor);
+    Saga.Engine.ForegroundColor(Saga.Race[R].Color);
+    Saga.Engine.Print(0, ord(R) + Top + 2, Saga.Race[R].Name, aCenter);
   end;
-  Saga.Engine.KeyOut(0, Top + ord(High(TRaceEnum)) + 4, __('Back to main menu'),
+  Saga.UI.DrawKey(0, Top + ord(High(TSaga.TRaceEnum)) + 4, __('Back to main menu'),
     'ESC', aCenter);
 end;
 
@@ -704,11 +706,11 @@ begin
     TK_ESCAPE:
       Saga.Stages.SetStage(stMainMenu);
     TK_UP:
-      MenuPos := Clamp(MenuPos - 1, ord(Low(TRaceEnum)),
-        ord(High(TRaceEnum)), False);
+      MenuPos := TUtils.Clamp(MenuPos - 1, ord(Low(TSaga.TRaceEnum)),
+        ord(High(TSaga.TRaceEnum)), False);
     TK_DOWN:
-      MenuPos := Clamp(MenuPos + 1, ord(Low(TRaceEnum)),
-        ord(High(TRaceEnum)), False);
+      MenuPos := TUtils.Clamp(MenuPos + 1, ord(Low(TSaga.TRaceEnum)),
+        ord(High(TSaga.TRaceEnum)), False);
     TK_ENTER:
       case MenuPos of
         0 .. 2:
@@ -725,11 +727,11 @@ end;
 
 procedure TStageNameMenu.Render;
 begin
-  Saga.Engine.TitleOut(Top, __('What is your name?'));
-  Saga.Engine.FontColor(Saga.Race[TRaceEnum(Saga.Player.Race)].Color);
-  Saga.Engine.TextOut(0, Top + 2, Saga.Player.GetRaceName + ' <' +
+  Saga.UI.DrawTitle(Top, __('What is your name?'));
+  Saga.Engine.ForegroundColor(Saga.Race[TSaga.TRaceEnum(Saga.Player.Race)].Color);
+  Saga.Engine.Print(0, Top + 2, Saga.Player.GetRaceName + ' <' +
     Saga.Player.Name + '>', aCenter);
-  Saga.Engine.KeyOut(0, Top + 4, __('Random name'), 'SPACE', aCenter);
+  Saga.UI.DrawKey(0, Top + 4, __('Random name'), 'SPACE', aCenter);
 end;
 
 procedure TStageNameMenu.Update(var Key: Word);
@@ -748,9 +750,9 @@ end;
 
 procedure TStageTextMenu.Render;
 begin
-  Saga.Engine.TitleOut(13, 'Как все начиналось...');
-  Saga.Engine.KeyOut(0, 25, 'Начать игру...', 'ENTER', aCenter);
-  Saga.Engine.FontColor(clSplText);
+  Saga.UI.DrawTitle(13, 'Как все начиналось...');
+  Saga.UI.DrawKey(0, 25, 'Начать игру...', 'ENTER', aCenter);
+  Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
   Saga.Log[lgIntro].Render(15, 15, 85);
 end;
 
@@ -776,14 +778,14 @@ procedure TStageStorageMenu.RenderNum;
 var
   I, H: ShortInt;
 begin
-  Saga.Engine.FontColor(Saga.Colors.GetColor(ceLGray));
+  Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceLGray));
   for I := 0 to 9 do
   begin
     if (I < 9) then
       H := 2
     else
       H := 1;
-    Saga.Engine.TextOut(H + 20, I + Top + 2, IntToStr(I + 1) + '.', aLeft);
+    Saga.Engine.Print(H + 20, I + Top + 2, IntToStr(I + 1) + '.', aLeft);
   end;
 end;
 
@@ -793,28 +795,28 @@ var
 begin
   for I := 0 to 9 do
   begin
-    Saga.Engine.FontColor(clTitle);
+    Saga.Engine.ForegroundColor(Saga.Colors.clTitle);
     if (I = MenuPos) then
     begin
-      RenderCursor(I + Top + 2, clCursor);
-      Saga.Engine.FontColor(clMenuAct);
+      RenderCursor(I + Top + 2, Saga.Colors.clCursor);
+      Saga.Engine.ForegroundColor(Saga.Colors.clMenuAct);
     end
     else
-      Saga.Engine.FontColor(clMenuDef);
+      Saga.Engine.ForegroundColor(Saga.Colors.clMenuDef);
     if (Saga.GetSlotData(I) <> '') then
     begin
-      Saga.Engine.TextOut(25, Top + I + 2, Saga.GetSlotData(I), aLeft)
+      Saga.Engine.Print(25, Top + I + 2, Saga.GetSlotData(I), aLeft)
     end
     else
     begin
       if (I <> MenuPos) then
-        Saga.Engine.FontColor(clSplText);
-      Saga.Engine.TextOut(25, Top + I + 2, __('Empty slot'), aLeft);
+        Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
+      Saga.Engine.Print(25, Top + I + 2, __('Empty slot'), aLeft);
     end;
   end;
   Self.RenderNum;
   if KeyFlag then
-    Saga.Engine.KeyOut(45, Top + 13, __('Back'), 'ESC');
+    Saga.UI.DrawKey(45, Top + 13, __('Back'), 'ESC');
 end;
 
 procedure TStageStorageMenu.Update(var Key: Word);
@@ -825,9 +827,9 @@ begin
         Saga.Stages.Back;
       end;
     TK_UP:
-      MenuPos := Clamp(MenuPos - 1, 0, 9, False);
+      MenuPos := TUtils.Clamp(MenuPos - 1, 0, 9, False);
     TK_DOWN:
-      MenuPos := Clamp(MenuPos + 1, 0, 9, False);
+      MenuPos := TUtils.Clamp(MenuPos + 1, 0, 9, False);
   end;
 end;
 
@@ -835,9 +837,9 @@ end;
 
 procedure TStageSaveMenu.Render;
 begin
-  Saga.Engine.TitleOut(Top, __('Save game'));
+  Saga.UI.DrawTitle(Top, __('Save game'));
   inherited Render;
-  Saga.Engine.KeyOut(57, Top + 13, __('Save'), 'ENTER');
+  Saga.UI.DrawKey(57, Top + 13, __('Save'), 'ENTER');
 end;
 
 procedure TStageSaveMenu.Update(var Key: Word);
@@ -856,9 +858,9 @@ end;
 
 procedure TStageLoadMenu.Render;
 begin
-  Saga.Engine.TitleOut(Top, __('Load game'));
+  Saga.UI.DrawTitle(Top, __('Load game'));
   inherited;
-  Saga.Engine.KeyOut(57, Top + 13, __('Load'), 'ENTER',
+  Saga.UI.DrawKey(57, Top + 13, __('Load'), 'ENTER',
     FileExists(Saga.GetSlotPath(Self.MenuPos) + 'game.log'));
 end;
 
@@ -876,19 +878,19 @@ end;
 
 procedure TStageBattle.Render;
 begin
-  Saga.Engine.TitleOut(5, 'Поединок');
-  Saga.Engine.KeyOut(15, 6, 'Атаковать', '1');
-  Saga.Engine.KeyOut(15, 7, 'Отступить', '2');
+  Saga.UI.DrawTitle(5, 'Поединок');
+  Saga.UI.DrawKey(15, 6, 'Атаковать', '1');
+  Saga.UI.DrawKey(15, 7, 'Отступить', '2');
 
-  Saga.Engine.FontColor(Saga.Player.Color);
-  Saga.Engine.TextOut(90, 6, Saga.Player.Name + ' (' + Saga.Player.Atr[atLife]
+  Saga.Engine.ForegroundColor(Saga.Player.Color);
+  Saga.Engine.Print(90, 6, Saga.Player.Name + ' (' + Saga.Player.Atr[atLife]
     .ToText + ')');
-  Saga.Engine.FontColor(Saga.World.CurrentCreatures.Get(Saga.Battle.ID).Color);
-  Saga.Engine.TextOut(90, 7, Saga.World.CurrentCreatures.Get(Saga.Battle.ID)
+  Saga.Engine.ForegroundColor(Saga.World.CurrentCreatures.Get(Saga.Battle.ID).Color);
+  Saga.Engine.Print(90, 7, Saga.World.CurrentCreatures.Get(Saga.Battle.ID)
     .Name + ' (' + Saga.World.CurrentCreatures.Get(Saga.Battle.ID).Atr[atLife]
     .ToText + ')');
 
-  Saga.Engine.FontColor(clSplText);
+  Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
   Saga.Log[lgBattle].Render(35, 6, 55);
 end;
 
@@ -963,12 +965,10 @@ end;
 constructor TStageDialog.Create;
 begin
   FLinkList := TLinks.Create;
-  FDialog := TScript.Create;
 end;
 
 destructor TStageDialog.Destroy;
 begin
-  FDialog.Free;
   FLinkList.Free;
   inherited;
 end;
@@ -978,25 +978,25 @@ var
   I: Integer;
   S, N, Close: string;
 begin
-  Saga.Engine.FontColor(Saga.World.CurrentCreatures.Get(ID).Color);
-  Saga.Engine.TextOut(0, 9, __(Saga.World.CurrentCreatures.Get(ID)
+  Saga.Engine.ForegroundColor(Saga.World.CurrentCreatures.Get(ID).Color);
+  Saga.Engine.Print(0, 9, __(Saga.World.CurrentCreatures.Get(ID)
     .Name), aCenter);
-  Saga.Engine.FontColor(Saga.Player.Color);
-  Saga.Engine.TextOut(0, 24, Saga.Player.GetRaceName + ' ' +
+  Saga.Engine.ForegroundColor(Saga.Player.Color);
+  Saga.Engine.Print(0, 24, Saga.Player.GetRaceName + ' ' +
     Saga.Player.Name, aCenter);
-  Saga.Engine.FontColor(clSplText);
+  Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
   Saga.Log[lgDialog].Render(35, 10, 55);
   for I := 0 to LinkList.Count - 1 do
   begin
     S := '';
     Close := Format('(%s)', [__('Close')]);
     N := LinkList.GetLabel(I);
-    N := SysUtils.StringReplace(N, '(' + Dialog.CloseTag + ')', Close,
+    N := SysUtils.StringReplace(N, '(' + Saga.Dialog.CloseTag + ')', Close,
       [SysUtils.rfIgnoreCase]);
     if (Copy(Trim(LinkList.GetName(I)), 1,
-      Saga.Engine.GetTextLength(Dialog.CloseTag)) = Dialog.CloseTag) then
+      Saga.Engine.GetTextLength(Saga.Dialog.CloseTag)) = Saga.Dialog.CloseTag) then
       S := Close;
-    Saga.Engine.KeyOut(35, I + 25, Trim(N + ' ' + S), Format('%d', [I + 1]));
+    Saga.UI.DrawKey(35, I + 25, Trim(N + ' ' + S), Format('%d', [I + 1]));
   end;
 end;
 
@@ -1020,7 +1020,7 @@ begin
   Saga.Log[lgDialog].Clear;
   S := Trim(LinkList.GetName(Key - TK_1));
   LinkList.Clear;
-  Dialog.Next(S);
+  Saga.Dialog.Next(S);
 end;
 
 procedure TStageDialog.Timer;
@@ -1032,13 +1032,13 @@ end;
 
 procedure TStageVictory.Render;
 begin
-  Saga.Engine.TitleOut(Top, __('Victory!'));
-  Saga.Engine.FontColor(clGoldText);
-  Saga.Engine.TextOut(0, Top + 2, Format('%s поверг всех врагов',
+  Saga.UI.DrawTitle(Top, __('Victory!'));
+  Saga.Engine.ForegroundColor(Saga.Colors.clGoldText);
+  Saga.Engine.Print(0, Top + 2, Format('%s поверг всех врагов',
     [Saga.Player.GetFullName]), aCenter);
-  Saga.Engine.TextOut(0, Top + 3,
+  Saga.Engine.Print(0, Top + 3,
     Format('%s %d', [__('Honor'), Saga.Player.Score]), aCenter);
-  Saga.Engine.KeyOut(0, Top + 5, __('Close'), 'ESC', aCenter);
+  Saga.UI.DrawKey(0, Top + 5, __('Close'), 'ESC', aCenter);
 end;
 
 procedure TStageVictory.Update(var Key: Word);
@@ -1056,13 +1056,13 @@ end;
 
 procedure TStageDefeat.Render;
 begin
-  Saga.Engine.TitleOut(Top, __('Defeat!'));
-  Saga.Engine.FontColor(clAlertText);
-  Saga.Engine.TextOut(0, Top + 2, Format('%s повержен!',
+  Saga.UI.DrawTitle(Top, __('Defeat!'));
+  Saga.Engine.ForegroundColor(Saga.Colors.clAlertText);
+  Saga.Engine.Print(0, Top + 2, Format('%s повержен!',
     [Saga.Player.GetFullName]), aCenter);
-  Saga.Engine.TextOut(0, Top + 3,
+  Saga.Engine.Print(0, Top + 3,
     Format('%s %d', [__('Honor'), Saga.Player.Score]), aCenter);
-  Saga.Engine.KeyOut(0, Top + 5, __('Close'), 'ESC', aCenter);
+  Saga.UI.DrawKey(0, Top + 5, __('Close'), 'ESC', aCenter);
 end;
 
 procedure TStageDefeat.Update(var Key: Word);
@@ -1082,31 +1082,31 @@ procedure TStageQuestLog.Render;
 var
   I: ShortInt;
 begin
-  Saga.Engine.TitleOut(Top, __('Quest log'));
+  Saga.UI.DrawTitle(Top, __('Quest log'));
   for I := 0 to 9 do
   begin
-    Saga.Engine.FontColor(clTitle);
+    Saga.Engine.ForegroundColor(Saga.Colors.clTitle);
     if (I = MenuPos) then
     begin
-      RenderCursor(I + Top + 2, clCursor);
-      Saga.Engine.FontColor(clMenuAct);
+      RenderCursor(I + Top + 2, Saga.Colors.clCursor);
+      Saga.Engine.ForegroundColor(Saga.Colors.clMenuAct);
     end
     else
-      Saga.Engine.FontColor(clMenuDef);
+      Saga.Engine.ForegroundColor(Saga.Colors.clMenuDef);
     if (Saga.Quest.Get(I, 0) <> '') then
     begin
-      Saga.Engine.TextOut(25, Top + I + 2, Saga.Quest.Get(I, 0), aLeft)
+      Saga.Engine.Print(25, Top + I + 2, Saga.Quest.Get(I, 0), aLeft)
     end
     else
     begin
       if (I <> MenuPos) then
-        Saga.Engine.FontColor(clSplText);
-      Saga.Engine.TextOut(25, Top + I + 2, __('Empty slot'), aLeft);
+        Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
+      Saga.Engine.Print(25, Top + I + 2, __('Empty slot'), aLeft);
     end;
   end;
   Self.RenderNum;
-  Saga.Engine.KeyOut(45, Top + 13, __('Back'), 'ESC');
-  Saga.Engine.KeyOut(57, Top + 13, __('Read'), 'ENTER',
+  Saga.UI.DrawKey(45, Top + 13, __('Back'), 'ESC');
+  Saga.UI.DrawKey(57, Top + 13, __('Read'), 'ENTER',
     (Saga.Quest.Get(MenuPos, 0) <> ''));
 end;
 
@@ -1134,10 +1134,10 @@ end;
 
 procedure TStageQuestInfo.Render;
 begin
-  Saga.Engine.TitleOut(8, Saga.Quest.Get(ID, 0));
-  Saga.Engine.FontColor(clSplText);
+  Saga.UI.DrawTitle(8, Saga.Quest.Get(ID, 0));
+  Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
   Saga.Log[lgQuest].Render(35, 10, 55);
-  Saga.Engine.KeyOut(0, 28, __('Back'), 'ESC', aCenter);
+  Saga.UI.DrawKey(0, 28, __('Back'), 'ESC', aCenter);
 end;
 
 procedure TStageQuestInfo.Timer;
@@ -1157,12 +1157,12 @@ end;
 
 procedure TStageAboutMenu.Render;
 begin
-  Saga.Engine.TitleOut(Top, __('Forgotten Saga'));
-  Saga.Engine.FontColor(Saga.Colors.GetColor(ceLGray));
-  Saga.Engine.TextOut(0, Top + 2,
+  Saga.UI.DrawTitle(Top, __('Forgotten Saga'));
+  Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceLGray));
+  Saga.Engine.Print(0, Top + 2,
     'github.com/devapromix/forgotten-saga', aCenter);
-  Saga.Engine.TextOut(0, Top + 3, Copyright, aCenter);
-  Saga.Engine.KeyOut(0, Top + 5, __('Back to main menu'), 'ESC', aCenter);
+  Saga.Engine.Print(0, Top + 3, Copyright, aCenter);
+  Saga.UI.DrawKey(0, Top + 5, __('Back to main menu'), 'ESC', aCenter);
 end;
 
 procedure TStageAboutMenu.Update(var Key: Word);
@@ -1183,7 +1183,7 @@ end;
 
 procedure TStageRecMenu.Render;
 begin
-  Saga.Engine.TitleOut(Top, __('High scores table'));
+  Saga.UI.DrawTitle(Top, __('High scores table'));
   inherited Render;
   case RecPos of
     0 .. 9:
@@ -1191,14 +1191,14 @@ begin
         if (Saga.Player.Score > 0) then
         begin
           RenderCursor(RecPos + Top + 2, Saga.Colors.GetColor(ceRed));
-          Saga.Engine.FontColor(Saga.Colors.GetColor(ceWhite));
-          Saga.Engine.TextOut(25, RecPos + Top + 2,
+          Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceWhite));
+          Saga.Engine.Print(25, RecPos + Top + 2,
             Saga.GetSlotData(RecPos), aLeft);
           Self.RenderNum;
         end;
       end;
   end;
-  Saga.Engine.KeyOut(0, Top + 13, __('Back to main menu'), 'ESC', aCenter);
+  Saga.UI.DrawKey(0, Top + 13, __('Back to main menu'), 'ESC', aCenter);
 end;
 
 procedure TStageRecMenu.Update(var Key: Word);
@@ -1217,15 +1217,15 @@ var
   I: TInvByte;
   F: string;
 begin
-  Saga.Engine.TitleOut(5, __('Inventory'));
+  Saga.UI.DrawTitle(5, __('Inventory'));
   for I := Low(TInvByte) to High(TInvByte) do
     if Saga.Player.Inventory.Item[I].Active then
     begin
       F := Saga.World.CurrentItems.GetItemPropStr
         (Saga.Player.Inventory.Item[I]);
-      Saga.Engine.KeyOut(15, I + 6, F, chr(I + 64));
+      Saga.UI.DrawKey(15, I + 6, F, chr(I + 64));
     end;
-  Saga.Engine.KeyOut(0, Saga.Engine.Window.Height - 6, __('Close'),
+  Saga.UI.DrawKey(0, Saga.Engine.Window.Height - 6, __('Close'),
     'ESC', aCenter);
 end;
 
@@ -1249,7 +1249,7 @@ var
   I, C: Integer;
   F: string;
 begin
-  Saga.Engine.TitleOut(5, __('Items'));
+  Saga.UI.DrawTitle(5, __('Items'));
   C := 0;
   for I := 0 to Saga.World.CurrentItems.Count - 1 do
   begin
@@ -1261,12 +1261,12 @@ begin
     begin
       F := Saga.World.CurrentItems.GetItemPropStr
         (Saga.World.CurrentItems.Get(I));
-      Saga.Engine.KeyOut(15, C + 7, F, chr(C + 65));
+      Saga.UI.DrawKey(15, C + 7, F, chr(C + 65));
       Inc(C);
     end;
   end;
-  Saga.Engine.KeyOut(42, Saga.Engine.Window.Height - 6, __('Close'), 'ESC');
-  Saga.Engine.KeyOut(57, Saga.Engine.Window.Height - 6, __('Pickup all items'),
+  Saga.UI.DrawKey(42, Saga.Engine.Window.Height - 6, __('Close'), 'ESC');
+  Saga.UI.DrawKey(57, Saga.Engine.Window.Height - 6, __('Pickup all items'),
     'SPACE', (Saga.World.CurrentItems.Count(Saga.Player.Pos.X,
     Saga.Player.Pos.Y) > 0));
 end;
