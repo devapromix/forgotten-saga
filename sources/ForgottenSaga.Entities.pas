@@ -4,7 +4,7 @@ interface
 
 uses {$IFNDEF FPC}Types, {$ENDIF}Classes, IniFiles;
 
-{$REGION 'Entity'}
+{$REGION ' TEntity '}
 
 type
   TEntity = class(TObject)
@@ -33,8 +33,8 @@ type
     property Active: Boolean read FActive write FActive;
   end;
 
-{$ENDREGION 'Entity'}
-{$REGION 'Look'}
+{$ENDREGION ' TEntity '}
+{$REGION ' TLook '}
 
 type
   TLook = class(TEntity)
@@ -43,8 +43,8 @@ type
     procedure Move(AX, AY: Integer);
   end;
 
-{$ENDREGION 'Look'}
-{$REGION 'Bar'}
+{$ENDREGION ' TLook '}
+{$REGION ' TBar '}
 
 type
   TBar = class(TObject)
@@ -74,8 +74,8 @@ type
     procedure SetToMax;
   end;
 
-{$ENDREGION 'Bar'}
-{$REGION 'Race'}
+{$ENDREGION ' TBar '}
+{$REGION ' TRace '}
 
 type
   TRace = class(TObject)
@@ -95,8 +95,8 @@ type
     property Mana: Word read FMana write FMana;
   end;
 
-{$ENDREGION 'Race'}
-{$REGION 'Creatures'}
+{$ENDREGION ' TRace '}
+{$REGION ' TCustomCreature '}
 
 type
   TCustomCreature = class(TEntity)
@@ -123,6 +123,9 @@ type
     procedure Fill;
   end;
 
+{$ENDREGION ' TCustomCreature '}
+{$REGION ' TCreature '}
+
 type
   TCreature = class(TCustomCreature)
   public type
@@ -144,6 +147,9 @@ type
     procedure Render;
   end;
 
+{$ENDREGION ' TCreature '}
+{$REGION ' TCreatures '}
+
 type
   TCreatures = class(TObject)
   private
@@ -160,8 +166,8 @@ type
     procedure Clear;
   end;
 
-{$ENDREGION 'Creatures'}
-{$REGION 'Items and Inventory'}
+{$ENDREGION ' TCreatures '}
+{$REGION ' TItem '}
 
 type
   TItem = class(TEntity)
@@ -191,6 +197,9 @@ type
     property Durability: TBar read FDurability write FDurability;
   end;
 
+{$ENDREGION ' TItem '}
+{$REGION ' TItems '}
+
 type
   TItems = class(TObject)
   private
@@ -215,24 +224,13 @@ type
     procedure Clear;
   end;
 
-type
-  TIniFile = class(IniFiles.TIniFile)
-  public
-    function ReadCategory(Section, Ident: string; DefaultValue: TItem.TCategory)
-      : TItem.TCategory;
-    procedure WriteCategory(Section, Ident: string; Value: TItem.TCategory);
-    function ReadColor(Section, Ident: string; DefaultValue: string): Integer;
-    procedure WriteColor(Section, Ident: string; Value: Integer);
-    function ReadMaterial(Section, Ident: string; DefaultValue: TItem.TMaterial)
-      : TItem.TMaterial;
-    procedure WriteMaterial(Section, Ident: string; Value: TItem.TMaterial);
-  end;
-
-type
-  TInvByte = 1 .. 26;
+{$ENDREGION ' TItems '}
+{$REGION ' TInventory '}
 
 type
   TInventor = class(TObject)
+  private type
+    TInvByte = 1 .. 26;
   private
     FItem: array [TInvByte] of TItem;
     function GetItem(I: TInvByte): TItem;
@@ -247,8 +245,24 @@ type
     procedure Clear; overload;
   end;
 
-{$ENDREGION 'Items and Inventory'}
-{$REGION 'Player'}
+{$ENDREGION ' TInventory '}
+{$REGION ' TIniFile '}
+
+type
+  TIniFile = class(IniFiles.TIniFile)
+  public
+    function ReadCategory(Section, Ident: string; DefaultValue: TItem.TCategory)
+      : TItem.TCategory;
+    procedure WriteCategory(Section, Ident: string; Value: TItem.TCategory);
+    function ReadColor(Section, Ident: string; DefaultValue: string): Integer;
+    procedure WriteColor(Section, Ident: string; Value: Integer);
+    function ReadMaterial(Section, Ident: string; DefaultValue: TItem.TMaterial)
+      : TItem.TMaterial;
+    procedure WriteMaterial(Section, Ident: string; Value: TItem.TMaterial);
+  end;
+
+{$ENDREGION ' TIniFile '}
+{$REGION ' TPlayer '}
 
 type
   TPlayer = class(TCreature)
@@ -280,8 +294,8 @@ type
     procedure AddExp(A: Word);
   end;
 
-{$ENDREGION 'Player'}
-{$REGION 'Map and Tiles'}
+{$ENDREGION ' TPlayer '}
+{$REGION ' TTiles '}
 
 type
   TTiles = class(TObject)
@@ -319,6 +333,9 @@ type
     procedure LoadFromFile(FileName: string);
   end;
 
+{$ENDREGION ' TTiles '}
+{$REGION ' TMap '}
+
 type
   TMap = class(TEntity)
   public const
@@ -351,7 +368,7 @@ type
     procedure Gen;
   end;
 
-{$ENDREGION 'Map and Tiles'}
+{$ENDREGION ' TMap '}
 
 const
   BarFmt = '%d/%d';
@@ -363,12 +380,12 @@ implementation
 uses SysUtils, Math, Engine, ForgottenSaga.Classes, ForgottenSaga.Scenes;
 
 const
-  Offset = 40;
   RaceNameDiv: array [TSaga.TRaceEnum] of string = ('', '-', ' ');
+  Offset = 40;
   cAdr = 75;
   cExp = 15;
 
-{$REGION 'TEntity'}
+{$REGION ' TEntity '}
 
 constructor TEntity.Create(Width: Integer = 1; Height: Integer = 1);
 begin
@@ -401,8 +418,8 @@ begin
   FPos := APos
 end;
 
-{$ENDREGION 'TEntity'}
-{$REGION 'TBar'}
+{$ENDREGION ' TEntity '}
+{$REGION ' TBar '}
 
 procedure TBar.Add(Values: string);
 var
@@ -503,8 +520,8 @@ begin
   Result := Format(BarFmt, [Cur, Max]);
 end;
 
-{$ENDREGION 'TBar'}
-{$REGION 'TCustomCreature'}
+{$ENDREGION ' TBar '}
+{$REGION ' TCustomCreature '}
 
 constructor TCustomCreature.Create(MaxLife, MaxMana: Integer);
 var
@@ -574,8 +591,8 @@ begin
   FAtr[I] := Value;
 end;
 
-{$ENDREGION 'TCustomCreature'}
-{$REGION 'TCreature'}
+{$ENDREGION ' TCustomCreature '}
+{$REGION ' TCreature '}
 
 constructor TCreature.Create;
 begin
@@ -616,8 +633,8 @@ begin
   Saga.UI.DrawChar(Pos.X, Pos.Y, Symbol, Color, BackColor);
 end;
 
-{$ENDREGION 'TCreature'}
-{$REGION 'TCreatures'}
+{$ENDREGION ' TCreature '}
+{$REGION ' TCreatures '}
 
 procedure TCreatures.Clear;
 var
@@ -736,8 +753,8 @@ begin
   end;
 end;
 
-{$ENDREGION 'TCreatures'}
-{$REGION 'TPlayer'}
+{$ENDREGION ' TCreatures '}
+{$REGION ' TPlayer '}
 
 procedure TPlayer.AddExp(A: Word);
 begin
@@ -843,7 +860,7 @@ var
   S: string;
   F: TIniFile;
   X, Y: Integer;
-  I: TInvByte;
+  I: TInventor.TInvByte;
 begin
   F := TIniFile.Create(AFileName);
   try
@@ -866,7 +883,7 @@ begin
     end;
     // Inventory
     Inventory.Clear();
-    for I := Low(TInvByte) to High(TInvByte) do
+    for I := Low(TInventor.TInvByte) to High(TInventor.TInvByte) do
     begin
       S := IntToStr(I);
       // Inventory.
@@ -909,7 +926,7 @@ procedure TPlayer.SaveToFile(AFileName: string);
 var
   S: string;
   F: TIniFile;
-  I: TInvByte;
+  I: TInventor.TInvByte;
 begin
   F := TIniFile.Create(AFileName);
   try
@@ -929,7 +946,7 @@ begin
       Atr[atMana].Max]));
     F.WriteInteger(S, 'Score', Score);
     // Inventory
-    for I := Low(TInvByte) to High(TInvByte) do
+    for I := Low(TInventor.TInvByte) to High(TInventor.TInvByte) do
     begin
       S := IntToStr(I);
       { F.WriteString(S, 'ID', Inventory.GetID(I));
@@ -961,8 +978,8 @@ begin
   end;
 end;
 
-{$ENDREGION 'TPlayer'}
-{$REGION 'TLook'}
+{$ENDREGION ' TPlayer '}
+{$REGION ' TLook '}
 
 procedure TLook.Move(AX, AY: Integer);
 begin
@@ -1001,9 +1018,9 @@ var
         Saga.World.CurrentItems.GetItemPropStr(Item)]));
       C := Saga.World.CurrentItems.Count(Pos.X, Pos.Y);
       if (C > 1) then
-        Result := Format(__('<%s> Несколько (%dx) предметов (%s)'),
-          [Saga.World.CurrentItems.Get(I).Symbol, C,
-          Saga.World.CurrentItems.Get(I).Name]);
+        Result := Format(KeyFmt, [Saga.World.CurrentItems.Get(I).Symbol,
+          Format('Несколько (%dx) предметов (%s)',
+          [C, Saga.World.CurrentItems.Get(I).Name])]);
     end;
   end;
 
@@ -1025,8 +1042,8 @@ begin
     GetCreatures(), GetItems(Pos)])));
 end;
 
-{$ENDREGION 'TLook'}
-{$REGION 'TItem'}
+{$ENDREGION ' TLook '}
+{$REGION ' TItem '}
 
 procedure TItem.Assign(Value: TItem);
 begin
@@ -1076,8 +1093,8 @@ begin
   Saga.UI.DrawChar(Pos.X, Pos.Y, Symbol, Color, BackColor);
 end;
 
-{$ENDREGION 'TItem'}
-{$REGION 'TItems'}
+{$ENDREGION ' TItem '}
+{$REGION ' TItems '}
 
 procedure TItems.Add(Symbol: Char; Color, Level: Integer; Name: string;
   Material: TItem.TMaterial; Category: TItem.TCategory; Durability: Word;
@@ -1288,8 +1305,8 @@ begin
   end;
 end;
 
-{$ENDREGION 'TItems'}
-{$REGION 'TIniFile'}
+{$ENDREGION ' TItems '}
+{$REGION ' TIniFile '}
 
 function TIniFile.ReadCategory(Section, Ident: string;
   DefaultValue: TItem.TCategory): TItem.TCategory;
@@ -1390,8 +1407,8 @@ begin
   WriteString(Section, Ident, TItem.MatStr[Value]);
 end;
 
-{$ENDREGION 'TIniFile'}
-{$REGION 'TInventor'}
+{$ENDREGION ' TIniFile '}
+{$REGION ' TInventor '}
 
 function TInventor.AddItem(Value: TItem): Boolean;
 var
@@ -1469,8 +1486,8 @@ begin
   FItem[I] := Value;
 end;
 
-{$ENDREGION 'TInventor'}
-{$REGION 'TTiles'}
+{$ENDREGION ' TInventor '}
+{$REGION ' TTiles '}
 
 function TTiles.Add(Name: string; Char: Char; Passable: Boolean; Color: Integer)
   : TTileProp;
@@ -1510,8 +1527,8 @@ begin
   end;
 end;
 
-{$ENDREGION 'TTiles'}
-{$REGION 'TMap'}
+{$ENDREGION ' TTiles '}
+{$REGION ' TMap '}
 
 function TMap.CellInMap(X, Y: Integer): Boolean;
 begin
@@ -1665,6 +1682,6 @@ begin
   // GenDarkCave();
 end;
 
-{$ENDREGION 'TMap'}
+{$ENDREGION ' TMap '}
 
 end.

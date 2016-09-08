@@ -10,6 +10,8 @@ uses
   Graphics,
   Types;
 
+{$REGION ' Keyboard scancodes '}
+
 const
   TK_A = ord('A');
   TK_B = ord('B');
@@ -85,6 +87,9 @@ const
   TK_DOWN = 40;
   TK_UP = 38;
 
+{$ENDREGION ' Keyboard scancodes '}
+{$REGION ' TEngine '}
+
 type
   TAlign = (aLeft, aCenter, aRight);
 
@@ -117,10 +122,10 @@ type
     procedure Close;
   end;
 
-const
-  clClear = -1;
+{$ENDREGION ' TEngine '}
 
 const
+  clClear = -1;
   kcBegin = '{';
   kcEnd = '}';
 
@@ -133,6 +138,8 @@ uses
   LCLIntf, LCLType, LMessages, LazUTF8,
 {$ENDIF}
   Forms, Classes, SysUtils;
+
+{$REGION ' TEngine '}
 
 constructor TEngine.Create(AWidth, AHeight: Integer);
 begin
@@ -288,5 +295,7 @@ begin
   B := B + MulDiv(255 - B, Percent, 100);
   Result := RGB(R, G, B);
 end;
+
+{$ENDREGION ' TEngine '}
 
 end.

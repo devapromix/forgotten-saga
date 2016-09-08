@@ -5,8 +5,9 @@ interface
 uses
   Types;
 
+{$REGION ' Keyboard scancodes '}
+
 const
-  // Keyboard scancodes
   TK_A = $04;
   TK_B = $05;
   TK_C = $06;
@@ -103,6 +104,9 @@ const
   TK_CONTROL = $71;
   TK_ALT = $72;
 
+{$ENDREGION ' Keyboard scancodes '}
+{$REGION ' TEngine '}
+
 type
   TAlign = (aLeft, aCenter, aRight);
 
@@ -135,10 +139,10 @@ type
     procedure Close;
   end;
 
-const
-  clClear = -1;
+{$ENDREGION ' TEngine '}
 
 const
+  clClear = -1;
   kcBegin = '{';
   kcEnd = '}';
 
@@ -152,6 +156,8 @@ uses
   LCLIntf, LCLType, LazUTF8,
 {$ENDIF}
   Classes, SysUtils;
+
+{$REGION ' TEngine '}
 
 constructor TEngine.Create(AWidth, AHeight: Integer);
 begin
@@ -273,5 +279,7 @@ begin
   Result := UTF8Length(Text);
 {$ENDIF}
 end;
+
+{$ENDREGION ' TEngine '}
 
 end.

@@ -4,7 +4,7 @@ interface
 
 uses Classes, Types, Engine, ForgottenSaga.Scenes, ForgottenSaga.Entities;
 
-{$REGION 'Utils'}
+{$REGION ' TUtils '}
 function __(S: string): string;
 
 type
@@ -22,8 +22,8 @@ type
     class function GetPath(SubDir: string = ''): string;
   end;
 
-{$ENDREGION 'Utils'}
-{$REGION 'TUI'}
+{$ENDREGION ' TUtils '}
+{$REGION ' TUI '}
 
 type
   TUI = class(TObject)
@@ -43,7 +43,8 @@ type
     property Engine: TEngine read FEngine write FEngine;
   end;
 
-{$ENDREGION 'TUI'}
+{$ENDREGION ' TUI '}
+{$REGION ' TVars '}
 
 type
   TVars = class(TObject)
@@ -64,6 +65,9 @@ type
     function GetInt(const AVar: string): Integer;
     procedure SetInt(const AVar: string; const AValue: Integer);
   end;
+
+{$ENDREGION ' TVars '}
+{$REGION ' TScript '}
 
 type
   TScript = class(TObject)
@@ -87,6 +91,9 @@ type
     property Vars: TVars read FVars write FVars;
   end;
 
+{$ENDREGION ' TScript '}
+{$REGION ' TLanguage '}
+
 type
   TLanguage = class(TObject)
   private
@@ -102,7 +109,8 @@ type
     property Current: string read FCurrent write FCurrent;
   end;
 
-{$REGION 'Colors'}
+{$ENDREGION ' TLanguage '}
+{$REGION ' TColors '}
 
 type
   TColors = class(TObject)
@@ -135,7 +143,8 @@ type
     function GetColor(Color: string): Integer; overload;
   end;
 
-{$ENDREGION 'Colors'}
+{$ENDREGION ' TColors '}
+{$REGION ' TConfig '}
 
 type
   TConfig = class(TObject)
@@ -144,6 +153,9 @@ type
   public
     procedure LoadFromFile(FileName: string);
   end;
+
+{$ENDREGION ' TConfig '}
+{$REGION ' TNotification '}
 
 type
   TNotification = class(TObject)
@@ -159,6 +171,9 @@ type
     property Counter: Byte read FCounter write FCounter;
     procedure Dec;
   end;
+
+{$ENDREGION ' TNotification '}
+{$REGION ' TWorld '}
 
 type
   TWorld = class(TObject)
@@ -185,6 +200,9 @@ type
     property Engine: TEngine read FEngine write FEngine;
   end;
 
+{$ENDREGION ' TWorld '}
+{$REGION ' TLog '}
+
 type
   TLog = class(TObject)
   private
@@ -201,6 +219,9 @@ type
     procedure Render(Left, Top, Width: Word);
   end;
 
+{$ENDREGION ' TLog '}
+{$REGION ' TRecs '}
+
 type
   TRecs = class(TObject)
   private
@@ -211,6 +232,9 @@ type
     procedure Load();
     procedure Save();
   end;
+
+{$ENDREGION ' TRecs '}
+{$REGION ' TBattle '}
 
 type
   TBattle = class(TObject)
@@ -227,6 +251,9 @@ type
     property ID: Integer read FID write FID;
   end;
 
+{$ENDREGION ' TBattle '}
+{$REGION ' TQuest '}
+
 type
   TQuest = class(TObject)
   private
@@ -241,7 +268,8 @@ type
     procedure SaveToFile(FileName: string);
   end;
 
-{$REGION 'TSaga'}
+{$ENDREGION ' TQuest '}
+{$REGION ' TSaga '}
 
 type
   TSaga = class(TObject)
@@ -310,13 +338,13 @@ type
 var
   Saga: TSaga;
 
-{$ENDREGION 'TSaga'}
+{$ENDREGION ' TSaga '}
 
 implementation
 
 uses Math, SysUtils, Dialogs, IniFiles;
 
-{$REGION 'Utils'}
+{$REGION ' TUtils '}
 
 function __(S: string): string;
 begin
@@ -396,8 +424,8 @@ begin
   Result := Trim(SL[I]);
 end;
 
-{$ENDREGION 'Utils'}
-{$REGION 'TWorld'}
+{$ENDREGION ' TUtils '}
+{$REGION ' TWorld '}
 
 function TWorld.Count: Byte;
 begin
@@ -533,8 +561,8 @@ begin
   FMaps[I].SaveToFile(TUtils.GetPath('resources') + '0.map');
 end;
 
-{$ENDREGION 'TWorld'}
-{$REGION 'TSaga'}
+{$ENDREGION ' TWorld '}
+{$REGION ' TSaga '}
 
 constructor TSaga.Create(AWidth, AHeight: Integer);
 const
@@ -750,8 +778,8 @@ begin
   Saga.Log[lgGame].Clear;
 end;
 
-{$ENDREGION 'TSaga'}
-{$REGION 'TLog'}
+{$ENDREGION ' TSaga '}
+{$REGION ' TLog '}
 
 procedure TLog.Add(Text: string; Flag: Boolean = True);
 begin
@@ -839,8 +867,8 @@ begin
   Saga.Engine.Print(Get, Rect(Left, Top, Width, 0));
 end;
 
-{$ENDREGION 'TLog'}
-{$REGION 'TQuest'}
+{$ENDREGION ' TLog '}
+{$REGION ' TQuest '}
 
 procedure TQuest.Add(Slot: Byte; Data: string);
 var
@@ -895,8 +923,8 @@ begin
   FList.SaveToFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
 end;
 
-{$ENDREGION 'TQuest'}
-{$REGION 'TNotification'}
+{$ENDREGION ' TQuest '}
+{$REGION ' TNotification '}
 
 procedure TNotification.Add(S: string);
 begin
@@ -924,8 +952,8 @@ begin
     Saga.Engine.Print(Left, Top, FMessage);
 end;
 
-{$ENDREGION 'TNotification'}
-{$REGION 'TRecs'}
+{$ENDREGION ' TNotification '}
+{$REGION ' TRecs '}
 
 procedure TRecs.Add(Slot: Byte);
 var
@@ -990,8 +1018,8 @@ begin
   TStageRecMenu(Saga.Stages.GetStage(stRecMenu)).RecPos := Slot;
 end;
 
-{$ENDREGION 'TRecs'}
-{$REGION 'TLanguage'}
+{$ENDREGION ' TRecs '}
+{$REGION ' TLanguage '}
 
 function TLanguage.Get(S: string): string;
 var
@@ -1053,8 +1081,8 @@ begin
   FValue.Clear;
 end;
 
-{$ENDREGION 'TLanguage'}
-{$REGION 'TColors'}
+{$ENDREGION ' TLanguage '}
+{$REGION ' TColors '}
 
 function TColors.GetColor(Color: TColorsEnum): Integer;
 begin
@@ -1109,8 +1137,8 @@ begin
   clCursor := GetColor(ceDGray);
 end;
 
-{$ENDREGION 'TColors'}
-{$REGION 'TConfig'}
+{$ENDREGION ' TColors '}
+{$REGION ' TConfig '}
 
 procedure TConfig.LoadFromFile(FileName: string);
 var
@@ -1124,8 +1152,8 @@ begin
   end;
 end;
 
-{$ENDREGION 'TConfig'}
-{$REGION 'TUI'}
+{$ENDREGION ' TConfig '}
+{$REGION ' TUI '}
 
 procedure TUI.DrawChar(X, Y: Integer; Symbol: System.Char;
   ForegroundColor, BackgroundColor: Integer);
@@ -1185,8 +1213,8 @@ begin
   Engine.Print(0, Y, StringOfChar('=', Engine.GetTextLength(Text)), aCenter);
 end;
 
-{$ENDREGION 'TUI'}
-{$REGION 'TScript'}
+{$ENDREGION ' TUI '}
+{$REGION ' TScript '}
 
 constructor TScript.Create;
 begin
@@ -1463,8 +1491,8 @@ begin
     Saga.Stages.SetStage(stGame);
 end;
 
-{$ENDREGION 'TScript'}
-{$REGION 'TVars'}
+{$ENDREGION ' TScript '}
+{$REGION ' TVars '}
 
 procedure TVars.Clear;
 begin
@@ -1584,8 +1612,8 @@ begin
   A.Free;
 end;
 
-{$ENDREGION 'TVars'}
-{$REGION 'TBattle'}
+{$ENDREGION ' TVars '}
+{$REGION ' TBattle '}
 
 constructor TBattle.Create;
 begin
@@ -1636,6 +1664,6 @@ begin
   end;
 end;
 
-{$ENDREGION 'TBattle'}
+{$ENDREGION ' TBattle '}
 
 end.

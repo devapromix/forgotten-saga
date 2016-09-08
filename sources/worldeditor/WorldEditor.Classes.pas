@@ -5,6 +5,8 @@ interface
 uses Windows, Graphics, Types, Controls, ForgottenSaga.Classes,
   ForgottenSaga.Entities;
 
+{$REGION ' TEditor '}
+
 type
   TEditor = class(TSaga)
   private
@@ -41,11 +43,13 @@ type
 var
   Editor: TEditor;
 
+{$ENDREGION ' TEditor '}
+
 implementation
 
 uses Engine;
 
-{ TEditor }
+{$REGION ' TEditor '}
 
 constructor TEditor.Create;
 begin
@@ -158,5 +162,7 @@ begin
         Editor.Engine.DarkColor(TerTile.Color, TTiles.TileDarkPercent));
     end;
 end;
+
+{$ENDREGION ' TEditor '}
 
 end.

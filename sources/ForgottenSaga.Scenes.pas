@@ -6,7 +6,7 @@ interface
 
 uses Classes;
 
-{$REGION 'Stages'}
+{$REGION ' Stages '}
 
 type
   TStageEnum = (stGame, stMainMenu, stGameMenu, stRaceMenu, stNameMenu,
@@ -40,8 +40,8 @@ type
     property PrevStage: TStageEnum read FPrevStageEnum write FPrevStageEnum;
   end;
 
-{$ENDREGION 'Stages'}
-{$REGION 'Stage Game'}
+{$ENDREGION ' Stages '}
+{$REGION ' TStageGame '}
 
 type
   TStageGame = class(TStage)
@@ -57,8 +57,8 @@ type
     procedure Timer; override;
   end;
 
-{$ENDREGION 'Stage Game'}
-{$REGION 'Stages Menu'}
+{$ENDREGION ' TStageGame '}
+{$REGION ' Stages Menu '}
 
 type
   TStageCustomMenu = class(TStage)
@@ -187,8 +187,8 @@ type
     procedure Update(var Key: Word); override;
   end;
 
-{$ENDREGION 'Stages Menu'}
-{$REGION 'Stage Battle'}
+{$ENDREGION ' Stages Menu '}
+{$REGION ' TStageBattle '}
 
 type
   TStageBattle = class(TStage)
@@ -200,8 +200,8 @@ type
     procedure Timer; override;
   end;
 
-{$ENDREGION 'Stage Battle'}
-{$REGION 'Stages Inventory and Items'}
+{$ENDREGION ' TStageBattle '}
+{$REGION ' Stages Inventory and Items '}
 
 type
   TStageInv = class(TStage)
@@ -223,8 +223,8 @@ type
     procedure Timer; override;
   end;
 
-{$ENDREGION 'Stages Inventory and Items'}
-{$REGION 'Stages Quests'}
+{$ENDREGION ' Stages Inventory and Items '}
+{$REGION ' Stages Quests '}
 
 type
   TStageQuestLog = class(TStageStorageMenu)
@@ -246,8 +246,8 @@ type
     property ID: Integer read FID write FID;
   end;
 
-{$ENDREGION 'Stages Quests'}
-{$REGION 'Stage Dialog'}
+{$ENDREGION ' Stages Quests '}
+{$REGION ' Stage Dialog '}
 
 type
   TLinks = class
@@ -280,8 +280,8 @@ type
     property LinkList: TLinks read FLinkList write FLinkList;
   end;
 
-{$ENDREGION 'Stage Dialog'}
-{$REGION 'Stages Victory and Defeat'}
+{$ENDREGION ' Stage Dialog '}
+{$REGION ' Stages Victory and Defeat '}
 
 type
   TStageVictory = class(TStageCustomMenu)
@@ -301,14 +301,14 @@ type
     procedure Update(var Key: Word); override;
   end;
 
-{$ENDREGION 'Stages Victory and Defeat'}
+{$ENDREGION ' Stages Victory and Defeat '}
 
 implementation
 
-uses SysUtils, Math, Engine,
-  ForgottenSaga.Classes, ForgottenSaga.Entities, ForgottenSaga.Inv;
+uses SysUtils, Math, Engine, ForgottenSaga.Classes, ForgottenSaga.Entities,
+  ForgottenSaga.Inv;
 
-{$REGION 'TStages'}
+{$REGION ' TStages '}
 
 procedure TStages.Update(var Key: Word);
 begin
@@ -406,8 +406,8 @@ begin
     FStage[Stage].Timer;
 end;
 
-{$ENDREGION 'TStages'}
-{$REGION 'TStageGame'}
+{$ENDREGION ' TStages '}
+{$REGION ' TStageGame '}
 
 procedure TStageGame.SetNPC(ID: Byte);
 var
@@ -556,8 +556,8 @@ begin
   end;
 end;
 
-{$ENDREGION 'TStageGame'}
-{$REGION 'TStageCustomMenu'}
+{$ENDREGION ' TStageGame '}
+{$REGION ' TStageCustomMenu '}
 
 constructor TStageCustomMenu.Create;
 begin
@@ -578,8 +578,8 @@ begin
 
 end;
 
-{$ENDREGION 'TStageCustomMenu'}
-{$REGION 'TStageMenu'}
+{$ENDREGION ' TStageCustomMenu '}
+{$REGION ' TStageMenu '}
 
 constructor TStageMenu.Create;
 begin
@@ -617,8 +617,8 @@ begin
       MenuPos := TUtils.Clamp(MenuPos - 1, 0, Count - 1, False);
   end;
 end;
-{$ENDREGION 'TStageMenu'}
-{$REGION 'TStageMainMenu'}
+{$ENDREGION ' TStageMenu '}
+{$REGION ' TStageMainMenu '}
 
 constructor TStageMainMenu.Create;
 begin
@@ -667,8 +667,8 @@ begin
       end;
   end;
 end;
-{$ENDREGION 'TStageMainMenu'}
-{$REGION 'TStageGameMenu'}
+{$ENDREGION ' TStageMainMenu '}
+{$REGION ' TStageGameMenu '}
 
 constructor TStageGameMenu.Create;
 begin
@@ -707,8 +707,8 @@ begin
       end;
   end;
 end;
-{$ENDREGION 'TStageGameMenu'}
-{$REGION 'TStageRaceMenu'}
+{$ENDREGION ' TStageGameMenu '}
+{$REGION ' TStageRaceMenu '}
 
 procedure TStageRaceMenu.Render;
 var
@@ -750,8 +750,8 @@ begin
       end;
   end;
 end;
-{$ENDREGION 'TStageRaceMenu'}
-{$REGION 'TStageNameMenu'}
+{$ENDREGION ' TStageRaceMenu '}
+{$REGION ' TStageNameMenu '}
 
 procedure TStageNameMenu.Render;
 begin
@@ -774,8 +774,8 @@ begin
       Saga.Player.GenName;
   end;
 end;
-{$ENDREGION 'TStageNameMenu'}
-{$REGION 'TStageTextMenu'}
+{$ENDREGION ' TStageNameMenu '}
+{$REGION ' TStageTextMenu '}
 
 procedure TStageTextMenu.Render;
 begin
@@ -794,8 +794,8 @@ begin
       Saga.New;
   end;
 end;
-{$ENDREGION 'TStageTextMenu'}
-{$REGION 'TStageStorageMenu'}
+{$ENDREGION ' TStageTextMenu '}
+{$REGION ' TStageStorageMenu '}
 
 constructor TStageStorageMenu.Create;
 begin
@@ -862,8 +862,8 @@ begin
   end;
 end;
 
-{$ENDREGION 'TStageStorageMenu'}
-{$REGION 'TStageSaveMenu'}
+{$ENDREGION ' TStageStorageMenu '}
+{$REGION ' TStageSaveMenu '}
 
 procedure TStageSaveMenu.Render;
 begin
@@ -884,8 +884,8 @@ begin
   end;
 end;
 
-{$ENDREGION 'TStageSaveMenu'}
-{$REGION 'TStageLoadMenu'}
+{$ENDREGION ' TStageSaveMenu '}
+{$REGION ' TStageLoadMenu '}
 
 procedure TStageLoadMenu.Render;
 begin
@@ -905,8 +905,8 @@ begin
   end;
 end;
 
-{$ENDREGION 'TStageLoadMenu'}
-{$REGION 'TStageBattle'}
+{$ENDREGION ' TStageLoadMenu '}
+{$REGION ' TStageBattle '}
 
 procedure TStageBattle.Render;
 begin
@@ -950,8 +950,8 @@ begin
   end;
 end;
 
-{$ENDREGION 'TStageBattle'}
-{$REGION 'TStageDialog'}
+{$ENDREGION ' TStageBattle '}
+{$REGION ' TStageDialog '}
 
 procedure TLinks.Append(const ALabel, AName: string);
 begin
@@ -1061,8 +1061,8 @@ begin
 
 end;
 
-{$ENDREGION 'TStageDialog'}
-{$REGION 'TStageVictory'}
+{$ENDREGION ' TStageDialog '}
+{$REGION ' TStageVictory '}
 
 procedure TStageVictory.Render;
 begin
@@ -1086,8 +1086,8 @@ begin
   end;
 end;
 
-{$ENDREGION 'TStageVictory'}
-{$REGION 'TStageDefeat'}
+{$ENDREGION ' TStageVictory '}
+{$REGION ' TStageDefeat '}
 
 procedure TStageDefeat.Render;
 begin
@@ -1111,8 +1111,8 @@ begin
   end;
 end;
 
-{$ENDREGION 'TStageDefeat'}
-{$REGION 'TStageQuestLog'}
+{$ENDREGION ' TStageDefeat '}
+{$REGION ' TStageQuestLog '}
 
 procedure TStageQuestLog.Render;
 var
@@ -1165,8 +1165,8 @@ begin
       end;
   end;
 end;
-{$ENDREGION 'TStageQuestLog'}
-{$REGION 'TStageQuestInfo'}
+{$ENDREGION ' TStageQuestLog '}
+{$REGION ' TStageQuestInfo '}
 
 procedure TStageQuestInfo.Render;
 begin
@@ -1188,8 +1188,8 @@ begin
       Saga.Stages.SetStage(stQuestLog);
   end;
 end;
-{$ENDREGION 'TStageQuestInfo'}
-{$REGION 'TStageAboutMenu'}
+{$ENDREGION ' TStageQuestInfo '}
+{$REGION ' TStageAboutMenu '}
 
 procedure TStageAboutMenu.Render;
 begin
@@ -1209,8 +1209,8 @@ begin
   end;
 end;
 
-{$ENDREGION 'TStageAboutMenu'}
-{$REGION 'TStageRecMenu'}
+{$ENDREGION ' TStageAboutMenu '}
+{$REGION ' TStageRecMenu '}
 
 constructor TStageRecMenu.Create;
 begin
@@ -1247,8 +1247,8 @@ begin
   end;
 end;
 
-{$ENDREGION 'TStageRecMenu'}
-{$REGION 'TStageInv'}
+{$ENDREGION ' TStageRecMenu '}
+{$REGION ' TStageInv '}
 
 procedure TStageInv.Render;
 var
@@ -1280,8 +1280,8 @@ begin
   end;
 end;
 
-{$ENDREGION 'TStageInv'}
-{$REGION 'TStageItems'}
+{$ENDREGION ' TStageInv '}
+{$REGION ' TStageItems '}
 
 procedure TStageItems.Render;
 var
@@ -1347,6 +1347,6 @@ begin
   end;
 end;
 
-{$ENDREGION 'TStageItems'}
+{$ENDREGION ' TStageItems '}
 
 end.
