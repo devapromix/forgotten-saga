@@ -575,6 +575,7 @@ begin
   FEngine := TEngine.Create(AWidth, AHeight);
   FTUI := TUI.Create(FEngine);
   FList := TStringlist.Create;
+  FList.WriteBOM := False;
   ClearSlots;
   ForceDirectories(TUtils.GetPath('save'));
   for I := 0 to 9 do
@@ -854,6 +855,7 @@ var
 begin
   S := TStringlist.Create;
   try
+    {$IFNDEF FPC}S.WriteBOM := False;{$ENDIF}
     S.Text := FLogStr;
     S.SaveToFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
   finally
@@ -920,6 +922,7 @@ end;
 
 procedure TQuest.SaveToFile(FileName: string);
 begin
+  FList.WriteBOM := False;
   FList.SaveToFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
 end;
 

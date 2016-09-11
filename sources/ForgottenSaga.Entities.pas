@@ -96,15 +96,20 @@ type
   end;
 
 {$ENDREGION ' TRace '}
-{$REGION ' TCustomCreature '}
+{$REGION ' TCreature '}
 
 type
-  TCustomCreature = class(TEntity)
+  TCreature = class(TEntity)
   public type
     TAtrEnum = (atExp, atLife, atMana, atAdr);
+    TForce = (fcAlly, fcEnemy);
   public const
     AtrStr: array [TAtrEnum] of string = ('Exp', 'Life', 'Mana', 'Adrenalin');
+    ForceValues: array [Boolean] of TForce = (fcAlly, fcEnemy);
   private
+    FForce: TForce;
+    FFileName: string;
+    FDialog: Integer;
     FAtr: array [TAtrEnum] of TBar;
     FSkillPoints: Byte;
     FStatPoints: Byte;
@@ -114,29 +119,6 @@ type
     function GetAtr(I: TAtrEnum): TBar;
     procedure SetAtr(I: TAtrEnum; const Value: TBar);
   public
-    constructor Create(MaxLife, MaxMana: Integer);
-    destructor Destroy; override;
-    property Atr[I: TAtrEnum]: TBar read GetAtr write SetAtr;
-    property StatPoints: Byte read FStatPoints write SetStatPoints;
-    property SkillPoints: Byte read FSkillPoints write SetSkillPoints;
-    procedure AddAtr(Atrib: TAtrEnum; Max: Integer; IsToMax: Boolean);
-    procedure Fill;
-  end;
-
-{$ENDREGION ' TCustomCreature '}
-{$REGION ' TCreature '}
-
-type
-  TCreature = class(TCustomCreature)
-  public type
-    TForce = (fcAlly, fcEnemy);
-  public const
-    ForceValues: array [Boolean] of TForce = (fcAlly, fcEnemy);
-  private
-    FForce: TForce;
-    FFileName: string;
-    FDialog: Integer;
-  public
     constructor Create;
     destructor Destroy; override;
     property Force: TForce read FForce write FForce;
@@ -145,6 +127,11 @@ type
     function BackColor: Integer;
     procedure Move(AX, AY: ShortInt);
     procedure Render;
+    property Atr[I: TAtrEnum]: TBar read GetAtr write SetAtr;
+    property StatPoints: Byte read FStatPoints write SetStatPoints;
+    property SkillPoints: Byte read FSkillPoints write SetSkillPoints;
+    procedure AddAtr(Atrib: TAtrEnum; Max: Integer; IsToMax: Boolean);
+    procedure Fill;
   end;
 
 {$ENDREGION ' TCreature '}
@@ -174,7 +161,7 @@ type
   public type
     TCategory = (ctNone, ctStaff, ctSpear, ctAxe, ctSword);
     TMaterial = (mtNone, mtWood, mtBone, mtStone, mtMetal);
-  public const
+  private const
     CatStr: array [TCategory] of string = ('', 'staff', 'spear', 'axe',
       'sword');
     MatStr: array [TMaterial] of string = ('', 'wood', 'bone', 'stone',
@@ -241,6 +228,8 @@ type
     function Count: Integer;
     property Item[I: TInvByte]: TItem read GetItem write SetItem;
     function AddItem(Value: TItem): Boolean;
+    procedure LoadFromFile(FileName: string);
+    procedure SaveToFile(FileName: string);
     procedure Clear(I: TInvByte); overload;
     procedure Clear; overload;
   end;
@@ -373,7 +362,6 @@ type
 const
   BarFmt = '%d/%d';
   InfFmt = '%s %s';
-  KeyFmt = '<%s> %s';
 
 implementation
 
@@ -381,6 +369,7 @@ uses SysUtils, Math, Engine, ForgottenSaga.Classes, ForgottenSaga.Scenes;
 
 const
   RaceNameDiv: array [TSaga.TRaceEnum] of string = ('', '-', ' ');
+  KeyFmt = '{%s} %s';
   Offset = 40;
   cAdr = 75;
   cExp = 15;
@@ -521,9 +510,9 @@ begin
 end;
 
 {$ENDREGION ' TBar '}
-{$REGION ' TCustomCreature '}
+{$REGION ' TCreature '}
 
-constructor TCustomCreature.Create(MaxLife, MaxMana: Integer);
+constructor TCreature.Create;
 var
   I: TAtrEnum;
 begin
@@ -539,64 +528,11 @@ begin
       atAdr:
         AddAtr(I, cAdr, False);
       atLife:
-        AddAtr(I, MaxLife, True);
+        AddAtr(I, 100, True);
       atMana:
-        AddAtr(I, MaxMana, True);
+        AddAtr(I, 100, True);
     end;
   end;
-end;
-
-destructor TCustomCreature.Destroy;
-var
-  I: TAtrEnum;
-begin
-  for I := Low(TAtrEnum) to High(TAtrEnum) do
-    FAtr[I].Free;
-  inherited;
-end;
-
-procedure TCustomCreature.AddAtr(Atrib: TAtrEnum; Max: Integer;
-  IsToMax: Boolean);
-begin
-  Atr[Atrib].Max := Max;
-  if IsToMax then
-    Atr[Atrib].SetToMax
-  else
-    Atr[Atrib].SetToMin;
-end;
-
-procedure TCustomCreature.Fill;
-begin
-  Atr[atLife].SetToMax;
-  Atr[atMana].SetToMax;
-end;
-
-procedure TCustomCreature.SetSkillPoints(const Value: Byte);
-begin
-  FSkillPoints := Value;
-end;
-
-procedure TCustomCreature.SetStatPoints(const Value: Byte);
-begin
-  FStatPoints := Value;
-end;
-
-function TCustomCreature.GetAtr(I: TAtrEnum): TBar;
-begin
-  Result := FAtr[I];
-end;
-
-procedure TCustomCreature.SetAtr(I: TAtrEnum; const Value: TBar);
-begin
-  FAtr[I] := Value;
-end;
-
-{$ENDREGION ' TCustomCreature '}
-{$REGION ' TCreature '}
-
-constructor TCreature.Create;
-begin
-  inherited Create(100, 100);
   Color := $00FFFF00;
   Symbol := '?';
   Force := fcEnemy;
@@ -605,8 +541,11 @@ begin
 end;
 
 destructor TCreature.Destroy;
+var
+  I: TAtrEnum;
 begin
-
+  for I := Low(TAtrEnum) to High(TAtrEnum) do
+    FAtr[I].Free;
   inherited;
 end;
 
@@ -631,6 +570,42 @@ end;
 procedure TCreature.Render;
 begin
   Saga.UI.DrawChar(Pos.X, Pos.Y, Symbol, Color, BackColor);
+end;
+
+procedure TCreature.AddAtr(Atrib: TAtrEnum; Max: Integer;
+  IsToMax: Boolean);
+begin
+  Atr[Atrib].Max := Max;
+  if IsToMax then
+    Atr[Atrib].SetToMax
+  else
+    Atr[Atrib].SetToMin;
+end;
+
+procedure TCreature.Fill;
+begin
+  Atr[atLife].SetToMax;
+  Atr[atMana].SetToMax;
+end;
+
+procedure TCreature.SetSkillPoints(const Value: Byte);
+begin
+  FSkillPoints := Value;
+end;
+
+procedure TCreature.SetStatPoints(const Value: Byte);
+begin
+  FStatPoints := Value;
+end;
+
+function TCreature.GetAtr(I: TAtrEnum): TBar;
+begin
+  Result := FAtr[I];
+end;
+
+procedure TCreature.SetAtr(I: TAtrEnum; const Value: TBar);
+begin
+  FAtr[I] := Value;
 end;
 
 {$ENDREGION ' TCreature '}
@@ -881,16 +856,10 @@ begin
       Atr[atMana].Add(F.ReadString(S, 'Mana', Format(BarFmt, [100, 100])));
       Score := F.ReadInteger(S, 'Score', 0);
     end;
-    // Inventory
-    Inventory.Clear();
-    for I := Low(TInventor.TInvByte) to High(TInventor.TInvByte) do
-    begin
-      S := IntToStr(I);
-      // Inventory.
-    end;
   finally
     F.Free;
   end;
+  Inventory.LoadFromFile(AFileName);
 end;
 
 procedure TPlayer.Move(AX, AY: ShortInt);
@@ -945,21 +914,10 @@ begin
     F.WriteString(S, 'Mana', Format(BarFmt, [Atr[atMana].Cur,
       Atr[atMana].Max]));
     F.WriteInteger(S, 'Score', Score);
-    // Inventory
-    for I := Low(TInventor.TInvByte) to High(TInventor.TInvByte) do
-    begin
-      S := IntToStr(I);
-      { F.WriteString(S, 'ID', Inventory.GetID(I));
-        F.WriteInteger(S, 'Count', Inventory.GetCount(I));
-        F.WriteInteger(S, 'Weight', Inventory.GetWeight(I));
-        F.WriteInteger(S, 'Tough', Inventory.GetTough(I));
-        F.WriteBool(S, 'Stack', Inventory.GetStack(I));
-        F.WriteBool(S, 'Doll', Inventory.GetDoll(I)); }
-    end;
   finally
     F.Free;
   end;
-  // Inventory.SaveToFile(ChangeFileExt(AFileName, '.inv'));
+  Inventory.SaveToFile(AFileName);
 end;
 
 procedure TPlayer.Pickup;
@@ -1014,8 +972,7 @@ var
     if (I > -1) then
     begin
       Item := Saga.World.CurrentItems.Get(I);
-      Result := Trim(Format(KeyFmt, [Item.Symbol,
-        Saga.World.CurrentItems.GetItemPropStr(Item)]));
+      Result := Trim(Saga.World.CurrentItems.GetItemPropStr(Item));
       C := Saga.World.CurrentItems.Count(Pos.X, Pos.Y);
       if (C > 1) then
         Result := Format(KeyFmt, [Saga.World.CurrentItems.Get(I).Symbol,
@@ -1117,6 +1074,8 @@ var
   end;
 
 begin
+  if (Amount = 0) then
+    Exit;
   if (Count <> 0) then
     for I := 0 to Count - 1 do
       if not FItem[I].Active then
@@ -1290,7 +1249,7 @@ begin
       Item.Durability.Max])
   else if (Item.Count > 1) then
     Result := Format('(%dx)', [Item.Count]);
-  Result := Format('%s %s', [__(Item.Name), Result]);
+  Result := Format(KeyFmt + ' %s', [Item.Symbol, __(Item.Name), Result]);
 end;
 
 procedure TItems.Pickup(I: Integer);
@@ -1481,6 +1440,102 @@ begin
   Result := FItem[I];
 end;
 
+{ procedure TItems.LoadFromFile(FileName: string);
+  var
+  I, L: Integer;
+  F: TIniFile;
+  S: string;
+  begin
+  Self.Clear;
+  F := TIniFile.Create(FileName);
+  try
+  for I := 0 to 99 do
+  begin
+  S := Format('%d', [I]);
+  if (F.SectionExists(S)) then
+  begin
+  L := Count;
+  SetLength(FItem, L + 1);
+  FItem[L] := TItem.Create;
+  FItem[L].Active := True;
+  FItem[L].Name := F.ReadString(S, 'Name', '');
+  FItem[L].Level := F.ReadInteger(S, 'Level', 1);
+  FItem[L].Category := F.ReadCategory(S, 'Category', ctNone);
+  FItem[L].Material := F.ReadMaterial(S, 'Material', mtNone);
+  FItem[L].Symbol := F.ReadString(S, 'Symbol', '/')[1];
+  FItem[L].Color := F.ReadColor(S, 'Color', '200,200,200');
+  FItem[L].Count := F.ReadInteger(S, 'Count', 1);
+  FItem[L].SetPosition(Point(F.ReadInteger(S, 'X', 0),
+  F.ReadInteger(S, 'Y', 0)));
+  FItem[L].Calc;
+  FItem[L].Durability.Cur := F.ReadInteger(S, 'Durability',
+  FItem[L].Durability.Max);
+  end;
+  end;
+  finally
+  F.Free;
+  end;
+  end;
+}
+procedure TInventor.LoadFromFile(FileName: string);
+var
+  I: TInvByte;
+  F: TIniFile;
+  S: string;
+begin
+  Self.Clear();
+  F := TIniFile.Create(FileName);
+  try
+    for I := Low(TInvByte) to High(TInvByte) do
+    begin
+      S := IntToStr(I);
+      if (F.SectionExists(S)) then
+      begin
+        FItem[I].Active := True;
+        FItem[I].Name := F.ReadString(S, 'Name', '');
+        FItem[I].Level := F.ReadInteger(S, 'Level', 1);
+        FItem[I].Category := F.ReadCategory(S, 'Category', ctNone);
+        FItem[I].Material := F.ReadMaterial(S, 'Material', mtNone);
+        FItem[I].Symbol := F.ReadString(S, 'Symbol', '/')[1];
+        FItem[I].Color := F.ReadColor(S, 'Color', '200,200,200');
+        FItem[I].Count := F.ReadInteger(S, 'Count', 1);
+        FItem[I].Calc;
+        FItem[I].Durability.Cur := F.ReadInteger(S, 'Durability',
+          FItem[I].Durability.Max);
+      end;
+    end;
+  finally
+    F.Free;
+  end;
+end;
+
+procedure TInventor.SaveToFile(FileName: string);
+var
+  S: string;
+  F: TIniFile;
+  I: TInvByte;
+begin
+  F := TIniFile.Create(FileName);
+  try
+    for I := Low(TInventor.TInvByte) to High(TInventor.TInvByte) do
+    begin
+      S := IntToStr(I);
+      F.WriteString(S, 'Name', Item[I].Name);
+      F.WriteInteger(S, 'Level', Item[I].Level);
+      F.WriteCategory(S, 'Category', Item[I].Category);
+      F.WriteMaterial(S, 'Material', Item[I].Material);
+      F.WriteString(S, 'Symbol', Item[I].Symbol);
+      F.WriteColor(S, 'Color', Item[I].Color);
+      F.WriteInteger(S, 'Count', Item[I].Count);
+      F.WriteInteger(S, 'Durability', Item[I].Durability.Cur);
+      if not Item[I].Active and F.SectionExists(S) then
+        F.EraseSection(S);
+    end;
+  finally
+    F.Free;
+  end;
+end;
+
 procedure TInventor.SetItem(I: TInvByte; const Value: TItem);
 begin
   FItem[I] := Value;
@@ -1572,6 +1627,7 @@ var
   S: string;
 begin
   L := TStringList.Create;
+  L.WriteBOM := False;
   L.Append(Format('; %s', [ExtractFileName(AFileName)]));
   for Z := Low(TLayerEnum) to High(TLayerEnum) do
   begin

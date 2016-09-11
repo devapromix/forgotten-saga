@@ -547,7 +547,7 @@ begin
       Saga.Player.Pickup;
     TK_H:
       Saga.World.CurrentItems.Add('|', $00AAFF88, 1, 'Посох Шамана', mtBone,
-        ctStaff, 15);
+        ctStaff, 14);
     TK_L:
       begin
         Saga.Player.Look.SetPosition(Saga.Player.Pos);
