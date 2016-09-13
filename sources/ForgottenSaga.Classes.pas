@@ -44,33 +44,31 @@ type
   end;
 
 {$ENDREGION ' TUI '}
-{$REGION ' TVars '}
-
-type
-  TVars = class(TObject)
-  private
-    FID: TStringlist;
-    FValue: TStringlist;
-  public
-    constructor Create;
-    destructor Destroy; override;
-    procedure Clear;
-    function Count: Integer;
-    procedure Empty(const AVar: string);
-    function Has(const AVar: string): Boolean;
-    procedure SaveToFile(const FileName: string);
-    procedure LoadFromFile(const FileName: string);
-    function GetStr(const AVar: string): string;
-    procedure SetStr(const AVar, AValue: string);
-    function GetInt(const AVar: string): Integer;
-    procedure SetInt(const AVar: string; const AValue: Integer);
-  end;
-
-{$ENDREGION ' TVars '}
 {$REGION ' TScript '}
 
 type
   TScript = class(TObject)
+{$REGION ' TScript.TVars '}
+  private type
+    TVars = class(TObject)
+    private
+      FID: TStringlist;
+      FValue: TStringlist;
+    public
+      constructor Create;
+      destructor Destroy; override;
+      procedure Clear;
+      function Count: Integer;
+      procedure Empty(const AVar: string);
+      function Has(const AVar: string): Boolean;
+      procedure SaveToFile(const FileName: string);
+      procedure LoadFromFile(const FileName: string);
+      function GetStr(const AVar: string): string;
+      procedure SetStr(const AVar, AValue: string);
+      function GetInt(const AVar: string): Integer;
+      procedure SetInt(const AVar: string; const AValue: Integer);
+    end;
+{$ENDREGION ' TScript.TVars '}
   private
     FIsNext: Boolean;
     FIsIf: Boolean;
@@ -182,6 +180,7 @@ type
     FCreatures: array of TCreatures;
     FItems: array of TItems;
     FEngine: TEngine;
+    function FileName(Dir: string; ID: Byte; Ext: string): string;
   public
     constructor Create;
     destructor Destroy; override;
@@ -189,37 +188,17 @@ type
     function GetMapCreatures(I: Byte): TCreatures;
     function GetMapItems(I: Byte): TItems;
     function CurrentMap: TMap;
-    function GoLoc(Dir: TMap.TDir): Boolean;
     function CurrentCreatures: TCreatures;
     function CurrentItems: TItems;
     function Count: Byte;
-    function FileName(Dir: string; ID: Byte; Ext: string): string;
     procedure SaveToDir(Dir: string);
     procedure LoadFromDir(Dir: string);
     procedure Gen(I: Byte);
     property Engine: TEngine read FEngine write FEngine;
+    class function GoLoc(Dir: TMap.TDir): Boolean;
   end;
 
 {$ENDREGION ' TWorld '}
-{$REGION ' TLog '}
-
-type
-  TLog = class(TObject)
-  private
-    FLogStr: string;
-    FLen: Word;
-  public
-    constructor Create(Len: Word);
-    procedure Clear;
-    procedure ClearTags;
-    procedure Add(Text: string; Flag: Boolean = True);
-    function Get: string;
-    procedure LoadFromFile(FileName: string);
-    procedure SaveToFile(FileName: string);
-    procedure Render(Left, Top, Width: Word);
-  end;
-
-{$ENDREGION ' TLog '}
 {$REGION ' TRecs '}
 
 type
@@ -264,8 +243,8 @@ type
     procedure Clear;
     function Get(Slot, N: Byte): string;
     procedure Add(Slot: Byte; Data: string);
-    procedure LoadFromFile(FileName: string);
-    procedure SaveToFile(FileName: string);
+    procedure LoadFromFile(const FileName: string);
+    procedure SaveToFile(const FileName: string);
   end;
 
 {$ENDREGION ' TQuest '}
@@ -273,6 +252,42 @@ type
 
 type
   TSaga = class(TObject)
+{$REGION ' TSaga.TRace '}
+  public type
+    TRace = class(TObject)
+    private
+      FColor: Integer;
+      FName: string;
+      FPos: TPoint;
+      FMap: Byte;
+      FLife: Word;
+      FMana: Word;
+    public
+      property Color: Integer read FColor write FColor;
+      property Name: string read FName write FName;
+      property Pos: TPoint read FPos write FPos;
+      property Map: Byte read FMap write FMap;
+      property Life: Word read FLife write FLife;
+      property Mana: Word read FMana write FMana;
+    end;
+{$ENDREGION ' TSaga.TRace '}
+{$REGION ' TSaga.TLog '}
+  public type
+    TLog = class(TObject)
+    private
+      FLogStr: string;
+      FLen: Word;
+    public
+      constructor Create(Len: Word);
+      procedure Clear;
+      procedure ClearTags;
+      procedure Add(Text: string; Flag: Boolean = True);
+      function Get: string;
+      procedure LoadFromFile(FileName: string);
+      procedure SaveToFile(FileName: string);
+      procedure Render(Left, Top, Width: Word);
+    end;
+{$ENDREGION ' TSaga.TLog '}
   public type
     TRaceEnum = (rcGoblin, rcOrc, rcTroll);
     TLogEnum = (lgGame, lgIntro, lgDialog, lgBattle, lgQuest);
@@ -281,6 +296,7 @@ type
       ('Avgu,Leo,Tan,Sho,Penr,Lok,Gron,Lar,Midr|sin,neg,zar,kar,tun,rel,bal,rin,kon|or,fin,shog,tal,rod,pin,ol,kan,on',
       'Had,Rod,Shag,Dor,Lid,Tar,Kreg,Bron,Shung|Garum,Turum,Ur,Utak,Udoom,Ud,Urak,Doon,Vuug|Kat,Shak,Gir,Bood,Dreg,Din,Grok,Rig,Sadr',
       'Blind,Glad,Proud,Sharp-sighted,Powerful,Dancer,Guarding,Thunderous,Night|Wolfhound,Wood-goblin,Destroyer,Crusher,Pathfinder,Astrologer,Bootes,Caretaker,Befouler');
+    RaceNameDiv: array [TRaceEnum] of string = ('', '-', ' ');
   private
     FList: TStringlist;
     FPlayer: TPlayer;
@@ -540,7 +556,7 @@ begin
   end;
 end;
 
-function TWorld.GoLoc(Dir: TMap.TDir): Boolean;
+class function TWorld.GoLoc(Dir: TMap.TDir): Boolean;
 var
   ID: Integer;
 begin
@@ -575,7 +591,7 @@ begin
   FEngine := TEngine.Create(AWidth, AHeight);
   FTUI := TUI.Create(FEngine);
   FList := TStringlist.Create;
-  FList.WriteBOM := False;
+{$IFNDEF FPC}FList.WriteBOM := False; {$ENDIF}
   ClearSlots;
   ForceDirectories(TUtils.GetPath('save'));
   for I := 0 to 9 do
@@ -779,10 +795,9 @@ begin
   Saga.Log[lgGame].Clear;
 end;
 
-{$ENDREGION ' TSaga '}
-{$REGION ' TLog '}
+{$REGION ' TSaga.TLog '}
 
-procedure TLog.Add(Text: string; Flag: Boolean = True);
+procedure TSaga.TLog.Add(Text: string; Flag: Boolean = True);
 begin
   Text := Trim(Text);
   if (Text = '') then
@@ -799,12 +814,12 @@ begin
   end;
 end;
 
-procedure TLog.Clear;
+procedure TSaga.TLog.Clear;
 begin
   FLogStr := '';
 end;
 
-procedure TLog.ClearTags;
+procedure TSaga.TLog.ClearTags;
 var
   I: Integer;
   F: Boolean;
@@ -825,18 +840,18 @@ begin
   FLogStr := StringReplace(FLogStr, '/', '', [rfReplaceAll]);
 end;
 
-constructor TLog.Create(Len: Word);
+constructor TSaga.TLog.Create(Len: Word);
 begin
   FLen := Len;
   Clear;
 end;
 
-function TLog.Get: string;
+function TSaga.TLog.Get: string;
 begin
   Result := FLogStr;
 end;
 
-procedure TLog.LoadFromFile(FileName: string);
+procedure TSaga.TLog.LoadFromFile(FileName: string);
 var
   S: TStringlist;
 begin
@@ -849,13 +864,13 @@ begin
   end;
 end;
 
-procedure TLog.SaveToFile(FileName: string);
+procedure TSaga.TLog.SaveToFile(FileName: string);
 var
   S: TStringlist;
 begin
   S := TStringlist.Create;
   try
-    {$IFNDEF FPC}S.WriteBOM := False;{$ENDIF}
+{$IFNDEF FPC}S.WriteBOM := False; {$ENDIF}
     S.Text := FLogStr;
     S.SaveToFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
   finally
@@ -863,13 +878,14 @@ begin
   end;
 end;
 
-procedure TLog.Render(Left, Top, Width: Word);
+procedure TSaga.TLog.Render(Left, Top, Width: Word);
 begin
   Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
-  Saga.Engine.Print(Get, Rect(Left, Top, Width, 0));
+  Saga.Engine.Print(Self.Get, Rect(Left, Top, Width, 0));
 end;
 
 {$ENDREGION ' TLog '}
+{$ENDREGION ' TSaga '}
 {$REGION ' TQuest '}
 
 procedure TQuest.Add(Slot: Byte; Data: string);
@@ -915,14 +931,14 @@ begin
     Result := '';
 end;
 
-procedure TQuest.LoadFromFile(FileName: string);
+procedure TQuest.LoadFromFile(const FileName: string);
 begin
   FList.LoadFromFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
 end;
 
-procedure TQuest.SaveToFile(FileName: string);
+procedure TQuest.SaveToFile(const FileName: string);
 begin
-  FList.WriteBOM := False;
+{$IFNDEF FPC}FList.WriteBOM := False; {$ENDIF}
   FList.SaveToFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
 end;
 
@@ -1467,7 +1483,7 @@ begin
     I := StrToIntDef(SL[0], 0);
     J := StrToIntDef(SL[1], 0);
     K := StrToIntDef(SL[2], 0);
-    Saga.World.GetMapCreatures(I).Get(J).Dialog := K;
+    Saga.World.GetMapCreatures(I).GetEntity(J).Dialog := K;
   end;
 
   if IsTag('exp') then
@@ -1494,34 +1510,33 @@ begin
     Saga.Stages.SetStage(stGame);
 end;
 
-{$ENDREGION ' TScript '}
-{$REGION ' TVars '}
+{$REGION ' TScript.TVars '}
 
-procedure TVars.Clear;
+procedure TScript.TVars.Clear;
 begin
   FID.Clear;
   FValue.Clear;
 end;
 
-function TVars.Count: Integer;
+function TScript.TVars.Count: Integer;
 begin
   Result := FID.Count;
 end;
 
-constructor TVars.Create;
+constructor TScript.TVars.Create;
 begin
   FID := TStringlist.Create;
   FValue := TStringlist.Create;
 end;
 
-destructor TVars.Destroy;
+destructor TScript.TVars.Destroy;
 begin
   FID.Free;
   FValue.Free;
   inherited;
 end;
 
-procedure TVars.Empty(const AVar: string);
+procedure TScript.TVars.Empty(const AVar: string);
 var
   I: Integer;
 begin
@@ -1532,7 +1547,7 @@ begin
   FValue.Delete(I);
 end;
 
-function TVars.GetStr(const AVar: string): string;
+function TScript.TVars.GetStr(const AVar: string): string;
 var
   I: Integer;
 begin
@@ -1543,7 +1558,7 @@ begin
     Result := FValue[I];
 end;
 
-procedure TVars.SetStr(const AVar, AValue: string);
+procedure TScript.TVars.SetStr(const AVar, AValue: string);
 var
   I: Integer;
 begin
@@ -1557,7 +1572,7 @@ begin
     FValue[I] := AValue;
 end;
 
-function TVars.GetInt(const AVar: string): Integer;
+function TScript.TVars.GetInt(const AVar: string): Integer;
 var
   S: string;
   E: Integer;
@@ -1569,17 +1584,17 @@ begin
     Val(S, Result, E);
 end;
 
-procedure TVars.SetInt(const AVar: string; const AValue: Integer);
+procedure TScript.TVars.SetInt(const AVar: string; const AValue: Integer);
 begin
   SetStr(AVar, Format('%d', [AValue]));
 end;
 
-function TVars.Has(const AVar: string): Boolean;
+function TScript.TVars.Has(const AVar: string): Boolean;
 begin
   Result := FID.IndexOf(AVar) > -1;
 end;
 
-procedure TVars.LoadFromFile(const FileName: string);
+procedure TScript.TVars.LoadFromFile(const FileName: string);
 var
   A: TStringlist;
   I, J: Integer;
@@ -1602,7 +1617,7 @@ begin
   end;
 end;
 
-procedure TVars.SaveToFile(const FileName: string);
+procedure TScript.TVars.SaveToFile(const FileName: string);
 var
   I: Integer;
   A: TStringlist;
@@ -1615,7 +1630,8 @@ begin
   A.Free;
 end;
 
-{$ENDREGION ' TVars '}
+{$ENDREGION ' TScript.TVars '}
+{$ENDREGION ' TScript '}
 {$REGION ' TBattle '}
 
 constructor TBattle.Create;
@@ -1636,7 +1652,7 @@ end;
 
 function TBattle.EnemyName: string;
 begin
-  Result := Saga.World.CurrentCreatures.Get(ID).Name;
+  Result := Saga.World.CurrentCreatures.GetEntity(ID).Name;
 end;
 
 procedure TBattle.Finish;

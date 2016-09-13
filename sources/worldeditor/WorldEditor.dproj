@@ -85,7 +85,6 @@
         <DCCReference Include="..\ForgottenSaga.Scenes.pas"/>
         <DCCReference Include="..\Common.Map.Generator.pas"/>
         <DCCReference Include="..\ForgottenSaga.Entities.pas"/>
-        <DCCReference Include="..\ForgottenSaga.Inv.pas"/>
         <DCCReference Include="WorldEditor.NewMapForm.pas">
             <Form>fNew</Form>
         </DCCReference>

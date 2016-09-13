@@ -9,7 +9,6 @@ uses
   ForgottenSaga.Scenes in '..\ForgottenSaga.Scenes.pas',
   Common.Map.Generator in '..\Common.Map.Generator.pas',
   ForgottenSaga.Entities in '..\ForgottenSaga.Entities.pas',
-  ForgottenSaga.Inv in '..\ForgottenSaga.Inv.pas',
   WorldEditor.NewMapForm in 'WorldEditor.NewMapForm.pas' {fNew};
 
 {$R *.res}

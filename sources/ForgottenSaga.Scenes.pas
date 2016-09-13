@@ -305,8 +305,7 @@ type
 
 implementation
 
-uses SysUtils, Math, Engine, ForgottenSaga.Classes, ForgottenSaga.Entities,
-  ForgottenSaga.Inv;
+uses SysUtils, Math, Engine, ForgottenSaga.Classes, ForgottenSaga.Entities;
 
 {$REGION ' TStages '}
 
@@ -416,8 +415,8 @@ begin
   D := TStageDialog(Saga.Stages.GetStage(stDialog));
   D.ID := ID;
   Saga.Dialog.LoadFromFile(TUtils.GetPath('resources') +
-    Saga.World.CurrentCreatures.Get(ID).FileName);
-  Saga.Dialog.Next(Format('%d', [Saga.World.CurrentCreatures.Get(ID).Dialog]));
+    Saga.World.CurrentCreatures.GetEntity(ID).FileName);
+  Saga.Dialog.Next(Format('%d', [Saga.World.CurrentCreatures.GetEntity(ID).Dialog]));
 end;
 
 procedure TStageGame.SetDialog(ID: Byte);
@@ -444,7 +443,7 @@ begin
   ID := Saga.World.CurrentCreatures.Has(Saga.Player.Pos.X + X,
     Saga.Player.Pos.Y + Y);
   if (ID > -1) then
-    case Saga.World.CurrentCreatures.Get(ID).Force of
+    case Saga.World.CurrentCreatures.GetEntity(ID).Force of
       fcAlly:
         SetDialog(ID);
       fcEnemy:
@@ -467,14 +466,14 @@ end;
 
 procedure TStageGame.RenderPlayerInfo;
 var
-  I: TCustomCreature.TAtrEnum;
+  I: TCreature.TAtrEnum;
 begin
   Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
   Saga.Engine.Print(81, 0, __(Saga.World.CurrentMap.Name));
   Saga.Engine.Print(81, 1, Saga.Player.GetFullName);
   Saga.Engine.Print(81, 2, __('Honor') + ' ' + IntToStr(Saga.Player.Score));
-  for I := Low(TCustomCreature.TAtrEnum) to High(TCustomCreature.TAtrEnum) do
-    Saga.Engine.Print(81, ord(I) + 3, __(TCustomCreature.AtrStr[I]) + ' ' +
+  for I := Low(TCreature.TAtrEnum) to High(TCreature.TAtrEnum) do
+    Saga.Engine.Print(81, ord(I) + 3, __(TCreature.AtrStr[I]) + ' ' +
       Saga.Player.Atr[I].ToText);
 end;
 
@@ -528,12 +527,12 @@ begin
     TK_COMMA:
       if Saga.World.CurrentMap.HasTile(tStUp, Saga.Player.Pos.X,
         Saga.Player.Pos.Y) then
-        Saga.World.GoLoc(drTop);
+        TWorld.GoLoc(drTop);
     TK_PERIOD:
       begin
         if Saga.World.CurrentMap.HasTile(tStDn, Saga.Player.Pos.X,
           Saga.Player.Pos.Y) then
-          Saga.World.GoLoc(drBottom);
+          TWorld.GoLoc(drBottom);
       end;
     TK_J:
       Saga.Stages.SetStage(stQuestLog);
@@ -917,10 +916,10 @@ begin
   Saga.Engine.ForegroundColor(Saga.Player.Color);
   Saga.Engine.Print(90, 6, Saga.Player.Name + ' (' + Saga.Player.Atr[atLife]
     .ToText + ')');
-  Saga.Engine.ForegroundColor(Saga.World.CurrentCreatures.Get
+  Saga.Engine.ForegroundColor(Saga.World.CurrentCreatures.GetEntity
     (Saga.Battle.ID).Color);
-  Saga.Engine.Print(90, 7, Saga.World.CurrentCreatures.Get(Saga.Battle.ID).Name
-    + ' (' + Saga.World.CurrentCreatures.Get(Saga.Battle.ID).Atr[atLife]
+  Saga.Engine.Print(90, 7, Saga.World.CurrentCreatures.GetEntity(Saga.Battle.ID).Name
+    + ' (' + Saga.World.CurrentCreatures.GetEntity(Saga.Battle.ID).Atr[atLife]
     .ToText + ')');
 
   Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
@@ -1010,8 +1009,8 @@ var
   I: Integer;
   S, N, Close: string;
 begin
-  Saga.Engine.ForegroundColor(Saga.World.CurrentCreatures.Get(ID).Color);
-  Saga.Engine.Print(0, 9, __(Saga.World.CurrentCreatures.Get(ID).Name),
+  Saga.Engine.ForegroundColor(Saga.World.CurrentCreatures.GetEntity(ID).Color);
+  Saga.Engine.Print(0, 9, __(Saga.World.CurrentCreatures.GetEntity(ID).Name),
     aCenter);
   Saga.Engine.ForegroundColor(Saga.Player.Color);
   Saga.Engine.Print(0, 24, Saga.Player.GetRaceName + ' ' +
@@ -1252,11 +1251,11 @@ end;
 
 procedure TStageInv.Render;
 var
-  I: TInvByte;
+  I: TPlayer.TInventor.TInvByte;
   F: string;
 begin
   Saga.UI.DrawTitle(5, __('Inventory'));
-  for I := Low(TInvByte) to High(TInvByte) do
+  for I := Low(TPlayer.TInventor.TInvByte) to High(TPlayer.TInventor.TInvByte) do
     if Saga.Player.Inventory.Item[I].Active then
     begin
       F := Saga.World.CurrentItems.GetItemPropStr
@@ -1292,14 +1291,14 @@ begin
   C := 0;
   for I := 0 to Saga.World.CurrentItems.Count - 1 do
   begin
-    if (C > High(TInvByte) - 1) then
+    if (C > High(TPlayer.TInventor.TInvByte) - 1) then
       Break;
-    if (Saga.World.CurrentItems.Get(I).Active) and
-      (Saga.World.CurrentItems.Get(I).Pos.X = Saga.Player.Pos.X) and
-      (Saga.World.CurrentItems.Get(I).Pos.Y = Saga.Player.Pos.Y) then
+    if (Saga.World.CurrentItems.GetEntity(I).Active) and
+      (Saga.World.CurrentItems.GetEntity(I).Pos.X = Saga.Player.Pos.X) and
+      (Saga.World.CurrentItems.GetEntity(I).Pos.Y = Saga.Player.Pos.Y) then
     begin
       F := Saga.World.CurrentItems.GetItemPropStr
-        (Saga.World.CurrentItems.Get(I));
+        (Saga.World.CurrentItems.GetEntity(I));
       Saga.UI.DrawKey(15, C + 7, F, chr(C + 65));
       Inc(C);
     end;
@@ -1341,7 +1340,7 @@ begin
     TK_SPACE:
       begin
         K := TK_A;
-        for I := 0 to High(TInvByte) - 1 do
+        for I := 0 to High(TPlayer.TInventor.TInvByte) - 1 do
           Self.Update(K);
       end;
   end;

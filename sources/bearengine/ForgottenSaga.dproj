@@ -79,7 +79,6 @@
         <DCCReference Include="Engine.pas"/>
         <DCCReference Include="BearLibTerminal.pas"/>
         <DCCReference Include="..\ForgottenSaga.Classes.pas"/>
-        <DCCReference Include="..\ForgottenSaga.Inv.pas"/>
         <DCCReference Include="..\ForgottenSaga.Entities.pas"/>
         <DCCReference Include="..\ForgottenSaga.Scenes.pas"/>
         <DCCReference Include="..\Common.Map.Generator.pas"/>

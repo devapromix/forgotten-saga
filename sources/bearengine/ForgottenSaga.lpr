@@ -6,7 +6,6 @@ uses
   Engine in 'Engine.pas',
   BearLibTerminal in 'BearLibTerminal.pas',
   ForgottenSaga.Classes in '..\ForgottenSaga.Classes.pas',
-  ForgottenSaga.Inv in '..\ForgottenSaga.Inv.pas',
   ForgottenSaga.Entities in '..\ForgottenSaga.Entities.pas',
   ForgottenSaga.Scenes in '..\ForgottenSaga.Scenes.pas',
   Common.Map.Generator in '..\Common.Map.Generator.pas';
@@ -17,7 +16,7 @@ var
 
 begin
   terminal_open();
-  Saga := TSaga.Create(MapWidth + UIPanelWidth, MapHeight);
+  Saga := TSaga.Create(TMap.MapWidth + TUI.PanelWidth, TMap.MapHeight);
   try
     Saga.Init;
     terminal_set(Format('window.title=%s', [__('Forgotten Saga')]));
