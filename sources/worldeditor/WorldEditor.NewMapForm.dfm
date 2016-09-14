@@ -26,21 +26,54 @@ object fNew: TfNew
     ModalResult = 1
     TabOrder = 0
   end
-  object cmdFill: TBitBtn
-    Left = 416
-    Top = 36
-    Width = 43
-    Height = 25
-    Caption = 'Fill'
+  object GroupBox1: TGroupBox
+    Left = 56
+    Top = 64
+    Width = 265
+    Height = 57
+    Caption = 'Terrain'
     TabOrder = 1
-    OnClick = cmdFillClick
+    object btTerFill: TBitBtn
+      Left = 208
+      Top = 20
+      Width = 43
+      Height = 25
+      Caption = 'Fill'
+      TabOrder = 0
+      OnClick = btTerFillClick
+    end
+    object cbTerrain: TComboBox
+      Left = 17
+      Top = 22
+      Width = 185
+      Height = 21
+      Style = csDropDownList
+      TabOrder = 1
+    end
   end
-  object cbxTiles: TComboBox
-    Left = 208
-    Top = 36
-    Width = 185
-    Height = 21
-    Style = csDropDownList
+  object GroupBox2: TGroupBox
+    Left = 56
+    Top = 136
+    Width = 265
+    Height = 57
+    Caption = 'Objects'
     TabOrder = 2
+    object btObjFill: TBitBtn
+      Left = 208
+      Top = 20
+      Width = 43
+      Height = 25
+      Caption = 'Fill'
+      TabOrder = 0
+      OnClick = btObjFillClick
+    end
+    object cbObjects: TComboBox
+      Left = 9
+      Top = 22
+      Width = 185
+      Height = 21
+      Style = csDropDownList
+      TabOrder = 1
+    end
   end
 end

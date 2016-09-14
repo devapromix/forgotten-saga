@@ -214,6 +214,7 @@ procedure TfMain.brObjectsClick(Sender: TObject);
 begin
   TerListBox.Visible := False;
   ObjListBox.Visible := True;
+  ObjListBoxClick(Sender);
   FormPaint(Sender);
 end;
 
@@ -221,6 +222,7 @@ procedure TfMain.brTerrainClick(Sender: TObject);
 begin
   ObjListBox.Visible := False;
   TerListBox.Visible := True;
+  TerListBoxClick(Sender);
   FormPaint(Sender);
 end;
 
@@ -260,9 +262,10 @@ procedure TfMain.ToolButton6Click(Sender: TObject);
 begin
   fNew.Left := Self.Left + ((Self.Width div 2) - (fNew.Width div 2));
   fNew.Top := Self.Top + ((Self.Height div 2) - (fNew.Height div 2));
-  brTerrain.Click;
-  fNew.cbxTiles.Items.Assign(Self.TerListBox.Items);
-  fNew.cbxTiles.ItemIndex := Self.TerListBox.ItemIndex;
+  fNew.cbTerrain.Items.Assign(Self.TerListBox.Items);
+  fNew.cbTerrain.ItemIndex := Self.TerListBox.ItemIndex;
+  fNew.cbObjects.Items.Assign(Self.ObjListBox.Items);
+  fNew.cbObjects.ItemIndex := Self.ObjListBox.ItemIndex;
   fNew.ShowModal;
 end;
 
