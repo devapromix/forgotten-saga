@@ -4,7 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, Menus, Buttons, ComCtrls, ToolWin, ImgList, StdCtrls;
+  Dialogs, ExtCtrls, Menus, Buttons, ComCtrls, ToolWin, ImgList, StdCtrls,
+  ForgottenSaga.Entities;
 
 type
   TfMain = class(TForm)
@@ -30,6 +31,7 @@ type
     ToolButton4: TToolButton;
     ToolButton5: TToolButton;
     ToolButton6: TToolButton;
+    ObjListBox: TListBox;
     procedure FormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -42,12 +44,17 @@ type
     procedure ToolButton1Click(Sender: TObject);
     procedure ToolButton4Click(Sender: TObject);
     procedure ToolButton6Click(Sender: TObject);
+    procedure ObjListBoxClick(Sender: TObject);
+    procedure brObjectsClick(Sender: TObject);
   private
+    procedure LoadResources;
     { Private declarations }
   public
     { Public declarations }
     procedure UpdateCaption;
     function GetCurrentLayer(): Byte;
+    function GetRealTile(Index: Integer; Layer: TTiles.TLayerTypeEnum)
+      : TTiles.TTileEnum;
   end;
 
 var
@@ -55,7 +62,7 @@ var
 
 implementation
 
-uses WorldEditor.Classes, WorldEditor.NewMapForm, ForgottenSaga.Entities;
+uses WorldEditor.Classes, WorldEditor.NewMapForm;
 
 {$R *.dfm}
 
@@ -70,8 +77,6 @@ begin
 end;
 
 procedure TfMain.FormCreate(Sender: TObject);
-var
-  I: TTiles.TTileEnum;
 begin
   Editor := TEditor.Create;
   Editor.ToolBarHeight := ToolBar.Height;
@@ -87,13 +92,7 @@ begin
   brTerrain.Click;
   brTerrain.Down := True;
   UpdateCaption;
-  TerListBox.Clear;
-  for I := Low(TTiles.TTileEnum) to High(TTiles.TTileEnum) do
-  begin
-    TerListBox.Items.Append(Format('[%s] %s', [Editor.Tiles.GetTile(I).Symbol,
-      Editor.Tiles.GetTile(I).Name]));
-  end;
-  TerListBox.ItemIndex := 0;
+  LoadResources;
   Editor.Tile := tNone;
   FormPaint(Sender);
 end;
@@ -140,6 +139,56 @@ begin
     Result := 3;
 end;
 
+function TfMain.GetRealTile(Index: Integer; Layer: TTiles.TLayerTypeEnum)
+  : TTiles.TTileEnum;
+var
+  Tile: TTiles.TTileEnum;
+  Counter: Byte;
+  Flag: Boolean;
+begin
+  Counter := 0;
+  Result := tNone;
+  for Tile := Low(TTiles.TTileEnum) to High(TTiles.TTileEnum) do
+  begin
+    Flag := (Editor.Tiles.GetTile(Tile).Layer = Layer) or
+      (Editor.Tiles.GetTile(Tile).Layer = ltBoth);
+    if not Flag then
+      Continue;
+    if (Counter = Index) then
+    begin
+      Result := Tile;
+      Break;
+    end;
+    if Flag then
+      Inc(Counter);
+  end;
+end;
+
+procedure TfMain.LoadResources;
+var
+  I: TTiles.TTileEnum;
+  ObjFlag: Boolean;
+  TerFlag: Boolean;
+begin
+  TerListBox.Clear;
+  ObjListBox.Clear;
+  for I := Low(TTiles.TTileEnum) to High(TTiles.TTileEnum) do
+  begin
+    TerFlag := (Editor.Tiles.GetTile(I).Layer = ltTerrain) or
+      (Editor.Tiles.GetTile(I).Layer = ltBoth);
+    ObjFlag := (Editor.Tiles.GetTile(I).Layer = ltObjects) or
+      (Editor.Tiles.GetTile(I).Layer = ltBoth);
+    if TerFlag then
+      TerListBox.Items.Append(Format(TPlayer.KeyFmt,
+        [Editor.Tiles.GetTile(I).Symbol, Editor.Tiles.GetTile(I).Name]));
+    if ObjFlag then
+      ObjListBox.Items.Append(Format(TPlayer.KeyFmt,
+        [Editor.Tiles.GetTile(I).Symbol, Editor.Tiles.GetTile(I).Name]));
+  end;
+  TerListBox.ItemIndex := 0;
+  ObjListBox.ItemIndex := 0;
+end;
+
 procedure TfMain.FormDestroy(Sender: TObject);
 begin
   Editor.Free;
@@ -161,14 +210,28 @@ begin
   UpdateCaption;
 end;
 
+procedure TfMain.brObjectsClick(Sender: TObject);
+begin
+  TerListBox.Visible := False;
+  ObjListBox.Visible := True;
+  FormPaint(Sender);
+end;
+
 procedure TfMain.brTerrainClick(Sender: TObject);
 begin
+  ObjListBox.Visible := False;
+  TerListBox.Visible := True;
   FormPaint(Sender);
 end;
 
 procedure TfMain.TerListBoxClick(Sender: TObject);
 begin
-  Editor.Tile := TTiles.TTileEnum(TerListBox.ItemIndex);
+  Editor.Tile := GetRealTile(TerListBox.ItemIndex, ltTerrain);
+end;
+
+procedure TfMain.ObjListBoxClick(Sender: TObject);
+begin
+  Editor.Tile := GetRealTile(ObjListBox.ItemIndex, ltObjects);
 end;
 
 procedure TfMain.ToolButton1Click(Sender: TObject);

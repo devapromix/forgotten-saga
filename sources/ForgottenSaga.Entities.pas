@@ -273,24 +273,27 @@ type
 type
   TTiles = class(TObject)
   public type
-    TLayerTypeEnum = (ltTerrain, ltObjects, ltBoth);
-    TTileEnum = (tNone, tRes1, tRes2, tRes3, tRes4, tRes5, tDirt, tGrass,
+    TLayerTypeEnum = (ltTerrain, ltObjects, ltBoth, ltRes);
+    TTileEnum = (tNone, tRes1, tRes2, tRes3, tRes4, tGravel, tDirt, tGrass,
       tStone, tSand, tRock, tWater, tDeepWater, tLava, tRes6, tRes7, tRes8,
       tRes9, tRes10, tWillowTree, tOakTree, tAshTree, tYewTree, tBirchTree,
       tAspenTree, tMapleTree, tWalnutTree, tPineTree, tCedarTree, tSpruceTree,
       tRes11, tRes12, tRes13, tRes14, tRes15, tStDn, tStUp, tRes16, tRes17,
-      tRes18, tRes19, tRes20, tStoneFloor, tStoneWall, tRes21, tRes22, tRes23,
-      tRes24, tRes25, tRoad);
+      tRes18, tRes19, tRes20, tStoneFloor, tStoneWall, tClosedDoor, tOpenedDoor,
+      tClosedGate, tOpenedGate, tClosedLiuk, tRes21, tRes22, tRes23, tRes24,
+      tRes25, tRoad, tRes26, tRes27, tRes28, tRes29, tRes30);
   public const
-    TileDarkPercent = 90;
+    TileDarkPercent = 80;
     TileStr: array [TTileEnum] of string = ('NONE', 'RES1', 'RES2', 'RES3',
-      'RES4', 'RES5', 'DIRT', 'GRASS', 'STONE', 'SAND', 'ROCK', 'WATER',
+      'RES4', 'GRAVEL', 'DIRT', 'GRASS', 'STONE', 'SAND', 'ROCK', 'WATER',
       'DEEP_WATER', 'LAVA', 'RES6', 'RES7', 'RES8', 'RES9', 'RES10',
       'WILLOW_TREE', 'OAK_TREE', 'ASH_TREE', 'YEW_TREE', 'BIRCH_TREE',
       'ASPEN_TREE', 'MAPLE_TREE', 'WALNUT_TREE', 'PINE_TREE', 'CEDAR_TREE',
       'SPRUCE_TREE', 'RES11', 'RES12', 'RES13', 'RES14', 'RES15', 'STAIRS_DOWN',
       'STAIRS_UP', 'RES16', 'RES17', 'RES18', 'RES19', 'RES20', 'STONE_FLOOR',
-      'STONE_WALL', 'RES21', 'RES22', 'RES23', 'RES24', 'RES25', 'ROAD');
+      'STONE_WALL', 'CLOSED_DOOR', 'OPENED_DOOR', 'CLOSED_GATE', 'OPENED_GATE',
+      'CLOSED_LIUK', 'RES21', 'RES22', 'RES23', 'RES24', 'RES25', 'ROAD',
+      'RES26', 'RES27', 'RES28', 'RES29', 'RES30');
   public type
     TTileProp = record
       Name: string;
@@ -518,11 +521,56 @@ begin
 end;
 
 procedure TCreature.Move(AX, AY: ShortInt);
+var
+  X, Y: Integer;
+  TerProp, ObjProp: TTiles.TTileProp;
+  TerTile, ObjTile: TTiles.TTileEnum;
+  Flag: Boolean;
+
+  function UseObject(): Boolean;
+  begin
+    Result := False;
+    if ObjTile = tClosedDoor then
+    begin
+      Saga.World.CurrentMap.SetTile(X, Y, lrObjects, tOpenedDoor);
+      Saga.Log[lgGame].Add(__('You open the door.'));
+      Result := True;
+    end;
+    if ObjTile = tClosedLiuk then
+    begin
+      Saga.World.CurrentMap.SetTile(X, Y, lrObjects, tNone);
+      Saga.Log[lgGame].Add(__('You open the liuk.'));
+      Result := True;
+    end;
+    if ObjTile = tClosedGate then
+    begin
+      Saga.World.CurrentMap.SetTile(X, Y, lrObjects, tOpenedGate);
+      Saga.Log[lgGame].Add(__('You open the gate.'));
+      Result := True;
+    end;
+  end;
+
 begin
-  if (Saga.World.CurrentMap.CellInMap(Pos.X + AX, Pos.Y + AY)) and
-    (Saga.Tiles.GetTile(Saga.World.CurrentMap.GetTile(Pos.X + AX, Pos.Y + AY,
-    lrTerrain)).Passable) then
-    SetPosition(Pos.X + AX, Pos.Y + AY);
+  X := Pos.X + AX;
+  Y := Pos.Y + AY;
+  if (Saga.World.CurrentMap.CellInMap(X, Y)) then
+  begin
+    Flag := True;
+    TerTile := Saga.World.CurrentMap.GetTile(X, Y, lrTerrain);
+    TerProp := Saga.Tiles.GetTile(TerTile);
+    ObjTile := Saga.World.CurrentMap.GetTile(X, Y, lrObjects);
+    ObjProp := Saga.Tiles.GetTile(ObjTile);
+    if (ObjTile > tNone) then
+      Flag := ObjProp.Passable;
+    if (ObjTile > tNone) then
+      if UseObject() then
+      begin
+        Saga.Stages.Render();
+        Exit;
+      end;
+    if Flag and TerProp.Passable then
+      SetPosition(X, Y);
+  end;
 end;
 
 function TCreature.BackColor: Integer;
@@ -936,8 +984,8 @@ var
     Result := '';
     I := Saga.World.CurrentCreatures.Has(Pos.X, Pos.Y);
     if (I > -1) then
-      Result := Format(' ' + KeyFmt, [Saga.World.CurrentCreatures.GetEntity(I).Symbol,
-        __(Saga.World.CurrentCreatures.GetEntity(I).Name)]);
+      Result := Format(' ' + KeyFmt, [Saga.World.CurrentCreatures.GetEntity(I)
+        .Symbol, __(Saga.World.CurrentCreatures.GetEntity(I).Name)]);
     if (Saga.Player.Has(Pos.X, Pos.Y)) then
       Result := Format(' ' + KeyFmt, ['@', Saga.Player.GetFullName]);
   end;

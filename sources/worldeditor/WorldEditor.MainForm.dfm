@@ -728,6 +728,16 @@ object fMain: TfMain
       TabOrder = 0
       OnClick = TerListBoxClick
     end
+    object ObjListBox: TListBox
+      Left = 0
+      Top = 441
+      Width = 200
+      Height = 441
+      Align = alTop
+      ItemHeight = 15
+      TabOrder = 1
+      OnClick = ObjListBoxClick
+    end
   end
   object ToolBar: TToolBar
     Left = 0
@@ -821,7 +831,7 @@ object fMain: TfMain
       Grouped = True
       ImageIndex = 6
       Style = tbsCheck
-      OnClick = FormPaint
+      OnClick = brObjectsClick
     end
     object brItems: TToolButton
       Left = 232
@@ -859,7 +869,7 @@ object fMain: TfMain
     Left = 24
     Top = 48
     Bitmap = {
-      494C0101010003003C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010101000300440010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
