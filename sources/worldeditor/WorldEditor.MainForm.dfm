@@ -722,7 +722,7 @@ object fMain: TfMain
       Left = 0
       Top = 0
       Width = 200
-      Height = 441
+      Height = 50
       Align = alTop
       ItemHeight = 15
       TabOrder = 0
@@ -730,13 +730,36 @@ object fMain: TfMain
     end
     object ObjListBox: TListBox
       Left = 0
-      Top = 441
+      Top = 150
       Width = 200
-      Height = 441
+      Height = 50
       Align = alTop
       ItemHeight = 15
       TabOrder = 1
+      Visible = False
       OnClick = ObjListBoxClick
+    end
+    object ItmListBox: TListBox
+      Left = 0
+      Top = 100
+      Width = 200
+      Height = 50
+      Align = alTop
+      ItemHeight = 15
+      TabOrder = 2
+      Visible = False
+      OnClick = ItmListBoxClick
+    end
+    object CrtListBox: TListBox
+      Left = 0
+      Top = 50
+      Width = 200
+      Height = 50
+      Align = alTop
+      ItemHeight = 15
+      TabOrder = 3
+      Visible = False
+      OnClick = CrtListBoxClick
     end
   end
   object ToolBar: TToolBar
@@ -839,7 +862,7 @@ object fMain: TfMain
       Grouped = True
       ImageIndex = 7
       Style = tbsCheck
-      OnClick = FormPaint
+      OnClick = brItemsClick
     end
     object brCreatures: TToolButton
       Left = 256
@@ -847,7 +870,7 @@ object fMain: TfMain
       Grouped = True
       ImageIndex = 8
       Style = tbsCheck
-      OnClick = FormPaint
+      OnClick = brCreaturesClick
     end
     object ToolButton5: TToolButton
       Left = 280
@@ -869,7 +892,7 @@ object fMain: TfMain
     Left = 24
     Top = 48
     Bitmap = {
-      494C010101000300440010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010101000300580010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

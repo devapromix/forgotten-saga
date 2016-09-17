@@ -62,7 +62,6 @@ begin
   // Tiles
   Tiles := TTiles.Create;
   Tiles.LoadFromFile(TUtils.GetPath('resources') + 'terrain.ini');
-  // Tiles.LoadFromFile(GetPath('resources') + 'objects.ini');
 end;
 
 destructor TEditor.Destroy;

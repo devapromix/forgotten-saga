@@ -6,8 +6,7 @@ uses
   ForgottenSaga.MainForm in 'ForgottenSaga.MainForm.pas' {fMain},
   ForgottenSaga.Classes in '..\ForgottenSaga.Classes.pas',
   ForgottenSaga.Entities in '..\ForgottenSaga.Entities.pas',
-  ForgottenSaga.Scenes in '..\ForgottenSaga.Scenes.pas',
-  Common.Map.Generator in '..\Common.Map.Generator.pas';
+  ForgottenSaga.Scenes in '..\ForgottenSaga.Scenes.pas';
 
 {$R *.res}
 

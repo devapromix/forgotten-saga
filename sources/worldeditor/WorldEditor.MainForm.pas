@@ -32,6 +32,8 @@ type
     ToolButton5: TToolButton;
     ToolButton6: TToolButton;
     ObjListBox: TListBox;
+    ItmListBox: TListBox;
+    CrtListBox: TListBox;
     procedure FormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -46,6 +48,10 @@ type
     procedure ToolButton6Click(Sender: TObject);
     procedure ObjListBoxClick(Sender: TObject);
     procedure brObjectsClick(Sender: TObject);
+    procedure brItemsClick(Sender: TObject);
+    procedure brCreaturesClick(Sender: TObject);
+    procedure CrtListBoxClick(Sender: TObject);
+    procedure ItmListBoxClick(Sender: TObject);
   private
     procedure LoadResources;
     { Private declarations }
@@ -78,8 +84,14 @@ end;
 
 procedure TfMain.FormCreate(Sender: TObject);
 begin
+  Randomize;
+  TerListBox.Height := 500;
+  ObjListBox.Height := 500;
+  ItmListBox.Height := 500;
+  CrtListBox.Height := 500;
   Editor := TEditor.Create;
   Editor.ToolBarHeight := ToolBar.Height;
+  Editor.Tile := tNone;
   ClientWidth := Editor.Engine.Surface.Width + ToolsPanel.Width;
   ClientHeight := Editor.Engine.Surface.Height + Editor.ToolBarHeight +
     StatusBar.Height;
@@ -93,7 +105,6 @@ begin
   brTerrain.Down := True;
   UpdateCaption;
   LoadResources;
-  Editor.Tile := tNone;
   FormPaint(Sender);
 end;
 
@@ -164,14 +175,21 @@ begin
   end;
 end;
 
+procedure TfMain.ItmListBoxClick(Sender: TObject);
+begin
+  //
+end;
+
 procedure TfMain.LoadResources;
 var
   I: TTiles.TTileEnum;
   ObjFlag: Boolean;
   TerFlag: Boolean;
+  J: Integer;
 begin
   TerListBox.Clear;
   ObjListBox.Clear;
+
   for I := Low(TTiles.TTileEnum) to High(TTiles.TTileEnum) do
   begin
     TerFlag := (Editor.Tiles.GetTile(I).Layer = ltTerrain) or
@@ -210,9 +228,31 @@ begin
   UpdateCaption;
 end;
 
+procedure TfMain.brCreaturesClick(Sender: TObject);
+begin
+  TerListBox.Visible := False;
+  ObjListBox.Visible := False;
+  ItmListBox.Visible := False;
+  CrtListBox.Visible := True;
+  CrtListBoxClick(Sender);
+  FormPaint(Sender);
+end;
+
+procedure TfMain.brItemsClick(Sender: TObject);
+begin
+  TerListBox.Visible := False;
+  ObjListBox.Visible := False;
+  CrtListBox.Visible := False;
+  ItmListBox.Visible := True;
+  ItmListBoxClick(Sender);
+  FormPaint(Sender);
+end;
+
 procedure TfMain.brObjectsClick(Sender: TObject);
 begin
   TerListBox.Visible := False;
+  ItmListBox.Visible := False;
+  CrtListBox.Visible := False;
   ObjListBox.Visible := True;
   ObjListBoxClick(Sender);
   FormPaint(Sender);
@@ -221,9 +261,16 @@ end;
 procedure TfMain.brTerrainClick(Sender: TObject);
 begin
   ObjListBox.Visible := False;
+  ItmListBox.Visible := False;
+  CrtListBox.Visible := False;
   TerListBox.Visible := True;
   TerListBoxClick(Sender);
   FormPaint(Sender);
+end;
+
+procedure TfMain.CrtListBoxClick(Sender: TObject);
+begin
+  //
 end;
 
 procedure TfMain.TerListBoxClick(Sender: TObject);
@@ -237,13 +284,32 @@ begin
 end;
 
 procedure TfMain.ToolButton1Click(Sender: TObject);
+var
+  I: Integer;
 begin
   if OD.Execute then
   begin
     Editor.CurrentMapFile := OD.FileName;
     Editor.Map.LoadFromFile(Editor.CurrentMapFile);
-    Editor.Creatures.LoadFromFile(ChangeFileExt(Editor.CurrentMapFile, '.crt'));
+
     Editor.Items.LoadFromFile(ChangeFileExt(Editor.CurrentMapFile, '.itm'));
+    ItmListBox.Clear;
+    for I := 0 to Editor.Items.Count - 1 do
+    begin
+      ItmListBox.Items.Append(Format(TPlayer.KeyFmt,
+        [Editor.Items.GetEntity(I).Symbol, Editor.Items.GetEntity(I).Name]));
+    end;
+    ItmListBox.ItemIndex := 0;
+
+    Editor.Creatures.LoadFromFile(ChangeFileExt(Editor.CurrentMapFile, '.crt'));
+    CrtListBox.Clear;
+    for I := 0 to Editor.Creatures.Count - 1 do
+    begin
+      CrtListBox.Items.Append(Format(TPlayer.KeyFmt,
+        [Editor.Creatures.GetEntity(I).Symbol, Editor.Creatures.GetEntity(I).Name]));
+    end;
+    CrtListBox.ItemIndex := 0;
+
     UpdateCaption;
   end;
 end;
@@ -266,6 +332,14 @@ begin
   fNew.cbTerrain.ItemIndex := Self.TerListBox.ItemIndex;
   fNew.cbObjects.Items.Assign(Self.ObjListBox.Items);
   fNew.cbObjects.ItemIndex := Self.ObjListBox.ItemIndex;
+  fNew.cbTerSpot.Items.Assign(Self.TerListBox.Items);
+  fNew.cbTerSpot.ItemIndex := Self.TerListBox.ItemIndex;
+  fNew.cbObjSpot.Items.Assign(Self.ObjListBox.Items);
+  fNew.cbObjSpot.ItemIndex := Self.ObjListBox.ItemIndex;
+  fNew.cbWall.Items.Assign(Self.TerListBox.Items);
+  fNew.cbWall.ItemIndex := 0;
+  fNew.cbFloor.Items.Assign(Self.TerListBox.Items);
+  fNew.cbFloor.ItemIndex := 0;
   fNew.ShowModal;
 end;
 

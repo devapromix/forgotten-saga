@@ -240,7 +240,7 @@ type
     end;
 {$ENDREGION ' TPlayer.TInventory '}
   private
-    FMap: Byte;
+    FMap: Integer;
     FRace: Byte;
     FScore: Word;
     FPrevName: string;
@@ -251,7 +251,7 @@ type
     destructor Destroy; override;
     property Score: Word read FScore write FScore;
     property Race: Byte read FRace write FRace;
-    property Map: Byte read FMap write FMap;
+    property Map: Integer read FMap write FMap;
     function GetRaceName: string;
     function GetFullName: string;
     procedure LoadFromFile(AFileName: string);
@@ -325,9 +325,9 @@ type
       of TTiles.TTileEnum;
   private
     FMap: TLayer;
+    FFileName: string;
   public
-    FileName: string;
-    Map: array [TDir] of Integer;
+    Map: array [TDir] of string;
     procedure Clear;
     procedure ClearLayer(Z: TLayerEnum);
     procedure FillLayer(Z: TLayerEnum; Tile: TTiles.TTileEnum);
@@ -343,9 +343,38 @@ type
       Z: TLayerEnum = lrTerrain): Boolean;
     procedure Render; override;
     procedure Gen;
+    property FileName: string read FFileName write FFileName;
   end;
 
 {$ENDREGION ' TMap '}
+{$REGION ' TMapGenerator '}
+
+type
+  TMapGenerator = class(TObject)
+  public type
+    TMGTiles = record
+      Wall: TTiles.TTileEnum;
+      Floor: TTiles.TTileEnum;
+      procedure SetFloor(Value: TTiles.TTileEnum);
+      procedure SetWall(Value: TTiles.TTileEnum);
+    end;
+  private
+    FMap: TMap;
+    FStart: TPoint;
+    FMGTiles: TMGTiles;
+    FNum: Byte;
+  public
+    constructor Create();
+    destructor Destroy; override;
+    property Map: TMap read FMap write FMap;
+    property Start: TPoint read FStart write FStart;
+    property MGTiles: TMGTiles read FMGTiles write FMGTiles;
+    property Num: Byte read FNum write FNum;
+    procedure AddSpot(Tile: TTiles.TTileEnum; Layer: TMap.TLayerEnum);
+    procedure GenCave();
+  end;
+
+{$ENDREGION ' TMapGenerator '}
 
 implementation
 
@@ -523,32 +552,39 @@ end;
 procedure TCreature.Move(AX, AY: ShortInt);
 var
   X, Y: Integer;
-  TerProp, ObjProp: TTiles.TTileProp;
-  TerTile, ObjTile: TTiles.TTileEnum;
+var
+  Prop: record Ter, Obj: TTiles.TTileProp;
+end;
+
+var
+  Tile: record Ter, Obj: TTiles.TTileEnum;
+end;
+
+var
   Flag: Boolean;
 
-  function UseObject(): Boolean;
+function UseObject(): Boolean;
+begin
+  Result := False;
+  if Tile.Obj = tClosedDoor then
   begin
-    Result := False;
-    if ObjTile = tClosedDoor then
-    begin
-      Saga.World.CurrentMap.SetTile(X, Y, lrObjects, tOpenedDoor);
-      Saga.Log[lgGame].Add(__('You open the door.'));
-      Result := True;
-    end;
-    if ObjTile = tClosedLiuk then
-    begin
-      Saga.World.CurrentMap.SetTile(X, Y, lrObjects, tNone);
-      Saga.Log[lgGame].Add(__('You open the liuk.'));
-      Result := True;
-    end;
-    if ObjTile = tClosedGate then
-    begin
-      Saga.World.CurrentMap.SetTile(X, Y, lrObjects, tOpenedGate);
-      Saga.Log[lgGame].Add(__('You open the gate.'));
-      Result := True;
-    end;
+    Saga.World.CurrentMap.SetTile(X, Y, lrObjects, tOpenedDoor);
+    Saga.Log[lgGame].Add(__('You open the door.'));
+    Result := True;
   end;
+  if Tile.Obj = tClosedLiuk then
+  begin
+    Saga.World.CurrentMap.SetTile(X, Y, lrObjects, tNone);
+    Saga.Log[lgGame].Add(__('You open the liuk.'));
+    Result := True;
+  end;
+  if Tile.Obj = tClosedGate then
+  begin
+    Saga.World.CurrentMap.SetTile(X, Y, lrObjects, tOpenedGate);
+    Saga.Log[lgGame].Add(__('You open the gate.'));
+    Result := True;
+  end;
+end;
 
 begin
   X := Pos.X + AX;
@@ -556,19 +592,19 @@ begin
   if (Saga.World.CurrentMap.CellInMap(X, Y)) then
   begin
     Flag := True;
-    TerTile := Saga.World.CurrentMap.GetTile(X, Y, lrTerrain);
-    TerProp := Saga.Tiles.GetTile(TerTile);
-    ObjTile := Saga.World.CurrentMap.GetTile(X, Y, lrObjects);
-    ObjProp := Saga.Tiles.GetTile(ObjTile);
-    if (ObjTile > tNone) then
-      Flag := ObjProp.Passable;
-    if (ObjTile > tNone) then
+    Tile.Ter := Saga.World.CurrentMap.GetTile(X, Y, lrTerrain);
+    Prop.Ter := Saga.Tiles.GetTile(Tile.Ter);
+    Tile.Obj := Saga.World.CurrentMap.GetTile(X, Y, lrObjects);
+    Prop.Obj := Saga.Tiles.GetTile(Tile.Obj);
+    if (Tile.Obj > tNone) then
+      Flag := Prop.Obj.Passable;
+    if (Tile.Obj > tNone) then
       if UseObject() then
       begin
         Saga.Stages.Render();
         Exit;
       end;
-    if Flag and TerProp.Passable then
+    if Flag and Prop.Ter.Passable then
       SetPosition(X, Y);
   end;
 end;
@@ -683,7 +719,7 @@ begin
   Self.Clear;
   F := TIniFile.Create(FileName);
   try
-    for I := 0 to 99 do
+    for I := 0 to Byte.MaxValue do
     begin
       S := Format('%d', [I]);
       if (F.SectionExists(S)) then
@@ -966,28 +1002,28 @@ procedure TPlayer.TLook.Render;
 var
   T: TTiles.TTileEnum;
 
-  function GetObjects(): string;
+  function GetTile(Z: TMap.TLayerEnum): string;
   var
     T: TTiles.TTileEnum;
   begin
     Result := '';
-    T := Saga.World.CurrentMap.GetTile(Pos.X, Pos.Y, lrObjects);
+    T := Saga.World.CurrentMap.GetTile(Pos.X, Pos.Y, Z);
     if (T > tNone) then
-      Result := Format(' ' + KeyFmt, [Saga.Tiles.GetTile(T).Symbol,
-        __(Saga.Tiles.GetTile(T).Name)]);
+      Result := Format(KeyFmt, [Saga.Tiles.GetTile(T).Symbol,
+        __(Saga.Tiles.GetTile(T).Name)]) + ' ';
   end;
 
-  function GetCreatures: string;
+  function GetCreature: string;
   var
     I: Integer;
   begin
     Result := '';
     I := Saga.World.CurrentCreatures.Has(Pos.X, Pos.Y);
     if (I > -1) then
-      Result := Format(' ' + KeyFmt, [Saga.World.CurrentCreatures.GetEntity(I)
-        .Symbol, __(Saga.World.CurrentCreatures.GetEntity(I).Name)]);
+      Result := Format(KeyFmt, [Saga.World.CurrentCreatures.GetEntity(I).Symbol,
+        __(Saga.World.CurrentCreatures.GetEntity(I).Name)]) + ' ';
     if (Saga.Player.Has(Pos.X, Pos.Y)) then
-      Result := Format(' ' + KeyFmt, ['@', Saga.Player.GetFullName]);
+      Result := Format(KeyFmt, ['@', Saga.Player.GetFullName]) + ' ';
   end;
 
   function GetItems(Pos: TPoint): string;
@@ -1022,9 +1058,8 @@ begin
   T := Saga.World.CurrentMap.GetTile(Pos.X, Pos.Y, lrTerrain);
   Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceWhite));
   Saga.Engine.BackgroundColor(0);
-  Saga.Engine.Print(0, 39, Trim(Format(KeyFmt + '%s' + InfFmt,
-    [Saga.Tiles.GetTile(T).Symbol, __(Saga.Tiles.GetTile(T).Name), GetObjects(),
-    GetCreatures(), GetItems(Pos)])));
+  Saga.Engine.Print(0, 39, Trim(GetTile(lrTerrain) + GetTile(lrObjects) +
+    GetCreature() + GetItems(Pos)));
 end;
 
 {$ENDREGION ' TPlayer.TLook '}
@@ -1460,10 +1495,13 @@ begin
     end;
 end;
 
+var
+  Color: record R, G, B: Byte;
+end;
+
 function TIniFile.ReadColor(Section, Ident, DefaultValue: string): Integer;
 var
   S: string;
-  R, G, B: Byte;
   SL: TStringList;
   C: TColors;
 begin
@@ -1487,18 +1525,18 @@ begin
   if (SL.Count = 0) then
     Exit;
   if (SL.Count > 0) then
-    R := StrToIntDef(SL[0], 255)
+    Color.R := StrToIntDef(SL[0], 255)
   else
-    R := 255;
+    Color.R := 255;
   if (SL.Count > 1) then
-    G := StrToIntDef(SL[1], 255)
+    Color.G := StrToIntDef(SL[1], 255)
   else
-    G := 255;
+    Color.G := 255;
   if (SL.Count > 2) then
-    B := StrToIntDef(SL[2], 255)
+    Color.B := StrToIntDef(SL[2], 255)
   else
-    B := 255;
-  Result := (R or (G shl 8) or (B shl 16))
+    Color.B := 255;
+  Result := (Color.R or (Color.G shl 8) or (Color.B shl 16))
 end;
 
 function TIniFile.ReadMaterial(Section, Ident: string;
@@ -1596,7 +1634,8 @@ end;
 procedure TMap.LoadFromFile(AFileName: string);
 var
   Z: TLayerEnum;
-  X, Y, I: Integer;
+  I: Integer;
+  X, Y: Integer;
   L: TStringList;
 begin
   L := TStringList.Create;
@@ -1640,7 +1679,10 @@ procedure TMap.Render;
 var
   Z: TLayerEnum;
   X, Y: Integer;
-  TerTile, ObjTile: TTiles.TTileProp;
+  Tile: record Ter: TTiles.TTileProp;
+  Obj: TTiles.TTileProp;
+end;
+
 begin
   for Z := Low(TLayerEnum) to High(TLayerEnum) do
     for Y := 0 to Self.Height - 1 do
@@ -1648,17 +1690,17 @@ begin
         case Z of
           lrTerrain:
             begin
-              TerTile := Saga.Tiles.GetTile(FMap[Y][X][Z]);
-              Saga.UI.DrawChar(X, Y, TerTile.Symbol, TerTile.Color,
-                Saga.Engine.DarkColor(TerTile.Color, TTiles.TileDarkPercent));
+              Tile.Ter := Saga.Tiles.GetTile(FMap[Y][X][Z]);
+              Saga.UI.DrawChar(X, Y, Tile.Ter.Symbol, Tile.Ter.Color,
+                Saga.Engine.DarkColor(Tile.Ter.Color, TTiles.TileDarkPercent));
             end;
           lrObjects:
             if not HasTile(tNone, X, Y, Z) then
             begin
-              TerTile := Saga.Tiles.GetTile(FMap[Y][X][lrTerrain]);
-              ObjTile := Saga.Tiles.GetTile(FMap[Y][X][Z]);
-              Saga.UI.DrawChar(X, Y, ObjTile.Symbol, ObjTile.Color,
-                Saga.Engine.DarkColor(TerTile.Color, TTiles.TileDarkPercent));
+              Tile.Ter := Saga.Tiles.GetTile(FMap[Y][X][lrTerrain]);
+              Tile.Obj := Saga.Tiles.GetTile(FMap[Y][X][Z]);
+              Saga.UI.DrawChar(X, Y, Tile.Obj.Symbol, Tile.Obj.Color,
+                Saga.Engine.DarkColor(Tile.Ter.Color, TTiles.TileDarkPercent));
             end;
         end;
 end;
@@ -1693,7 +1735,8 @@ end;
 
 procedure TMap.SetTile(X, Y: Integer; Z: TLayerEnum; Tile: TTiles.TTileEnum);
 begin
-  FMap[Y][X][Z] := Tile;
+  if CellInMap(X, Y) then
+    FMap[Y][X][Z] := Tile;
 end;
 
 function TMap.GetTile(X, Y: Integer; Z: TLayerEnum): TTiles.TTileEnum;
@@ -1731,5 +1774,126 @@ begin
 end;
 
 {$ENDREGION ' TMap '}
+{$REGION ' TMapGenerator '}
+
+procedure TMapGenerator.AddSpot(Tile: TTiles.TTileEnum; Layer: TMap.TLayerEnum);
+var
+  I, X, Y, K, L: Integer;
+begin
+  K := Math.RandomRange(0, Map.Width);
+  L := Math.RandomRange(0, Map.Height);
+  X := K;
+  Y := L;
+  for I := 1 to Self.Num do
+  begin
+    X := X + Math.RandomRange(0, 3) - 1;
+    Y := Y + Math.RandomRange(0, 3) - 1;
+    Map.SetTile(X, Y, Layer, Tile);
+  end;
+end;
+
+procedure TMapGenerator.GenCave();
+var
+  I: Integer;
+  kx, ky, K, dx, dy: real;
+  X, Y, py, px: Integer;
+  Counter: Integer;
+begin
+  X := TMap.MapWidth;
+  Y := TMap.MapHeight;
+  Map.SetTile(Start.X, Start.Y, lrTerrain, Self.MGTiles.Floor);
+  for I := 0 to (X * Y div Num) do
+  begin
+    try
+      K := (Random(360) + 1) * 3.14159 / 180;
+      kx := (X / 3) + (Y / 3) * cos(K);
+      ky := (Y / 3) + (Y / 3) * sin(K);
+      dx := 1;
+      dy := 1;
+      while ((abs(dx) < 10) and (abs(dy) < 10)) do
+      begin
+        dx := Random(100) + 1;
+        dy := Random(100) + 1;
+      end;
+      dx := dx - 50;
+      dy := dy - 50;
+      dx := dx / 50;
+      dy := dy / 50;
+      Counter := 0;
+      while (True) do
+      begin
+        if Counter + 1 > 10000 then
+          Break;
+        Counter := Counter + 1;
+        kx := kx + dx;
+        ky := ky + dy;
+        px := round(kx);
+        py := round(ky);
+        if (px < 0) then
+        begin
+          px := X;
+          kx := px;
+        end;
+        if (px > X) then
+        begin
+          px := 1;
+          kx := px;
+        end;
+        if (py < 0) then
+        begin
+          py := Y;
+          ky := py;
+        end;
+        if (py > Y) then
+        begin
+          py := 1;
+          ky := py;
+        end;
+        if (px = 0) then
+          px := Random(X) + 1;
+        if (py = 0) then
+          py := Random(Y) + 1;
+        if ((px > 1) and (Map.HasTile(Self.MGTiles.Floor, px - 1, py))) or
+          ((py > 1) and (Map.HasTile(Self.MGTiles.Floor, px, py - 1))) or
+          ((px < X) and (Map.HasTile(Self.MGTiles.Floor, px + 1, py))) or
+          ((py < Y) and (Map.HasTile(Self.MGTiles.Floor, px, py + 1))) then
+          if (px <> 0) and (px <> TMap.MapWidth - 1) and (py <> 0) and
+            (py <> TMap.MapHeight - 1) then
+          begin
+            Map.SetTile(px, py, lrTerrain, Self.MGTiles.Floor);
+            Break;
+          end;
+      end;
+    except
+    end;
+  end;
+  // Map.SetTile(Start.X, Start.Y, lrTerrain, tStUp);
+end;
+
+constructor TMapGenerator.Create;
+begin
+  Self.FMGTiles.Wall := tStoneWall;
+  Self.FMGTiles.Floor := tStoneFloor;
+end;
+
+destructor TMapGenerator.Destroy;
+begin
+
+  inherited;
+end;
+
+{ TMapGenerator.TMGTiles }
+
+procedure TMapGenerator.TMGTiles.SetFloor(Value: TTiles.TTileEnum);
+begin
+  Self.Floor := Value;
+end;
+
+procedure TMapGenerator.TMGTiles.SetWall(Value: TTiles.TTileEnum);
+begin
+  Self.Wall := Value;
+end;
+
+{$ENDREGION ' TMapGenerator '}
 
 end.

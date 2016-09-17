@@ -180,6 +180,7 @@ type
     FCreatures: array of TCreatures;
     FItems: array of TItems;
     FEngine: TEngine;
+    Sections: TStringlist;
     function FileName(Dir: string; ID: Byte; Ext: string): string;
   public
     constructor Create;
@@ -191,6 +192,7 @@ type
     function CurrentCreatures: TCreatures;
     function CurrentItems: TItems;
     function Count: Byte;
+    function GetMapIndex(MapSectionID: string): Integer;
     procedure SaveToDir(Dir: string);
     procedure LoadFromDir(Dir: string);
     procedure Gen(I: Byte);
@@ -451,30 +453,29 @@ end;
 constructor TWorld.Create;
 var
   I, C: Integer;
-  S: string;
   F: TIniFile;
 begin
   F := TIniFile.Create(TUtils.GetPath('resources') + 'world.ini');
   try
-    S := 'Main';
-    C := F.ReadInteger(S, 'Count', 0);
+    Sections := TStringlist.Create;
+    F.ReadSections(Sections);
+    C := Sections.Count;
     SetLength(FMaps, C);
     SetLength(FCreatures, C);
     SetLength(FItems, C);
     for I := 0 to Count - 1 do
     begin
-      S := Format('%d', [I]);
       FMaps[I] := TMap.Create;
       FCreatures[I] := TCreatures.Create;
       FItems[I] := TItems.Create;
-      FMaps[I].Name := F.ReadString(S, 'Name', '');
-      FMaps[I].FileName := F.ReadString(S, 'FileName', '');
-      FMaps[I].Map[drLeft] := F.ReadInteger(S, 'Left', -1);
-      FMaps[I].Map[drUp] := F.ReadInteger(S, 'Up', -1);
-      FMaps[I].Map[drRight] := F.ReadInteger(S, 'Right', -1);
-      FMaps[I].Map[drDown] := F.ReadInteger(S, 'Down', -1);
-      FMaps[I].Map[drTop] := F.ReadInteger(S, 'Top', -1);
-      FMaps[I].Map[drBottom] := F.ReadInteger(S, 'Bottom', -1);
+      FMaps[I].Name := F.ReadString(Sections[I], 'Name', '');
+      FMaps[I].FileName := F.ReadString(Sections[I], 'FileName', ''); // ID
+      FMaps[I].Map[drLeft] := F.ReadString(Sections[I], 'Left', '');
+      FMaps[I].Map[drUp] := F.ReadString(Sections[I], 'Up', '');
+      FMaps[I].Map[drRight] := F.ReadString(Sections[I], 'Right', '');
+      FMaps[I].Map[drDown] := F.ReadString(Sections[I], 'Down', '');
+      FMaps[I].Map[drTop] := F.ReadString(Sections[I], 'Top', '');
+      FMaps[I].Map[drBottom] := F.ReadString(Sections[I], 'Bottom', '');
     end;
   finally
     F.Free;
@@ -509,7 +510,21 @@ begin
   SetLength(FMaps, 0);
   SetLength(FCreatures, 0);
   SetLength(FItems, 0);
+  Sections.Free;
   inherited;
+end;
+
+function TWorld.GetMapIndex(MapSectionID: string): Integer;
+var
+  I: Integer;
+begin
+  Result := -1;
+  for I := 0 to Sections.Count - 1 do
+    if (MapSectionID = Sections[I]) then
+    begin
+      Result := I;
+      Break;
+    end;
 end;
 
 function TWorld.GetMap(I: Byte): TMap;
@@ -558,15 +573,18 @@ end;
 
 class function TWorld.GoLoc(Dir: TMap.TDir): Boolean;
 var
-  ID: Integer;
+  MapID: string;
+  I: Integer;
 begin
   Result := False;
-  ID := Saga.World.CurrentMap.Map[Dir];
-  if (ID > -1) then
+  MapID := Saga.World.CurrentMap.Map[Dir];
+  if (MapID <> '') then
   begin
+    I := Saga.World.GetMapIndex(MapID);
+    if (I < 0) then Exit;
     Saga.Log[lgGame].Add(Format(__('You walked in <RED>%s.</>'),
-      [Saga.World.GetMap(ID).Name]));
-    Saga.Player.Map := ID;
+      [Saga.World.GetMap(I).Name]));
+    Saga.Player.Map := I;
     Result := True;
   end;
 end;
@@ -1479,11 +1497,12 @@ begin
   if IsTag('dialog') then
   begin
     S := GetLastCode('dialog', Code);
-    SL := TUtils.ExplodeString(':', Code);
-    I := StrToIntDef(SL[0], 0);
+    SL := TUtils.ExplodeString(':', S);
+    I := Saga.World.GetMapIndex(Trim(SL[0]));
     J := StrToIntDef(SL[1], 0);
     K := StrToIntDef(SL[2], 0);
     Saga.World.GetMapCreatures(I).GetEntity(J).Dialog := K;
+    ShowMessage(I.ToString() + ':' + J.ToString() + ':' + K.ToString());
   end;
 
   if IsTag('exp') then

@@ -1,4 +1,4 @@
-;Forest of Boars
+﻿;Forest of Boars
 
 [0]
 Name=Каменный Идол
@@ -10,8 +10,20 @@ File=stone_idol.qst
 Color=100,140,100
 Dialog=0
 NPC=1
+
 [1]
-Name=Секач
+Name=Лось
+X=10
+Y=15
+Life=100/100
+Symbol=E
+File=elk.qst
+Color=200,200,160
+Dialog=0
+NPC=1
+
+[60]
+Name=Старый Секач
 X=42
 Y=24
 Life=100/100
@@ -20,7 +32,27 @@ File=
 Color=255,255,255
 Dialog=0
 NPC=0
-[2]
+[61]
+Name=Секач
+X=44
+Y=27
+Life=100/100
+Symbol=B
+File=
+Color=255,255,255
+Dialog=0
+NPC=0
+[62]
+Name=Секач
+X=40
+Y=23
+Life=100/100
+Symbol=B
+File=
+Color=255,255,255
+Dialog=0
+NPC=0
+[63]
 Name=Кабан
 X=40
 Y=14
@@ -30,7 +62,7 @@ File=
 Color=255,255,255
 Dialog=0
 NPC=0
-[3]
+[64]
 Name=Свинья
 X=56
 Y=19
@@ -40,7 +72,7 @@ File=
 Color=255,255,255
 Dialog=0
 NPC=0
-[4]
+[65]
 Name=Молодая Свинья
 X=52
 Y=23
@@ -50,7 +82,7 @@ File=
 Color=255,255,255
 Dialog=0
 NPC=0
-[5]
+[66]
 Name=Свинья
 X=61
 Y=6
@@ -60,7 +92,7 @@ File=
 Color=255,255,255
 Dialog=0
 NPC=0
-[6]
+[67]
 Name=Дикий Вепрь
 X=54
 Y=3
@@ -70,7 +102,7 @@ File=
 Color=255,255,255
 Dialog=0
 NPC=0
-[7]
+[68]
 Name=Кабан
 X=16
 Y=14
@@ -80,7 +112,7 @@ File=
 Color=255,255,255
 Dialog=0
 NPC=0
-[8]
+[69]
 Name=Молодая Свинья
 X=46
 Y=16
@@ -90,7 +122,7 @@ File=
 Color=255,255,255
 Dialog=0
 NPC=0
-[9]
+[70]
 Name=Молодая Свинья
 X=17
 Y=11
@@ -100,7 +132,7 @@ File=
 Color=255,255,255
 Dialog=0
 NPC=0
-[10]
+[71]
 Name=Молодая Свинья
 X=50
 Y=31
@@ -110,7 +142,7 @@ File=
 Color=255,255,255
 Dialog=0
 NPC=0
-[11]
+[72]
 Name=Молодая Свинья
 X=42
 Y=36
@@ -120,7 +152,7 @@ File=
 Color=255,255,255
 Dialog=0
 NPC=0
-[12]
+[73]
 Name=Вожак
 X=52
 Y=12
