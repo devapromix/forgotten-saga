@@ -108,16 +108,18 @@ const
 {$REGION ' TEngine '}
 
 type
-  TAlign = (aLeft, aCenter, aRight);
-
-type
-  TSize = record
-    Width: Integer;
-    Height: Integer;
-  end;
-
-type
   TEngine = class(TObject)
+  public const
+    clClear = -1;
+    kcBegin = '{';
+    kcEnd = '}';
+  public type
+    TAlign = (aLeft, aCenter, aRight);
+  public type
+    TSize = record
+      Width: Integer;
+      Height: Integer;
+    end;
   private
     FWindow: TSize;
     FChar: TSize;
@@ -140,11 +142,6 @@ type
   end;
 
 {$ENDREGION ' TEngine '}
-
-const
-  clClear = -1;
-  kcBegin = '{';
-  kcEnd = '}';
 
 implementation
 

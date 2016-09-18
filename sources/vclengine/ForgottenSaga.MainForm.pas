@@ -31,7 +31,7 @@ uses Engine, ForgottenSaga.Classes, ForgottenSaga.Entities, ForgottenSaga.Scenes
 
 procedure TfMain.FormCreate(Sender: TObject);
 begin
-  Saga := TSaga.Create(TMap.MapWidth + TUI.PanelWidth, TMap.MapHeight);
+  Saga := TSaga.Create(TMap.Size.Width + TUI.PanelWidth, TMap.Size.Height);
   Saga.Init;
   ClientWidth := Saga.Engine.Surface.Width;
   ClientHeight := Saga.Engine.Surface.Height;

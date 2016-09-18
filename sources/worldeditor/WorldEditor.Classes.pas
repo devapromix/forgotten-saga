@@ -53,7 +53,7 @@ uses Engine;
 
 constructor TEditor.Create;
 begin
-  inherited Create(TMap.MapWidth, TMap.MapHeight);
+  inherited Create(TMap.Size.Width, TMap.Size.Height);
   Map := TMap.Create;
   Creatures := TCreatures.Create;
   Items := TItems.Create;

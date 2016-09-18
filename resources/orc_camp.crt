@@ -1,6 +1,6 @@
 ;Orc Camp
 
-[0]
+[orc_leader]
 Name=Вождь Тром-Хаш
 X=53
 Y=18
@@ -11,7 +11,7 @@ Color=200,160,255
 Dialog=0
 NPC=1
 
-[1]
+[orc_shaman]
 Name=Шаман Варок Тал
 X=52
 Y=17
@@ -22,7 +22,7 @@ Color=100,128,255
 Dialog=0
 NPC=1
 
-[2]
+[warg]
 Name=Варг Вождя
 X=8
 Y=10
@@ -33,7 +33,7 @@ Color=255,128,100
 Dialog=0
 NPC=1
 
-[39]
+[well]
 Name=Магический Источник
 X=20
 Y=18
@@ -44,7 +44,7 @@ Color=160,170,255
 Dialog=0
 NPC=1
 
-[4]
+[goblin_telorgon]
 Name=Повар Телоргон
 X=45
 Y=20
@@ -55,7 +55,7 @@ Color=135,200,255
 Dialog=0
 NPC=1
 
-[5]
+[goblin_virn]
 Name=Goblin Virn
 X=40
 Y=23

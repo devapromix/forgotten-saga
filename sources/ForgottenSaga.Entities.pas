@@ -2,7 +2,7 @@
 
 interface
 
-uses {$IFNDEF FPC}Types, {$ENDIF}Classes, IniFiles;
+uses Engine, {$IFNDEF FPC}Types, {$ENDIF}Classes, IniFiles;
 
 {$REGION ' TEntity '}
 
@@ -112,6 +112,7 @@ type
 type
   TCreatures = class(TObject)
   private
+    Sections: TStringlist;
     FCreature: array of TCreature;
   public
     constructor Create;
@@ -313,19 +314,20 @@ type
 {$REGION ' TMap '}
 
 type
-  TMap = class(TEntity)
+  TMap = class(TObject)
   public const
-    MapWidth = 80;
-    MapHeight = 40;
+    Size: TEngine.TSize = (Width: 80; Height: 40);
     Offset = 40;
   public type
     TDir = (drLeft, drUp, drRight, drDown, drTop, drBottom);
     TLayerEnum = (lrTerrain, lrObjects);
-    TLayer = array [0 .. MapHeight - 1, 0 .. MapWidth - 1, TLayerEnum]
-      of TTiles.TTileEnum;
+    TLayer = array [Byte, Byte, TLayerEnum] of TTiles.TTileEnum;
   private
     FMap: TLayer;
+    FName: string;
     FFileName: string;
+    FWidth: Integer;
+    FHeight: Integer;
   public
     Map: array [TDir] of string;
     procedure Clear;
@@ -341,9 +343,12 @@ type
     function GetTile(X, Y: Integer; Z: TLayerEnum): TTiles.TTileEnum;
     function HasTile(Tile: TTiles.TTileEnum; X, Y: Integer;
       Z: TLayerEnum = lrTerrain): Boolean;
-    procedure Render; override;
+    procedure Render;
     procedure Gen;
+    property Name: string read FName write FName;
     property FileName: string read FFileName write FFileName;
+    property Width: Integer read FWidth write FWidth;
+    property Height: Integer read FHeight write FHeight;
   end;
 
 {$ENDREGION ' TMap '}
@@ -378,7 +383,7 @@ type
 
 implementation
 
-uses SysUtils, Math, Engine, ForgottenSaga.Classes, ForgottenSaga.Scenes;
+uses SysUtils, Math, ForgottenSaga.Classes, ForgottenSaga.Scenes;
 
 {$REGION ' TEntity '}
 
@@ -417,7 +422,7 @@ end;
 
 procedure TEntity.TBar.Add(Values: string);
 var
-  SL: TStringList;
+  SL: TStringlist;
 begin
   SL := TUtils.ExplodeString('/', Values);
   FCur := StrToIntDef(Trim(SL[0]), 0);
@@ -666,6 +671,7 @@ procedure TCreatures.Clear;
 var
   I: Integer;
 begin
+  Sections.Clear;
   for I := 0 to Count - 1 do
     FCreature[I].Free;
   SetLength(FCreature, 0);
@@ -683,12 +689,13 @@ end;
 
 constructor TCreatures.Create;
 begin
-
+  Sections := TStringlist.Create;
 end;
 
 destructor TCreatures.Destroy;
 begin
   Self.Clear;
+  Sections.Free;
   inherited;
 end;
 
@@ -714,31 +721,30 @@ procedure TCreatures.LoadFromFile(const FileName: string);
 var
   I, L: Integer;
   F: TIniFile;
-  S: string;
 begin
   Self.Clear;
   F := TIniFile.Create(FileName);
   try
-    for I := 0 to Byte.MaxValue do
+    F.ReadSections(Sections);
+    for I := 0 to Sections.Count - 1 do
     begin
-      S := Format('%d', [I]);
-      if (F.SectionExists(S)) then
+      if (F.SectionExists(Sections[I])) then
       begin
         L := Count;
         SetLength(FCreature, L + 1);
         FCreature[L] := TCreature.Create;
-        FCreature[L].Name := F.ReadString(S, 'Name', '');
-        FCreature[L].SetPosition(Point(F.ReadInteger(S, 'X', 0),
-          F.ReadInteger(S, 'Y', 0)));
-        FCreature[L].Atr[atLife].Add(F.ReadString(S, 'Life',
+        FCreature[L].Name := F.ReadString(Sections[I], 'Name', '');
+        FCreature[L].SetPosition(Point(F.ReadInteger(Sections[I], 'X', 0),
+          F.ReadInteger(Sections[I], 'Y', 0)));
+        FCreature[L].Atr[atLife].Add(F.ReadString(Sections[I], 'Life',
           Format(TEntity.BarFmt, [100, 100])));
-        FCreature[L].Symbol := F.ReadString(S, 'Symbol', '?')[1];
-        FCreature[L].Color := F.ReadColor(S, 'Color', '255,255,255');
-        FCreature[L].Dialog := F.ReadInteger(S, 'Dialog', 0);
-        FCreature[L].Level := F.ReadInteger(S, 'Level', 1);
-        FCreature[L].FileName := F.ReadString(S, 'File', '');
+        FCreature[L].Symbol := F.ReadString(Sections[I], 'Symbol', '?')[1];
+        FCreature[L].Color := F.ReadColor(Sections[I], 'Color', '255,255,255');
+        FCreature[L].Dialog := F.ReadInteger(Sections[I], 'Dialog', 0);
+        FCreature[L].Level := F.ReadInteger(Sections[I], 'Level', 1);
+        FCreature[L].FileName := F.ReadString(Sections[I], 'File', '');
         FCreature[L].Force := TCreature.ForceValues
-          [not F.ReadBool(S, 'NPC', False)];
+          [not F.ReadBool(Sections[I], 'NPC', False)];
       end;
     end;
   finally
@@ -759,25 +765,23 @@ end;
 procedure TCreatures.SaveToFile(const FileName: string);
 var
   I: Integer;
-  S: string;
   F: TIniFile;
 begin
   F := TIniFile.Create(FileName);
   try
-    for I := 0 to Count - 1 do
+    for I := 0 to Sections.Count - 1 do
     begin
-      S := Format('%d', [I]);
-      F.WriteString(S, 'Name', FCreature[I].Name);
-      F.WriteInteger(S, 'X', FCreature[I].Pos.X);
-      F.WriteInteger(S, 'Y', FCreature[I].Pos.Y);
-      F.WriteString(S, 'Life', Format(TEntity.BarFmt,
+      F.WriteString(Sections[I], 'Name', FCreature[I].Name);
+      F.WriteInteger(Sections[I], 'X', FCreature[I].Pos.X);
+      F.WriteInteger(Sections[I], 'Y', FCreature[I].Pos.Y);
+      F.WriteString(Sections[I], 'Life', Format(TEntity.BarFmt,
         [FCreature[I].Atr[atLife].Cur, FCreature[I].Atr[atLife].Max]));
-      F.WriteInteger(S, 'Level', FCreature[I].Level);
-      F.WriteString(S, 'Symbol', FCreature[I].Symbol);
-      F.WriteString(S, 'File', FCreature[I].FileName);
-      F.WriteColor(S, 'Color', FCreature[I].Color);
-      F.WriteInteger(S, 'Dialog', FCreature[I].Dialog);
-      F.WriteBool(S, 'NPC', FCreature[I].Force = fcAlly);
+      F.WriteInteger(Sections[I], 'Level', FCreature[I].Level);
+      F.WriteString(Sections[I], 'Symbol', FCreature[I].Symbol);
+      F.WriteString(Sections[I], 'File', FCreature[I].FileName);
+      F.WriteColor(Sections[I], 'Color', FCreature[I].Color);
+      F.WriteInteger(Sections[I], 'Dialog', FCreature[I].Dialog);
+      F.WriteBool(Sections[I], 'NPC', FCreature[I].Force = fcAlly);
     end;
   finally
     F.Free;
@@ -855,7 +859,7 @@ end;
 
 procedure TPlayer.GenName;
 var
-  SL: TStringList;
+  SL: TStringlist;
   I, M: Byte;
   R: string;
 begin
@@ -922,10 +926,10 @@ begin
   if (Pos.X = 0) and (AX = -1) then
     if TWorld.GoLoc(drLeft) then
     begin
-      SetPosition(TMap.MapWidth - 1, Pos.Y);
+      SetPosition(TMap.Size.Width - 1, Pos.Y);
       Exit;
     end;
-  if (Pos.X = TMap.MapWidth - 1) and (AX = 1) then
+  if (Pos.X = TMap.Size.Width - 1) and (AX = 1) then
     if TWorld.GoLoc(drRight) then
     begin
       SetPosition(0, Pos.Y);
@@ -934,10 +938,10 @@ begin
   if (Pos.Y = 0) and (AY = -1) then
     if TWorld.GoLoc(drUp) then
     begin
-      SetPosition(Pos.X, TMap.MapHeight - 1);
+      SetPosition(Pos.X, TMap.Size.Height - 1);
       Exit;
     end;
-  if (Pos.Y = TMap.MapHeight - 1) and (AY = 1) then
+  if (Pos.Y = TMap.Size.Height - 1) and (AY = 1) then
     if TWorld.GoLoc(drDown) then
     begin
       SetPosition(Pos.X, 0);
@@ -1148,7 +1152,7 @@ begin
     for I := Low(TInvByte) to High(TInvByte) do
     begin
       S := IntToStr(I);
-      if (F.SectionExists(S)) then
+      if F.SectionExists(S) then
       begin
         FItem[I].Active := True;
         FItem[I].LoadFromFile(FileName, S);
@@ -1502,7 +1506,7 @@ end;
 function TIniFile.ReadColor(Section, Ident, DefaultValue: string): Integer;
 var
   S: string;
-  SL: TStringList;
+  SL: TStringlist;
   C: TColors;
 begin
   Result := $00FFFFFF;
@@ -1622,7 +1626,8 @@ end;
 
 constructor TMap.Create;
 begin
-  inherited Create(MapWidth, MapHeight);
+  Self.Width := Self.Size.Width;
+  Self.Height := Self.Size.Height;
   Clear;
 end;
 
@@ -1636,9 +1641,9 @@ var
   Z: TLayerEnum;
   I: Integer;
   X, Y: Integer;
-  L: TStringList;
+  L: TStringlist;
 begin
-  L := TStringList.Create;
+  L := TStringlist.Create;
   L.LoadFromFile(AFileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
   for Z := Low(TLayerEnum) to High(TLayerEnum) do
   begin
@@ -1654,10 +1659,10 @@ procedure TMap.SaveToFile(AFileName: string);
 var
   Z: TLayerEnum;
   X, Y: Integer;
-  L: TStringList;
+  L: TStringlist;
   S: string;
 begin
-  L := TStringList.Create;
+  L := TStringlist.Create;
 {$IFNDEF FPC}L.WriteBOM := False; {$ENDIF}
   L.Append(Format('; %s', [ExtractFileName(AFileName)]));
   for Z := Low(TLayerEnum) to High(TLayerEnum) do
@@ -1799,8 +1804,8 @@ var
   X, Y, py, px: Integer;
   Counter: Integer;
 begin
-  X := TMap.MapWidth;
-  Y := TMap.MapHeight;
+  X := TMap.Size.Width;
+  Y := TMap.Size.Height;
   Map.SetTile(Start.X, Start.Y, lrTerrain, Self.MGTiles.Floor);
   for I := 0 to (X * Y div Num) do
   begin
@@ -1857,8 +1862,8 @@ begin
           ((py > 1) and (Map.HasTile(Self.MGTiles.Floor, px, py - 1))) or
           ((px < X) and (Map.HasTile(Self.MGTiles.Floor, px + 1, py))) or
           ((py < Y) and (Map.HasTile(Self.MGTiles.Floor, px, py + 1))) then
-          if (px <> 0) and (px <> TMap.MapWidth - 1) and (py <> 0) and
-            (py <> TMap.MapHeight - 1) then
+          if (px <> 0) and (px <> TMap.Size.Width - 1) and (py <> 0) and
+            (py <> TMap.Size.Height - 1) then
           begin
             Map.SetTile(px, py, lrTerrain, Self.MGTiles.Floor);
             Break;

@@ -1,6 +1,6 @@
 ﻿;Forest of Boars
 
-[0]
+[stone_idol]
 Name=Каменный Идол
 X=10
 Y=28
@@ -11,7 +11,7 @@ Color=100,140,100
 Dialog=0
 NPC=1
 
-[1]
+[elk]
 Name=Лось
 X=10
 Y=15

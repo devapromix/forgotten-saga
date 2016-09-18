@@ -39,7 +39,7 @@ type
     procedure DrawKey(X, Y: Integer; Caption: string; Key: string;
       Active: Boolean = True); overload;
     procedure DrawKey(X, Y: Integer; Caption: string; Key: string;
-      Align: TAlign; Active: Boolean = True); overload;
+      Align: TEngine.TAlign; Active: Boolean = True); overload;
     property Engine: TEngine read FEngine write FEngine;
   end;
 
@@ -1204,7 +1204,7 @@ procedure TUI.DrawKey(X, Y: Integer; Caption, Key: string; Active: Boolean);
 var
   S: string;
 begin
-  S := kcBegin + Key + kcEnd;
+  S := TEngine.kcBegin + Key + TEngine.kcEnd;
   if Active then
     FEngine.ForegroundColor(Saga.Colors.clHotKey)
   else
@@ -1214,7 +1214,7 @@ begin
   FEngine.Print(X + FEngine.GetTextLength(S) + 1, Y, Caption);
 end;
 
-procedure TUI.DrawKey(X, Y: Integer; Caption, Key: string; Align: TAlign;
+procedure TUI.DrawKey(X, Y: Integer; Caption, Key: string; Align: TEngine.TAlign;
   Active: Boolean);
 var
   S: string;
@@ -1225,7 +1225,7 @@ begin
       DrawKey(X, Y, Caption, Key, Active);
     aCenter:
       begin
-        S := kcBegin + Key + kcEnd + ' ' + Caption;
+        S := TEngine.kcBegin + Key + TEngine.kcEnd + ' ' + Caption;
         L := ((((FEngine.Char.Width * FEngine.Window.Width) +
           (X * FEngine.Char.Width)) div 2)) -
           ((FEngine.GetTextLength(S) * FEngine.Char.Width) div 2);

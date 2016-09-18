@@ -569,7 +569,7 @@ begin
   Saga.Engine.BackgroundColor(Color);
   Saga.Engine.Print(0, Y, StringOfChar(#32, Saga.Engine.Window.Width -
     10), aCenter);
-  Saga.Engine.BackgroundColor(clClear);
+  Saga.Engine.BackgroundColor(TEngine.clClear);
 end;
 
 procedure TStageCustomMenu.Timer;

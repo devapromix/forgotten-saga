@@ -110,7 +110,7 @@ begin
     G.Num := StrToIntDef(edNum.Text, 7);
     G.Map.Clear;
     G.Map.FillLayer(lrTerrain, G.MGTiles.Wall);
-    G.Start := Point(TMap.MapWidth div 2, TMap.MapHeight div 2);
+    G.Start := Point(TMap.Size.Width div 2, TMap.Size.Height div 2);
     G.GenCave();
   finally
     G.Free;
