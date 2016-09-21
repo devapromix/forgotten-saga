@@ -4,6 +4,12 @@ interface
 
 uses Engine, {$IFNDEF FPC}Types, {$ENDIF}Classes, IniFiles;
 
+type
+  TGetXYVal = function(X, Y: Integer): Boolean; stdcall;
+function DoAStar(MapX, MapY, FromX, FromY, ToX, ToY: Integer;
+  Callback: TGetXYVal; var TargetX, TargetY: Integer): Boolean;
+  external 'BearLibPF.dll';
+
 {$REGION ' TEntity '}
 
 type
