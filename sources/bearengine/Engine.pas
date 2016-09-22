@@ -127,8 +127,7 @@ type
     procedure Clear;
     constructor Create(AWidth, AHeight: Integer);
     destructor Destroy; override;
-    procedure Print(X, Y: Integer; S: string;
-      Align: TAlign = aLeft); overload;
+    procedure Print(X, Y: Integer; S: string; Align: TAlign = aLeft); overload;
     function Print(S: string; R: TRect): Integer; overload;
     procedure ForegroundColor(Color: Integer);
     procedure BackgroundColor(Color: Integer);
@@ -203,8 +202,7 @@ begin
     aLeft:
       terminal_print(X, Y, S);
     aCenter:
-      terminal_print((Window.Width div 2) -
-        (GetTextLength(S) div 2), Y, S);
+      terminal_print((Window.Width div 2) - (GetTextLength(S) div 2), Y, S);
     aRight:
       terminal_print(Window.Width - GetTextLength(S), Y, S);
   end;
@@ -213,8 +211,7 @@ end;
 function TEngine.Print(S: string; R: TRect): Integer;
 begin
   Result := terminal_print(R.Left, R.Top,
-    Format('[bbox=%dx%d][align=left-top]%s',
-    [R.Right, R.Bottom, S]));
+    Format('[bbox=%dx%d][align=left-top]%s', [R.Right, R.Bottom, S]));
 end;
 
 function TEngine.DarkColor(Color: Integer; Percent: Byte): Integer;

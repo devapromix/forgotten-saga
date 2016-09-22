@@ -581,7 +581,8 @@ begin
   if (MapID <> '') then
   begin
     I := Saga.World.GetMapIndex(MapID);
-    if (I < 0) then Exit;
+    if (I < 0) then
+      Exit;
     Saga.Log[lgGame].Add(Format(__('You walked in <RED>%s.</>'),
       [Saga.World.GetMap(I).Name]));
     Saga.Player.Map := I;
@@ -1214,8 +1215,8 @@ begin
   FEngine.Print(X + FEngine.GetTextLength(S) + 1, Y, Caption);
 end;
 
-procedure TUI.DrawKey(X, Y: Integer; Caption, Key: string; Align: TEngine.TAlign;
-  Active: Boolean);
+procedure TUI.DrawKey(X, Y: Integer; Caption, Key: string;
+  Align: TEngine.TAlign; Active: Boolean);
 var
   S: string;
   L: Integer;

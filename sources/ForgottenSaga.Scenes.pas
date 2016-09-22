@@ -416,7 +416,8 @@ begin
   D.ID := ID;
   Saga.Dialog.LoadFromFile(TUtils.GetPath('resources') +
     Saga.World.CurrentCreatures.GetEntity(ID).FileName);
-  Saga.Dialog.Next(Format('%d', [Saga.World.CurrentCreatures.GetEntity(ID).Dialog]));
+  Saga.Dialog.Next(Format('%d', [Saga.World.CurrentCreatures.GetEntity(ID)
+    .Dialog]));
 end;
 
 procedure TStageGame.SetDialog(ID: Byte);
@@ -918,9 +919,9 @@ begin
     .ToText + ')');
   Saga.Engine.ForegroundColor(Saga.World.CurrentCreatures.GetEntity
     (Saga.Battle.ID).Color);
-  Saga.Engine.Print(90, 7, Saga.World.CurrentCreatures.GetEntity(Saga.Battle.ID).Name
-    + ' (' + Saga.World.CurrentCreatures.GetEntity(Saga.Battle.ID).Atr[atLife]
-    .ToText + ')');
+  Saga.Engine.Print(90, 7, Saga.World.CurrentCreatures.GetEntity(Saga.Battle.ID)
+    .Name + ' (' + Saga.World.CurrentCreatures.GetEntity(Saga.Battle.ID)
+    .Atr[atLife].ToText + ')');
 
   Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
   Saga.Log[lgBattle].Render(35, 6, 55);
@@ -1010,8 +1011,8 @@ var
   S, N, Close: string;
 begin
   Saga.Engine.ForegroundColor(Saga.World.CurrentCreatures.GetEntity(ID).Color);
-  Saga.Engine.Print(0, 9, __(Saga.World.CurrentCreatures.GetEntity(ID).Name),
-    aCenter);
+  Saga.Engine.Print(0, 9, __(Saga.World.CurrentCreatures.GetEntity(ID)
+    .Name), aCenter);
   Saga.Engine.ForegroundColor(Saga.Player.Color);
   Saga.Engine.Print(0, 24, Saga.Player.GetRaceName + ' ' +
     Saga.Player.Name, aCenter);
@@ -1255,7 +1256,8 @@ var
   F: string;
 begin
   Saga.UI.DrawTitle(5, __('Inventory'));
-  for I := Low(TPlayer.TInventor.TInvByte) to High(TPlayer.TInventor.TInvByte) do
+  for I := Low(TPlayer.TInventor.TInvByte)
+    to High(TPlayer.TInventor.TInvByte) do
     if Saga.Player.Inventory.Item[I].Active then
     begin
       F := Saga.World.CurrentItems.GetItemPropStr
