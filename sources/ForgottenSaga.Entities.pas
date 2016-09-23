@@ -4,12 +4,6 @@ interface
 
 uses Engine, {$IFNDEF FPC}Types, {$ENDIF}Classes, IniFiles;
 
-type
-  TGetXYVal = function(X, Y: Integer): Boolean; stdcall;
-function DoAStar(MapX, MapY, FromX, FromY, ToX, ToY: Integer;
-  Callback: TGetXYVal; var TargetX, TargetY: Integer): Boolean;
-  external 'BearLibPF.dll';
-
 {$REGION ' TEntity '}
 
 type
@@ -390,6 +384,12 @@ type
 implementation
 
 uses SysUtils, Math, ForgottenSaga.Classes, ForgottenSaga.Scenes;
+
+type
+  TGetXYVal = function(X, Y: Integer): Boolean; stdcall;
+function DoPath(MapX, MapY, FromX, FromY, ToX, ToY: Integer;
+  Callback: TGetXYVal; var TargetX, TargetY: Integer): Boolean;
+  external 'BearLibPF.dll' name 'DoAStar';
 
 {$REGION ' TEntity '}
 
