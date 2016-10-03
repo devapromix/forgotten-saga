@@ -7,14 +7,15 @@ btn close, Отступить
 end
 
 :elk
-dialog orc_camp:4:1
-dialog forest_of_boars:1:1
+dialog orc_camp:goblin_telorgon:1
+dialog forest_of_boars:elk:1
 exp 12
 quest7=2
-qlog 7:Я встретил лося и хорошо поохотился. Отнесу мясо Телоргону.
+qlog 7:В густой чаще я выследил лося и хорошо поохотился. Отнесу мясо Телоргону.
+qlog 7:update
 end
 
 :1
-pln У твоих ног лежат останки огромного лося. Кто-то хорошо поохотился...
+pln У твоих ног лежат останки лося. Кто-то хорошо поохотился...
 btn close, Пройти мимо
 end

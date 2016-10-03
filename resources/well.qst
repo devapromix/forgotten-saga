@@ -6,7 +6,7 @@ endif
 end
 
 :water
-dialog forest_of_boars:3:1
+dialog forest_of_boars:well:1
 quest1=2
 qlog 1:Я нашел источник и набрал воды из него. Нужно побыстрее отнести ее шаману.
 end

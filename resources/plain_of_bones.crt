@@ -1,5 +1,27 @@
 ;Plain of Bones
 
+[portal]
+Name=Portal
+X=55
+Y=7
+Life=100/100
+Symbol=O
+File=portal.qst
+Color=20,40,250
+Dialog=0
+NPC=1
+
+[troll_warg_spirit]
+Name=Дух Варга
+X=15
+Y=37
+Life=100/100
+Symbol=T
+File=warg_spirit.qst
+Color=80,140,150
+Dialog=0
+NPC=1
+
 [0]
 Name=Вожак Стаи
 X=24

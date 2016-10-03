@@ -17,8 +17,8 @@ var
   x, y, py, px: Integer;
   counter: Integer;
 begin
-  x := TMap.MapWidth; // + 20;
-  y := TMap.MapHeight; // + 20;
+  x := TMap.Size.Width; // + 20;
+  y := TMap.Size.Height; // + 20;
   Saga.World.CurrentMap.SetTile(x div 2, y div 2, lrTerrain, Tile);
   for I := 0 to (x * y div 5) do
   begin
@@ -75,8 +75,8 @@ begin
           ((py > 1) and (Saga.World.CurrentMap.HasTile(Tile, px, py - 1))) or
           ((px < x) and (Saga.World.CurrentMap.HasTile(Tile, px + 1, py))) or
           ((py < y) and (Saga.World.CurrentMap.HasTile(Tile, px, py + 1))) then
-          if (px <> 0) and (px <> TMap.MapWidth - 1) and (py <> 0) and
-            (py <> TMap.MapHeight - 1) then
+          if (px <> 0) and (px <> TMap.Size.Width - 1) and (py <> 0) and
+            (py <> TMap.Size.Height - 1) then
           begin
             Saga.World.CurrentMap.SetTile(px, py, lrTerrain, Tile);
             break;

@@ -6,7 +6,7 @@ interface
 
 uses Classes;
 
-{$REGION ' Stages '}
+{$REGION ' TStages '}
 
 type
   TStageEnum = (stGame, stMainMenu, stGameMenu, stRaceMenu, stNameMenu,
@@ -14,7 +14,7 @@ type
     stQuestLog, stQuestInfo, stAboutMenu, stRecMenu, stItems, stInv);
 
 type
-  TStage = class(TObject)
+  TStage = class(TInterfacedObject, IInterface)
     procedure Render; virtual; abstract;
     procedure Update(var Key: Word); virtual; abstract;
     procedure Timer; virtual; abstract;
@@ -40,7 +40,7 @@ type
     property PrevStage: TStageEnum read FPrevStageEnum write FPrevStageEnum;
   end;
 
-{$ENDREGION ' Stages '}
+{$ENDREGION ' TStages '}
 {$REGION ' TStageGame '}
 
 type
@@ -58,7 +58,7 @@ type
   end;
 
 {$ENDREGION ' TStageGame '}
-{$REGION ' Stages Menu '}
+{$REGION ' TStageCustomMenu '}
 
 type
   TStageCustomMenu = class(TStage)
@@ -72,6 +72,17 @@ type
     property MenuPos: ShortInt read FMenuPos write FMenuPos;
     procedure Timer; override;
   end;
+
+{$ENDREGION ' TStageCustomMenu '}
+{$REGION ' TStageCustomMenuHelper '}
+
+type
+  TStageCustomMenuHelper = class helper for TStageCustomMenu
+    function Clamp(Value, AMin, AMax: Integer; Flag: Boolean): Integer;
+  end;
+
+{$ENDREGION ' TStageCustomMenuHelper '}
+{$REGION ' Stages Menu '}
 
 type
   TStageMenu = class(TStageCustomMenu)
@@ -89,11 +100,9 @@ type
 type
   TStageMainMenu = class(TStageMenu)
   private const
-    FSVersion = '0.0.3'; // Версия
+    FSVersion = '0.0.3';
   public const
     Copyright = 'Copyright (C) 2016 by Sergiy Tkach (DevApromix)';
-  private
-
   public
     constructor Create;
     procedure Render; override;
@@ -192,8 +201,6 @@ type
 
 type
   TStageBattle = class(TStage)
-  private
-
   public
     procedure Render; override;
     procedure Update(var Key: Word); override;
@@ -281,7 +288,7 @@ type
   end;
 
 {$ENDREGION ' Stage Dialog '}
-{$REGION ' Stages Victory and Defeat '}
+{$REGION ' TStageVictory '}
 
 type
   TStageVictory = class(TStageCustomMenu)
@@ -292,6 +299,9 @@ type
     procedure Update(var Key: Word); override;
   end;
 
+{$ENDREGION ' TStageVictory '}
+{$REGION ' TStageDefeat '}
+
 type
   TStageDefeat = class(TStageCustomMenu)
   private
@@ -301,7 +311,7 @@ type
     procedure Update(var Key: Word); override;
   end;
 
-{$ENDREGION ' Stages Victory and Defeat '}
+{$ENDREGION ' TStageDefeat '}
 
 implementation
 
@@ -415,9 +425,9 @@ begin
   D := TStageDialog(Saga.Stages.GetStage(stDialog));
   D.ID := ID;
   Saga.Dialog.LoadFromFile(TUtils.GetPath('resources') +
-    Saga.World.CurrentCreatures.GetEntity(ID).FileName);
-  Saga.Dialog.Next(Format('%d', [Saga.World.CurrentCreatures.GetEntity(ID)
-    .Dialog]));
+    (Saga.World.CurrentCreatures.GetEntity(ID) as TCreature).ScriptFileName);
+  Saga.Dialog.Next(Format('%d', [(Saga.World.CurrentCreatures.GetEntity(ID)
+    as TCreature).Dialog]));
 end;
 
 procedure TStageGame.SetDialog(ID: Byte);
@@ -444,7 +454,7 @@ begin
   ID := Saga.World.CurrentCreatures.Has(Saga.Player.Pos.X + X,
     Saga.Player.Pos.Y + Y);
   if (ID > -1) then
-    case Saga.World.CurrentCreatures.GetEntity(ID).Force of
+    case (Saga.World.CurrentCreatures.GetEntity(ID) as TCreature).Force of
       fcAlly:
         SetDialog(ID);
       fcEnemy:
@@ -459,6 +469,8 @@ begin
   Saga.World.CurrentMap.Render;
   Saga.World.CurrentItems.Render;
   Saga.World.CurrentCreatures.Render;
+  Saga.Player.Render;
+  Saga.Player.Look.Render;
   Saga.Engine.BackgroundColor(0);
   RenderPlayerInfo;
   Saga.Log[lgGame].Render(81, 15, 39);
@@ -535,6 +547,12 @@ begin
           Saga.Player.Pos.Y) then
           TWorld.GoLoc(drBottom);
       end;
+    //BeginTest
+    TK_1:
+      TWorld.GoLoc(drLeft);
+    TK_2:
+      TWorld.GoLoc(drRight);
+    //End Test
     TK_J:
       Saga.Stages.SetStage(stQuestLog);
     TK_I:
@@ -579,6 +597,25 @@ begin
 end;
 
 {$ENDREGION ' TStageCustomMenu '}
+{$REGION ' TStageCustomMenuHelper '}
+
+function TStageCustomMenuHelper.Clamp(Value, AMin, AMax: Integer;
+  Flag: Boolean): Integer;
+begin
+  Result := Value;
+  if (Result < AMin) then
+    if Flag then
+      Result := AMin
+    else
+      Result := AMax;
+  if (Result > AMax) then
+    if Flag then
+      Result := AMax
+    else
+      Result := AMin;
+end;
+
+{$ENDREGION ' TStageCustomMenuHelper '}
 {$REGION ' TStageMenu '}
 
 constructor TStageMenu.Create;
@@ -612,9 +649,9 @@ procedure TStageMenu.Update(var Key: Word);
 begin
   case Key of
     TK_DOWN:
-      MenuPos := TUtils.Clamp(MenuPos + 1, 0, Count - 1, False);
+      MenuPos := Clamp(MenuPos + 1, 0, Count - 1, False);
     TK_UP:
-      MenuPos := TUtils.Clamp(MenuPos - 1, 0, Count - 1, False);
+      MenuPos := Clamp(MenuPos - 1, 0, Count - 1, False);
   end;
 end;
 {$ENDREGION ' TStageMenu '}
@@ -734,10 +771,10 @@ begin
     TK_ESCAPE:
       Saga.Stages.SetStage(stMainMenu);
     TK_UP:
-      MenuPos := TUtils.Clamp(MenuPos - 1, ord(Low(TSaga.TRaceEnum)),
+      MenuPos := Clamp(MenuPos - 1, ord(Low(TSaga.TRaceEnum)),
         ord(High(TSaga.TRaceEnum)), False);
     TK_DOWN:
-      MenuPos := TUtils.Clamp(MenuPos + 1, ord(Low(TSaga.TRaceEnum)),
+      MenuPos := Clamp(MenuPos + 1, ord(Low(TSaga.TRaceEnum)),
         ord(High(TSaga.TRaceEnum)), False);
     TK_ENTER:
       case MenuPos of
@@ -856,9 +893,9 @@ begin
         Saga.Stages.Back;
       end;
     TK_UP:
-      MenuPos := TUtils.Clamp(MenuPos - 1, 0, 9, False);
+      MenuPos := Clamp(MenuPos - 1, 0, 9, False);
     TK_DOWN:
-      MenuPos := TUtils.Clamp(MenuPos + 1, 0, 9, False);
+      MenuPos := Clamp(MenuPos + 1, 0, 9, False);
   end;
 end;
 
@@ -920,8 +957,8 @@ begin
   Saga.Engine.ForegroundColor(Saga.World.CurrentCreatures.GetEntity
     (Saga.Battle.ID).Color);
   Saga.Engine.Print(90, 7, Saga.World.CurrentCreatures.GetEntity(Saga.Battle.ID)
-    .Name + ' (' + Saga.World.CurrentCreatures.GetEntity(Saga.Battle.ID)
-    .Atr[atLife].ToText + ')');
+    .Name + ' (' + (Saga.World.CurrentCreatures.GetEntity(Saga.Battle.ID)
+    as TCreature).Atr[atLife].ToText + ')');
 
   Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
   Saga.Log[lgBattle].Render(35, 6, 55);
@@ -1169,8 +1206,11 @@ end;
 {$REGION ' TStageQuestInfo '}
 
 procedure TStageQuestInfo.Render;
+var
+  S: string;
 begin
-  Saga.UI.DrawTitle(8, Saga.Quest.Get(ID, 0));
+  S := Saga.Quest.Get(ID, 0);
+  Saga.UI.DrawTitle(8, Trim(Copy(S, Pos(TEngine.kcEnd, S) + 1, Length(S))));
   Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
   Saga.Log[lgQuest].Render(35, 10, 55);
   Saga.UI.DrawKey(0, 28, __('Back'), 'ESC', aCenter);
@@ -1188,6 +1228,7 @@ begin
       Saga.Stages.SetStage(stQuestLog);
   end;
 end;
+
 {$ENDREGION ' TStageQuestInfo '}
 {$REGION ' TStageAboutMenu '}
 
@@ -1252,16 +1293,15 @@ end;
 
 procedure TStageInv.Render;
 var
-  I: TPlayer.TInventor.TInvByte;
+  I: TPlayer.TInventory.TInvByte;
   F: string;
 begin
   Saga.UI.DrawTitle(5, __('Inventory'));
-  for I := Low(TPlayer.TInventor.TInvByte)
-    to High(TPlayer.TInventor.TInvByte) do
+  for I := Low(TPlayer.TInventory.TInvByte)
+    to High(TPlayer.TInventory.TInvByte) do
     if Saga.Player.Inventory.Item[I].Active then
     begin
-      F := Saga.World.CurrentItems.GetItemPropStr
-        (Saga.Player.Inventory.Item[I]);
+      F := Saga.World.CurrentItems.ToString(Saga.Player.Inventory.Item[I]);
       Saga.UI.DrawKey(15, I + 6, F, chr(I + 64));
     end;
   Saga.UI.DrawKey(0, Saga.Engine.Window.Height - 6, __('Close'), 'ESC',
@@ -1286,22 +1326,22 @@ end;
 
 procedure TStageItems.Render;
 var
+  Entity: TEntity;
   I, C: Integer;
-  F: string;
+  S: string;
 begin
   Saga.UI.DrawTitle(5, __('Items'));
   C := 0;
-  for I := 0 to Saga.World.CurrentItems.Count - 1 do
+  for I := Saga.World.CurrentItems.Count - 1 downto 0 do
   begin
-    if (C > High(TPlayer.TInventor.TInvByte) - 1) then
+    if (C > High(TPlayer.TInventory.TInvByte) - 1) then
       Break;
-    if (Saga.World.CurrentItems.GetEntity(I).Active) and
-      (Saga.World.CurrentItems.GetEntity(I).Pos.X = Saga.Player.Pos.X) and
-      (Saga.World.CurrentItems.GetEntity(I).Pos.Y = Saga.Player.Pos.Y) then
+    Entity := Saga.World.CurrentItems.GetEntity(I);
+    if (Entity.Active) and (Entity.Pos.X = Saga.Player.Pos.X) and
+      (Entity.Pos.Y = Saga.Player.Pos.Y) then
     begin
-      F := Saga.World.CurrentItems.GetItemPropStr
-        (Saga.World.CurrentItems.GetEntity(I));
-      Saga.UI.DrawKey(15, C + 7, F, chr(C + 65));
+      S := Saga.World.CurrentItems.ToString(Entity as TItem);
+      Saga.UI.DrawKey(15, C + 7, S, chr(C + 65));
       Inc(C);
     end;
   end;
@@ -1342,7 +1382,7 @@ begin
     TK_SPACE:
       begin
         K := TK_A;
-        for I := 0 to High(TPlayer.TInventor.TInvByte) - 1 do
+        for I := 0 to High(TPlayer.TInventory.TInvByte) - 1 do
           Self.Update(K);
       end;
   end;

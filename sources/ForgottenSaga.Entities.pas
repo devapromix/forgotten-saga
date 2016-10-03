@@ -2,8 +2,21 @@
 
 interface
 
+{$I Include.inc}
+
 uses Engine, {$IFNDEF FPC}Types, {$ENDIF}Classes, IniFiles;
 
+{$REGION ' IStorage '}
+
+type
+  IStorage = interface
+    procedure Clear;
+    function Count: Integer;
+    procedure LoadFromFile(const FileName: string);
+    procedure SaveToFile(const FileName: string);
+  end;
+
+{$ENDREGION ' IStorage '}
 {$REGION ' TEntity '}
 
 type
@@ -62,10 +75,20 @@ type
     property Symbol: Char read FSymbol write FSymbol;
     property Level: Byte read FLevel write FLevel;
     property Active: Boolean read FActive write FActive;
+    function BackColor: Integer; virtual; abstract;
     procedure Render; virtual; abstract;
   end;
 
 {$ENDREGION ' TEntity '}
+{$REGION ' TEntityHelper '}
+
+type
+  TEntityHelper = class helper for TEntity
+    function Percent(N, P: Integer): Integer;
+    function BarWidth(CX, MX, WX: Integer): Integer;
+  end;
+
+{$ENDREGION ' TEntityHelper '}
 {$REGION ' TCreature '}
 
 type
@@ -80,7 +103,7 @@ type
     ForceValues: array [Boolean] of TForce = (fcAlly, fcEnemy);
   private
     FForce: TForce;
-    FFileName: string;
+    FScriptFileName: string;
     FDialog: Integer;
     FAtr: array [TAtrEnum] of TEntity.TBar;
     FSkillPoints: Byte;
@@ -95,9 +118,9 @@ type
     destructor Destroy; override;
     property Force: TForce read FForce write FForce;
     property Dialog: Integer read FDialog write FDialog;
-    property FileName: string read FFileName write FFileName;
-    function BackColor: Integer;
-    procedure Move(AX, AY: ShortInt);
+    property ScriptFileName: string read FScriptFileName write FScriptFileName;
+    function BackColor: Integer; override;
+    procedure Move(const AX, AY: ShortInt);
     procedure Render; override;
     property Atr[I: TAtrEnum]: TEntity.TBar read GetAtr write SetAtr;
     property StatPoints: Byte read FStatPoints write SetStatPoints;
@@ -107,27 +130,6 @@ type
   end;
 
 {$ENDREGION ' TCreature '}
-{$REGION ' TCreatures '}
-
-type
-  TCreatures = class(TObject)
-  private
-    Sections: TStringlist;
-    FCreature: array of TCreature;
-  public
-    constructor Create;
-    destructor Destroy; override;
-    function GetEntity(N: Integer): TCreature;
-    function Has(X, Y: Integer): Integer;
-    procedure LoadFromFile(const FileName: string);
-    procedure SaveToFile(const FileName: string);
-    function Count: Integer; overload;
-    function Count(X, Y: Integer): Integer; overload;
-    procedure Render;
-    procedure Clear;
-  end;
-
-{$ENDREGION ' TCreatures '}
 {$REGION ' TItem '}
 
 type
@@ -135,7 +137,7 @@ type
   public type
     TCategory = (ctNone, ctStaff, ctSpear, ctAxe, ctSword);
     TMaterial = (mtNone, mtWood, mtBone, mtStone, mtMetal);
-  private const
+  public const
     CatStr: array [TCategory] of string = ('', 'staff', 'spear', 'axe',
       'sword');
     MatStr: array [TMaterial] of string = ('', 'wood', 'bone', 'stone',
@@ -151,7 +153,7 @@ type
     procedure Render; override;
     procedure Assign(Value: TItem);
     procedure Calc;
-    function BackColor: Integer;
+    function BackColor: Integer; override;
     property Count: Integer read FCount write FCount;
     property Category: TCategory read FCategory write FCategory;
     property Material: TMaterial read FMaterial write FMaterial;
@@ -161,49 +163,6 @@ type
   end;
 
 {$ENDREGION ' TItem '}
-{$REGION ' TItems '}
-
-type
-  TItems = class(TObject)
-  private
-    FItem: array of TItem;
-  public
-    constructor Create;
-    destructor Destroy; override;
-    procedure Add(Symbol: Char; Color, Level: Integer; Name: string;
-      Material: TItem.TMaterial; Category: TItem.TCategory; Durability: Word;
-      Amount: Word = 1);
-    procedure Del(const Index: Integer);
-    function GetEntity(N: Integer): TItem;
-    function Has(X, Y: Integer): Integer;
-    function GetIndex(N, X, Y: Integer): Integer;
-    procedure LoadFromFile(const FileName: string);
-    procedure SaveToFile(const FileName: string);
-    function Count: Integer; overload;
-    function Count(X, Y: Integer): Integer; overload;
-    function GetItemPropStr(Item: TItem): string;
-    procedure Pickup(I: Integer);
-    procedure Render;
-    procedure Clear;
-  end;
-
-{$ENDREGION ' TItems '}
-{$REGION ' TIniFile '}
-
-type
-  TIniFile = class(IniFiles.TIniFile)
-  public
-    function ReadCategory(Section, Ident: string; DefaultValue: TItem.TCategory)
-      : TItem.TCategory;
-    procedure WriteCategory(Section, Ident: string; Value: TItem.TCategory);
-    function ReadColor(Section, Ident: string; DefaultValue: string): Integer;
-    procedure WriteColor(Section, Ident: string; Value: Integer);
-    function ReadMaterial(Section, Ident: string; DefaultValue: TItem.TMaterial)
-      : TItem.TMaterial;
-    procedure WriteMaterial(Section, Ident: string; Value: TItem.TMaterial);
-  end;
-
-{$ENDREGION ' TIniFile '}
 {$REGION ' TPlayer '}
 
 type
@@ -215,12 +174,13 @@ type
     TLook = class(TEntity)
     public
       procedure Render; override;
+      function BackColor: Integer; override;
       procedure Move(AX, AY: Integer);
     end;
 {$ENDREGION ' TPlayer.TLook '}
 {$REGION ' TPlayer.TInventory '}
   public type
-    TInventor = class(TObject)
+    TInventory = class(TObject)
     public type
       TInvByte = 1 .. 26;
     private
@@ -246,7 +206,7 @@ type
     FScore: Word;
     FPrevName: string;
     FLook: TLook;
-    FInventory: TInventor;
+    FInventory: TInventory;
   public
     constructor Create;
     destructor Destroy; override;
@@ -255,8 +215,8 @@ type
     property Map: Integer read FMap write FMap;
     function GetRaceName: string;
     function GetFullName: string;
-    procedure LoadFromFile(AFileName: string);
-    procedure SaveToFile(AFileName: string);
+    procedure LoadFromFile(const FileName: string);
+    procedure SaveToFile(const FileName: string);
     procedure Move(AX, AY: ShortInt);
     procedure GenName;
     procedure Clear;
@@ -265,10 +225,63 @@ type
     procedure Victory;
     procedure AddExp(A: Word);
     property Look: TLook read FLook write FLook;
-    property Inventory: TInventor read FInventory write FInventory;
+    property Inventory: TInventory read FInventory write FInventory;
   end;
 
 {$ENDREGION ' TPlayer '}
+{$REGION ' TEntities '}
+
+type
+  TEntities = class(TInterfacedObject, IStorage)
+  private
+    Sections: TStringList;
+    FEntity: array of TEntity;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    function GetEntity(N: Integer): TEntity;
+    function Has(X, Y: Integer): Integer;
+    procedure Render;
+    function Count: Integer; overload;
+    function Count(X, Y: Integer): Integer; overload;
+    function GetIndex(N, X, Y: Integer): Integer; overload;
+    function GetIndex(SectionID: string): Integer; overload;
+    procedure LoadFromFile(const FileName: string); virtual; abstract;
+    procedure SaveToFile(const FileName: string); virtual; abstract;
+    procedure Delete(const Index: Integer);
+    procedure Clear;
+  end;
+
+{$ENDREGION ' TEntities '}
+{$REGION ' TCreatures '}
+
+type
+  TCreatures = class(TEntities, IStorage)
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure LoadFromFile(const FileName: string); override;
+    procedure SaveToFile(const FileName: string); override;
+  end;
+
+{$ENDREGION ' TCreatures '}
+{$REGION ' TItems '}
+
+type
+  TItems = class(TEntities, IStorage)
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure LoadFromFile(const FileName: string); override;
+    procedure SaveToFile(const FileName: string); override;
+    procedure Add(Symbol: Char; Color, Level: Integer; Name: string;
+      Material: TItem.TMaterial; Category: TItem.TCategory; Durability: Word;
+      Amount: Word = 1);
+    function ToString(Item: TItem): string;
+    procedure Pickup(I: Integer);
+  end;
+
+{$ENDREGION ' TItems '}
 {$REGION ' TTiles '}
 
 type
@@ -314,7 +327,7 @@ type
 {$REGION ' TMap '}
 
 type
-  TMap = class(TObject)
+  TMap = class(TInterfacedObject, IStorage)
   public const
     Size: TEngine.TSize = (Width: 80; Height: 40);
     Offset = 40;
@@ -329,14 +342,15 @@ type
     FWidth: Integer;
     FHeight: Integer;
   public
-    Map: array [TDir] of string;
+    MapNeighbors: array [TDir] of string;
     procedure Clear;
     procedure ClearLayer(Z: TLayerEnum);
     procedure FillLayer(Z: TLayerEnum; Tile: TTiles.TTileEnum);
     constructor Create;
     destructor Destroy; override;
-    procedure LoadFromFile(AFileName: string);
-    procedure SaveToFile(AFileName: string);
+    function Count: Integer;
+    procedure LoadFromFile(const FileName: string);
+    procedure SaveToFile(const FileName: string);
     function CellInMap(X, Y: Integer): Boolean;
     function GetTopTileChar(X, Y: Integer): Char;
     procedure SetTile(X, Y: Integer; Z: TLayerEnum; Tile: TTiles.TTileEnum);
@@ -360,20 +374,19 @@ type
     TMGTiles = record
       Wall: TTiles.TTileEnum;
       Floor: TTiles.TTileEnum;
-      procedure SetFloor(Value: TTiles.TTileEnum);
-      procedure SetWall(Value: TTiles.TTileEnum);
     end;
   private
     FMap: TMap;
     FStart: TPoint;
-    FMGTiles: TMGTiles;
+    // ?    FMGTiles: TMGTiles;
     FNum: Byte;
   public
+    MGTiles: TMGTiles;
     constructor Create();
     destructor Destroy; override;
     property Map: TMap read FMap write FMap;
     property Start: TPoint read FStart write FStart;
-    property MGTiles: TMGTiles read FMGTiles write FMGTiles;
+    // ?    property MGTiles: TMGTiles read FMGTiles write FMGTiles;
     property Num: Byte read FNum write FNum;
     procedure AddSpot(Tile: TTiles.TTileEnum; Layer: TMap.TLayerEnum);
     procedure GenCave();
@@ -428,7 +441,7 @@ end;
 
 procedure TEntity.TBar.Add(Values: string);
 var
-  SL: TStringlist;
+  SL: TStringList;
 begin
   SL := TUtils.ExplodeString('/', Values);
   FCur := StrToIntDef(Trim(SL[0]), 0);
@@ -521,6 +534,19 @@ end;
 
 {$ENDREGION ' TEntity.TBar '}
 {$ENDREGION ' TEntity '}
+{$REGION ' TEntityHelper '}
+
+function TEntityHelper.BarWidth(CX, MX, WX: Integer): Integer;
+begin
+  Result := Round(CX / MX * WX);
+end;
+
+function TEntityHelper.Percent(N, P: Integer): Integer;
+begin
+  Result := N * P div 100;
+end;
+
+{$ENDREGION ' TEntityHelper '}
 {$REGION ' TCreature '}
 
 constructor TCreature.Create;
@@ -548,7 +574,7 @@ begin
   Symbol := '?';
   Force := fcEnemy;
   Dialog := 0;
-  FileName := '';
+  ScriptFileName := '';
 end;
 
 destructor TCreature.Destroy;
@@ -560,7 +586,7 @@ begin
   inherited;
 end;
 
-procedure TCreature.Move(AX, AY: ShortInt);
+procedure TCreature.Move(const AX, AY: ShortInt);
 var
   X, Y: Integer;
 var
@@ -671,531 +697,6 @@ begin
 end;
 
 {$ENDREGION ' TCreature '}
-{$REGION ' TCreatures '}
-
-procedure TCreatures.Clear;
-var
-  I: Integer;
-begin
-  Sections.Clear;
-  for I := 0 to Count - 1 do
-    FCreature[I].Free;
-  SetLength(FCreature, 0);
-end;
-
-function TCreatures.Count: Integer;
-begin
-  Result := Length(FCreature);
-end;
-
-function TCreatures.Count(X, Y: Integer): Integer;
-begin
-  Result := 1;
-end;
-
-constructor TCreatures.Create;
-begin
-  Sections := TStringlist.Create;
-end;
-
-destructor TCreatures.Destroy;
-begin
-  Self.Clear;
-  Sections.Free;
-  inherited;
-end;
-
-function TCreatures.GetEntity(N: Integer): TCreature;
-begin
-  Result := FCreature[N];
-end;
-
-function TCreatures.Has(X, Y: Integer): Integer;
-var
-  I: Integer;
-begin
-  Result := -1;
-  for I := 0 to Count - 1 do
-    if (FCreature[I].Has(X, Y)) then
-    begin
-      Result := I;
-      Break;
-    end;
-end;
-
-procedure TCreatures.LoadFromFile(const FileName: string);
-var
-  I, L: Integer;
-  F: TIniFile;
-begin
-  Self.Clear;
-  F := TIniFile.Create(FileName);
-  try
-    F.ReadSections(Sections);
-    for I := 0 to Sections.Count - 1 do
-    begin
-      if (F.SectionExists(Sections[I])) then
-      begin
-        L := Count;
-        SetLength(FCreature, L + 1);
-        FCreature[L] := TCreature.Create;
-        FCreature[L].Name := F.ReadString(Sections[I], 'Name', '');
-        FCreature[L].SetPosition(Point(F.ReadInteger(Sections[I], 'X', 0),
-          F.ReadInteger(Sections[I], 'Y', 0)));
-        FCreature[L].Atr[atLife].Add(F.ReadString(Sections[I], 'Life',
-          Format(TEntity.BarFmt, [100, 100])));
-        FCreature[L].Symbol := F.ReadString(Sections[I], 'Symbol', '?')[1];
-        FCreature[L].Color := F.ReadColor(Sections[I], 'Color', '255,255,255');
-        FCreature[L].Dialog := F.ReadInteger(Sections[I], 'Dialog', 0);
-        FCreature[L].Level := F.ReadInteger(Sections[I], 'Level', 1);
-        FCreature[L].FileName := F.ReadString(Sections[I], 'File', '');
-        FCreature[L].Force := TCreature.ForceValues
-          [not F.ReadBool(Sections[I], 'NPC', False)];
-      end;
-    end;
-  finally
-    F.Free;
-  end;
-end;
-
-procedure TCreatures.Render;
-var
-  I: Integer;
-begin
-  for I := 0 to Count - 1 do
-    FCreature[I].Render;
-  Saga.Player.Render;
-  Saga.Player.Look.Render;
-end;
-
-procedure TCreatures.SaveToFile(const FileName: string);
-var
-  I: Integer;
-  F: TIniFile;
-begin
-  F := TIniFile.Create(FileName);
-  try
-    for I := 0 to Sections.Count - 1 do
-    begin
-      F.WriteString(Sections[I], 'Name', FCreature[I].Name);
-      F.WriteInteger(Sections[I], 'X', FCreature[I].Pos.X);
-      F.WriteInteger(Sections[I], 'Y', FCreature[I].Pos.Y);
-      F.WriteString(Sections[I], 'Life', Format(TEntity.BarFmt,
-        [FCreature[I].Atr[atLife].Cur, FCreature[I].Atr[atLife].Max]));
-      F.WriteInteger(Sections[I], 'Level', FCreature[I].Level);
-      F.WriteString(Sections[I], 'Symbol', FCreature[I].Symbol);
-      F.WriteString(Sections[I], 'File', FCreature[I].FileName);
-      F.WriteColor(Sections[I], 'Color', FCreature[I].Color);
-      F.WriteInteger(Sections[I], 'Dialog', FCreature[I].Dialog);
-      F.WriteBool(Sections[I], 'NPC', FCreature[I].Force = fcAlly);
-    end;
-  finally
-    F.Free;
-  end;
-end;
-
-{$ENDREGION ' TCreatures '}
-{$REGION ' TPlayer '}
-
-procedure TPlayer.AddExp(A: Word);
-begin
-  if (Atr[atExp].Cur + A >= Atr[atExp].Max) then
-  begin
-    Atr[atExp].SetCur(Atr[atExp].Cur + A - Atr[atExp].Max);
-    Score := Score + (Level * 10);
-    Level := Level + 1;
-    Atr[atExp].SetMax(Atr[atExp].Max + TUtils.Percent(Atr[atExp].Max, 20));
-  end
-  else
-    Atr[atExp].Inc(A);
-end;
-
-procedure TPlayer.Clear;
-var
-  R: TSaga.TRaceEnum;
-begin
-  R := TSaga.TRaceEnum(Race);
-  Color := Saga.Race[R].Color;
-  SetPosition(Saga.Race[R].Pos);
-  Map := Saga.Race[R].Map;
-  Score := 0;
-  Level := 1;
-  AddAtr(atExp, cExp, False);
-  AddAtr(atAdr, cAdr, False);
-  AddAtr(atLife, Saga.Race[R].Life, True);
-  AddAtr(atMana, Saga.Race[R].Mana, True);
-  Look.Active := False;
-  Inventory.Clear();
-  FPrevName := '';
-end;
-
-constructor TPlayer.Create;
-begin
-  inherited Create;
-  FPrevName := '';
-  Look := TLook.Create;
-  Inventory := TInventor.Create();
-  Look.Active := False;
-  SetPosition(40, 20);
-  Color := $00FFFFFF;
-  Symbol := '@';
-  Force := fcAlly;
-  Race := 0;
-  Map := 0;
-end;
-
-procedure TPlayer.Defeat;
-begin
-  Saga.Recs.Save;
-  Saga.Stages.SetStage(stDefeat);
-end;
-
-procedure TPlayer.Victory;
-begin
-  Saga.Recs.Save;
-  Saga.Stages.SetStage(stVictory);
-end;
-
-destructor TPlayer.Destroy;
-begin
-  Inventory.Free;
-  Look.Free;
-  inherited;
-end;
-
-procedure TPlayer.GenName;
-var
-  SL: TStringlist;
-  I, M: Byte;
-  R: string;
-begin
-  Name := '';
-  M := Math.RandomRange(1, 3);
-  if (Race = 2) then
-    M := 1;
-  R := TSaga.RaceName[TSaga.TRaceEnum(Race)];
-  SL := TUtils.ExplodeString('|', R);
-  for I := 0 to M do
-  begin
-    Name := Name + TUtils.RandStr(',', __(SL[I]));
-    if (I < M) then
-      Name := Name + Saga.RaceNameDiv[TSaga.TRaceEnum(Race)];
-  end;
-  if (FPrevName = Name) then
-    GenName;
-  FPrevName := Name;
-end;
-
-function TPlayer.GetFullName: string;
-begin
-  Result := Format(__(InfFmt + ' %d level'), [Name, GetRaceName, Level]);
-end;
-
-function TPlayer.GetRaceName: string;
-begin
-  Result := Saga.Race[TSaga.TRaceEnum(Race)].Name;
-end;
-
-procedure TPlayer.LoadFromFile(AFileName: string);
-var
-  S: string;
-  F: TIniFile;
-  X, Y: Integer;
-begin
-  F := TIniFile.Create(AFileName);
-  try
-    // Character
-    S := 'Player';
-    if (F.SectionExists(S)) then
-    begin
-      Name := F.ReadString(S, 'Name', '');
-      X := F.ReadInteger(S, 'X', 0);
-      Y := F.ReadInteger(S, 'Y', 0);
-      SetPosition(X, Y);
-      Race := F.ReadInteger(S, 'Race', 0);
-      Map := F.ReadInteger(S, 'Map', 0);
-      Level := F.ReadInteger(S, 'Level', 1);
-      Atr[atExp].Add(F.ReadString(S, 'Exp', Format(BarFmt, [0, cExp])));
-      Atr[atAdr].Add(F.ReadString(S, 'Adr', Format(BarFmt, [0, cAdr])));
-      Atr[atLife].Add(F.ReadString(S, 'Life', Format(BarFmt, [100, 100])));
-      Atr[atMana].Add(F.ReadString(S, 'Mana', Format(BarFmt, [100, 100])));
-      Score := F.ReadInteger(S, 'Score', 0);
-    end;
-  finally
-    F.Free;
-  end;
-  Inventory.LoadFromFile(AFileName);
-end;
-
-procedure TPlayer.Move(AX, AY: ShortInt);
-begin
-  if (Pos.X = 0) and (AX = -1) then
-    if TWorld.GoLoc(drLeft) then
-    begin
-      SetPosition(TMap.Size.Width - 1, Pos.Y);
-      Exit;
-    end;
-  if (Pos.X = TMap.Size.Width - 1) and (AX = 1) then
-    if TWorld.GoLoc(drRight) then
-    begin
-      SetPosition(0, Pos.Y);
-      Exit;
-    end;
-  if (Pos.Y = 0) and (AY = -1) then
-    if TWorld.GoLoc(drUp) then
-    begin
-      SetPosition(Pos.X, TMap.Size.Height - 1);
-      Exit;
-    end;
-  if (Pos.Y = TMap.Size.Height - 1) and (AY = 1) then
-    if TWorld.GoLoc(drDown) then
-    begin
-      SetPosition(Pos.X, 0);
-      Exit;
-    end;
-  inherited Move(AX, AY);
-end;
-
-procedure TPlayer.SaveToFile(AFileName: string);
-var
-  S: string;
-  F: TIniFile;
-begin
-  F := TIniFile.Create(AFileName);
-  try
-    // Character
-    S := 'Player';
-    F.WriteString(S, 'Name', Name);
-    F.WriteInteger(S, 'X', Pos.X);
-    F.WriteInteger(S, 'Y', Pos.Y);
-    F.WriteInteger(S, 'Race', Race);
-    F.WriteInteger(S, 'Map', Map);
-    F.WriteInteger(S, 'Level', Level);
-    F.WriteString(S, 'Exp', Format(BarFmt, [Atr[atExp].Cur, Atr[atExp].Max]));
-    F.WriteString(S, 'Adr', Format(BarFmt, [Atr[atAdr].Cur, Atr[atAdr].Max]));
-    F.WriteString(S, 'Life', Format(BarFmt, [Atr[atLife].Cur,
-      Atr[atLife].Max]));
-    F.WriteString(S, 'Mana', Format(BarFmt, [Atr[atMana].Cur,
-      Atr[atMana].Max]));
-    F.WriteInteger(S, 'Score', Score);
-  finally
-    F.Free;
-  end;
-  Inventory.SaveToFile(AFileName);
-end;
-
-procedure TPlayer.Pickup;
-var
-  I, C: Integer;
-  // E: TItem;
-begin
-  I := Saga.World.CurrentItems.Has(Pos.X, Pos.Y);
-  if (I > -1) then
-  begin
-    C := Saga.World.CurrentItems.Count(Pos.X, Pos.Y);
-    if (C = 1) then
-      Saga.World.CurrentItems.Pickup(I)
-    else if (C > 1) then
-      Saga.Stages.SetStage(stItems, stGame);
-  end;
-end;
-
-{$REGION ' TPlayer.TLook '}
-
-procedure TPlayer.TLook.Move(AX, AY: Integer);
-begin
-  if (Saga.World.CurrentMap.CellInMap(Pos.X + AX, Pos.Y + AY)) then
-    SetPosition(Pos.X + AX, Pos.Y + AY);
-end;
-
-procedure TPlayer.TLook.Render;
-var
-  T: TTiles.TTileEnum;
-
-  function GetTile(Z: TMap.TLayerEnum): string;
-  var
-    T: TTiles.TTileEnum;
-  begin
-    Result := '';
-    T := Saga.World.CurrentMap.GetTile(Pos.X, Pos.Y, Z);
-    if (T > tNone) then
-      Result := Format(KeyFmt, [Saga.Tiles.GetTile(T).Symbol,
-        __(Saga.Tiles.GetTile(T).Name)]) + ' ';
-  end;
-
-  function GetCreature: string;
-  var
-    I: Integer;
-  begin
-    Result := '';
-    I := Saga.World.CurrentCreatures.Has(Pos.X, Pos.Y);
-    if (I > -1) then
-      Result := Format(KeyFmt, [Saga.World.CurrentCreatures.GetEntity(I).Symbol,
-        __(Saga.World.CurrentCreatures.GetEntity(I).Name)]) + ' ';
-    if (Saga.Player.Has(Pos.X, Pos.Y)) then
-      Result := Format(KeyFmt, ['@', Saga.Player.GetFullName]) + ' ';
-  end;
-
-  function GetItems(Pos: TPoint): string;
-  var
-    I, C: Integer;
-    Item: TItem;
-  begin
-    Result := '';
-    I := Saga.World.CurrentItems.Has(Pos.X, Pos.Y);
-    if (I > -1) then
-    begin
-      Item := Saga.World.CurrentItems.GetEntity(I);
-      Result := Trim(Saga.World.CurrentItems.GetItemPropStr(Item));
-      C := Saga.World.CurrentItems.Count(Pos.X, Pos.Y);
-      if (C > 1) then
-        Result := Format(KeyFmt, [Saga.World.CurrentItems.GetEntity(I).Symbol,
-          Format('Несколько (%dx) предметов (%s)',
-          [C, Saga.World.CurrentItems.GetEntity(I).Name])]);
-    end;
-  end;
-
-begin
-  if not Active then
-  begin
-    Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceWhite));
-    Saga.Engine.BackgroundColor(0);
-    Saga.Engine.Print(0, 39, GetItems(Saga.Player.Pos));
-    Exit;
-  end;
-  Saga.UI.DrawChar(Pos.X, Pos.Y, Saga.World.CurrentMap.GetTopTileChar(Pos.X,
-    Pos.Y), Saga.Colors.GetColor(ceWhite), Saga.Colors.GetColor(ceLGray));
-  T := Saga.World.CurrentMap.GetTile(Pos.X, Pos.Y, lrTerrain);
-  Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceWhite));
-  Saga.Engine.BackgroundColor(0);
-  Saga.Engine.Print(0, 39, Trim(GetTile(lrTerrain) + GetTile(lrObjects) +
-    GetCreature() + GetItems(Pos)));
-end;
-
-{$ENDREGION ' TPlayer.TLook '}
-{$REGION ' TPlayer.TInventor '}
-
-function TPlayer.TInventor.AddItem(Value: TItem): Boolean;
-var
-  I: TInvByte;
-  C: Integer;
-begin
-  for I := Low(TInvByte) to High(TInvByte) do
-  begin
-    if (Item[I].Active and (Item[I].Name = Value.Name)) then
-    begin
-      C := Item[I].Count;
-      Item[I].Assign(Value);
-      Item[I].Count := C + Value.Count;
-      Result := True;
-      Exit;
-    end;
-    Item[I].Assign(Value);
-    Result := True;
-    Exit;
-  end;
-  Result := False;
-end;
-
-procedure TPlayer.TInventor.Clear;
-var
-  I: TInvByte;
-begin
-  for I := Low(TInvByte) to High(TInvByte) do
-    Self.Clear(I);
-end;
-
-procedure TPlayer.TInventor.Clear(I: TInvByte);
-begin
-  Item[I].Create;
-  Item[I].Active := False;
-end;
-
-function TPlayer.TInventor.Count: Integer;
-var
-  I: TInvByte;
-begin
-  Result := 0;
-  for I := Low(TInvByte) to High(TInvByte) do
-    if Item[I].Active then
-      Inc(Result);
-end;
-
-constructor TPlayer.TInventor.Create;
-var
-  I: TInvByte;
-begin
-  for I := Low(TInvByte) to High(TInvByte) do
-  begin
-    Item[I] := TItem.Create;
-    Self.Clear(I);
-  end;
-end;
-
-destructor TPlayer.TInventor.Destroy;
-var
-  I: TInvByte;
-begin
-  for I := Low(TInvByte) to High(TInvByte) do
-    Item[I].Free;
-  inherited;
-end;
-
-function TPlayer.TInventor.GetItem(I: TInvByte): TItem;
-begin
-  Result := FItem[I];
-end;
-
-procedure TPlayer.TInventor.LoadFromFile(const FileName: string);
-var
-  I: TInvByte;
-  F: TIniFile;
-  S: string;
-begin
-  Self.Clear();
-  F := TIniFile.Create(FileName);
-  try
-    for I := Low(TInvByte) to High(TInvByte) do
-    begin
-      S := IntToStr(I);
-      if F.SectionExists(S) then
-      begin
-        FItem[I].Active := True;
-        FItem[I].LoadFromFile(FileName, S);
-      end;
-    end;
-  finally
-    F.Free;
-  end;
-end;
-
-procedure TPlayer.TInventor.SaveToFile(const FileName: string);
-var
-  S: string;
-  F: TIniFile;
-  I: TInvByte;
-begin
-  F := TIniFile.Create(FileName);
-  try
-    for I := Low(TInventor.TInvByte) to High(TInventor.TInvByte) do
-    begin
-      S := IntToStr(I);
-      Item[I].SaveToFile(FileName, S);
-      if not Item[I].Active and F.SectionExists(S) then
-        F.EraseSection(S);
-    end;
-  finally
-    F.Free;
-  end;
-end;
-
-procedure TPlayer.TInventor.SetItem(I: TInvByte; const Value: TItem);
-begin
-  FItem[I] := Value;
-end;
-
-{$ENDREGION ' TPlayer.TInventor '}
-{$ENDREGION ' TPlayer '}
 {$REGION ' TItem '}
 
 procedure TItem.Assign(Value: TItem);
@@ -1290,110 +791,481 @@ begin
 end;
 
 {$ENDREGION ' TItem '}
-{$REGION ' TItems '}
+{$REGION ' TPlayer '}
 
-procedure TItems.Add(Symbol: Char; Color, Level: Integer; Name: string;
-  Material: TItem.TMaterial; Category: TItem.TCategory; Durability: Word;
-  Amount: Word = 1);
-var
-  I: Integer;
-
-  procedure SetItem(Index: Integer);
+procedure TPlayer.AddExp(A: Word);
+begin
+  if (Atr[atExp].Cur + A >= Atr[atExp].Max) then
   begin
-    FItem[Index].SetPosition(Saga.Player.Pos);
-    FItem[Index].Name := Name;
-    FItem[Index].Color := Color;
-    FItem[Index].Symbol := Symbol;
-    FItem[Index].Level := Level;
-    FItem[Index].Count := Amount;
-    FItem[Index].Material := Material;
-    FItem[Index].Category := Category;
-    FItem[Index].Calc;
-    FItem[Index].Durability.Cur := Durability;
+    Atr[atExp].SetCur(Atr[atExp].Cur + A - Atr[atExp].Max);
+    Score := Score + (Level * 10);
+    Level := Level + 1;
+    Atr[atExp].SetMax(Atr[atExp].Max + (Atr[atExp].Max * 20 div 100));
+  end
+  else
+    Atr[atExp].Inc(A);
+end;
+
+procedure TPlayer.Clear;
+var
+  R: TSaga.TRaceEnum;
+begin
+  R := TSaga.TRaceEnum(Race);
+  Color := Saga.Race[R].Color;
+  SetPosition(Saga.Race[R].Pos);
+  Map := Saga.Race[R].Map;
+  Score := 0;
+  Level := 1;
+  AddAtr(atExp, cExp, False);
+  AddAtr(atAdr, cAdr, False);
+  AddAtr(atLife, Saga.Race[R].Life, True);
+  AddAtr(atMana, Saga.Race[R].Mana, True);
+  Look.Active := False;
+  Inventory.Clear();
+  FPrevName := '';
+end;
+
+constructor TPlayer.Create;
+begin
+  inherited Create;
+  FPrevName := '';
+  Look := TLook.Create;
+  Inventory := TInventory.Create();
+  Look.Active := False;
+  SetPosition(40, 20);
+  Color := $00FFFFFF;
+  Symbol := '@';
+  Force := fcAlly;
+  Race := 0;
+  Map := 0;
+end;
+
+procedure TPlayer.Defeat;
+begin
+  Saga.Recs.Save;
+  Saga.Stages.SetStage(stDefeat);
+end;
+
+procedure TPlayer.Victory;
+begin
+  Saga.Recs.Save;
+  Saga.Stages.SetStage(stVictory);
+end;
+
+destructor TPlayer.Destroy;
+begin
+  Inventory.Free;
+  Look.Free;
+  inherited;
+end;
+
+procedure TPlayer.GenName;
+var
+  SL: TStringList;
+  I, M: Byte;
+  R: string;
+begin
+  Name := '';
+  M := Math.RandomRange(1, 3);
+  if (Race = 2) then
+    M := 1;
+  R := TSaga.RaceName[TSaga.TRaceEnum(Race)];
+  SL := TUtils.ExplodeString('|', R);
+  for I := 0 to M do
+  begin
+    Name := Name + TUtils.RandStr(',', __(SL[I]));
+    if (I < M) then
+      Name := Name + Saga.RaceNameDiv[TSaga.TRaceEnum(Race)];
+  end;
+  if (FPrevName = Name) then
+    GenName;
+  FPrevName := Name;
+end;
+
+function TPlayer.GetFullName: string;
+begin
+  Result := Format(__(InfFmt + ' %d level'), [Name, GetRaceName, Level]);
+end;
+
+function TPlayer.GetRaceName: string;
+begin
+  Result := Saga.Race[TSaga.TRaceEnum(Race)].Name;
+end;
+
+procedure TPlayer.LoadFromFile(const FileName: string);
+var
+  S: string;
+  F: TIniFile;
+  X, Y: Integer;
+begin
+  F := TIniFile.Create(FileName);
+  try
+    // Character
+    S := 'Player';
+    if (F.SectionExists(S)) then
+    begin
+      Name := F.ReadString(S, 'Name', '');
+      X := F.ReadInteger(S, 'X', 0);
+      Y := F.ReadInteger(S, 'Y', 0);
+      SetPosition(X, Y);
+      Race := F.ReadInteger(S, 'Race', 0);
+      Map := F.ReadInteger(S, 'Map', 0);
+      Level := F.ReadInteger(S, 'Level', 1);
+      Atr[atExp].Add(F.ReadString(S, 'Exp', Format(BarFmt, [0, cExp])));
+      Atr[atAdr].Add(F.ReadString(S, 'Adr', Format(BarFmt, [0, cAdr])));
+      Atr[atLife].Add(F.ReadString(S, 'Life', Format(BarFmt, [100, 100])));
+      Atr[atMana].Add(F.ReadString(S, 'Mana', Format(BarFmt, [100, 100])));
+      Score := F.ReadInteger(S, 'Score', 0);
+    end;
+  finally
+    F.Free;
+  end;
+  Inventory.LoadFromFile(FileName);
+end;
+
+procedure TPlayer.Move(AX, AY: ShortInt);
+begin
+  if (Pos.X = 0) and (AX = -1) then
+    if TWorld.GoLoc(drLeft) then
+    begin
+      SetPosition(TMap.Size.Width - 1, Pos.Y);
+      Exit;
+    end;
+  if (Pos.X = TMap.Size.Width - 1) and (AX = 1) then
+    if TWorld.GoLoc(drRight) then
+    begin
+      SetPosition(0, Pos.Y);
+      Exit;
+    end;
+  if (Pos.Y = 0) and (AY = -1) then
+    if TWorld.GoLoc(drUp) then
+    begin
+      SetPosition(Pos.X, TMap.Size.Height - 1);
+      Exit;
+    end;
+  if (Pos.Y = TMap.Size.Height - 1) and (AY = 1) then
+    if TWorld.GoLoc(drDown) then
+    begin
+      SetPosition(Pos.X, 0);
+      Exit;
+    end;
+  inherited Move(AX, AY);
+end;
+
+procedure TPlayer.SaveToFile(const FileName: string);
+var
+  S: string;
+  F: TIniFile;
+begin
+  F := TIniFile.Create(FileName);
+  try
+    // Character
+    S := 'Player';
+    F.WriteString(S, 'Name', Name);
+    F.WriteInteger(S, 'X', Pos.X);
+    F.WriteInteger(S, 'Y', Pos.Y);
+    F.WriteInteger(S, 'Race', Race);
+    F.WriteInteger(S, 'Map', Map);
+    F.WriteInteger(S, 'Level', Level);
+    F.WriteString(S, 'Exp', Format(BarFmt, [Atr[atExp].Cur, Atr[atExp].Max]));
+    F.WriteString(S, 'Adr', Format(BarFmt, [Atr[atAdr].Cur, Atr[atAdr].Max]));
+    F.WriteString(S, 'Life', Format(BarFmt, [Atr[atLife].Cur,
+      Atr[atLife].Max]));
+    F.WriteString(S, 'Mana', Format(BarFmt, [Atr[atMana].Cur,
+      Atr[atMana].Max]));
+    F.WriteInteger(S, 'Score', Score);
+  finally
+    F.Free;
+  end;
+  Inventory.SaveToFile(FileName);
+end;
+
+procedure TPlayer.Pickup;
+var
+  I, C: Integer;
+  // E: TItem;
+begin
+  I := Saga.World.CurrentItems.Has(Pos.X, Pos.Y);
+  if (I > -1) then
+  begin
+    C := Saga.World.CurrentItems.Count(Pos.X, Pos.Y);
+    if (C = 1) then
+      Saga.World.CurrentItems.Pickup(I)
+    else if (C > 1) then
+      Saga.Stages.SetStage(stItems, stGame);
+  end;
+end;
+
+{$REGION ' TPlayer.TLook '}
+
+function TPlayer.TLook.BackColor: Integer;
+begin
+  Result := Saga.Colors.GetColor(ceWhite);
+end;
+
+procedure TPlayer.TLook.Move(AX, AY: Integer);
+begin
+  if (Saga.World.CurrentMap.CellInMap(Pos.X + AX, Pos.Y + AY)) then
+    SetPosition(Pos.X + AX, Pos.Y + AY);
+end;
+
+procedure TPlayer.TLook.Render;
+
+  function GetTile(Z: TMap.TLayerEnum): string;
+  var
+    T: TTiles.TTileEnum;
+  begin
+    Result := '';
+    T := Saga.World.CurrentMap.GetTile(Pos.X, Pos.Y, Z);
+    if (T > tNone) then
+      Result := Format(KeyFmt, [Saga.Tiles.GetTile(T).Symbol,
+        __(Saga.Tiles.GetTile(T).Name)]) + ' ';
+  end;
+
+  function GetCreature: string;
+  var
+    I: Integer;
+  begin
+    Result := '';
+    I := Saga.World.CurrentCreatures.Has(Pos.X, Pos.Y);
+    if (I > -1) then
+      Result := Format(KeyFmt, [Saga.World.CurrentCreatures.GetEntity(I).Symbol,
+        __(Saga.World.CurrentCreatures.GetEntity(I).Name)]) + ' ';
+    if (Saga.Player.Has(Pos.X, Pos.Y)) then
+      Result := Format(KeyFmt, ['@', Saga.Player.GetFullName]) + ' ';
+  end;
+
+  function GetItems(Pos: TPoint): string;
+  var
+    I, C: Integer;
+    Item: TItem;
+  begin
+    Result := '';
+    I := Saga.World.CurrentItems.Has(Pos.X, Pos.Y);
+    if (I > -1) then
+    begin
+      Item := (Saga.World.CurrentItems.GetEntity(I) as TItem);
+      Result := Trim(Saga.World.CurrentItems.ToString(Item));
+      C := Saga.World.CurrentItems.Count(Pos.X, Pos.Y);
+      if (C > 1) then
+        Result := Format(KeyFmt, [Saga.World.CurrentItems.GetEntity(I).Symbol,
+          Format('Несколько (%dx) предметов (%s)',
+          [C, Saga.World.CurrentItems.GetEntity(I).Name])]);
+    end;
   end;
 
 begin
-  if (Amount = 0) then
+  if not Active then
+  begin
+    Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceWhite));
+    Saga.Engine.BackgroundColor(0);
+    Saga.Engine.Print(0, 39, GetItems(Saga.Player.Pos));
     Exit;
-  if (Count <> 0) then
-    for I := 0 to Count - 1 do
-      if not FItem[I].Active then
-      begin
-        FItem[I].Create();
-        SetItem(I);
-        Exit;
-      end;
-  SetLength(FItem, Count + 1);
-  FItem[Count - 1] := TItem.Create();
-  SetItem(Count - 1);
+  end;
+  Saga.UI.DrawChar(Pos.X, Pos.Y, Saga.World.CurrentMap.GetTopTileChar(Pos.X,
+    Pos.Y), 0, BackColor);
+  Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceWhite));
+  Saga.Engine.BackgroundColor(0);
+  Saga.Engine.Print(0, 39, Trim(GetTile(lrTerrain) + GetTile(lrObjects) +
+    GetCreature() + GetItems(Pos)));
 end;
 
-procedure TItems.Del(const Index: Integer);
+{$ENDREGION ' TPlayer.TLook '}
+{$REGION ' TPlayer.TInventor '}
+
+function TPlayer.TInventory.AddItem(Value: TItem): Boolean;
+var
+  I: TInvByte;
+  C: Integer;
 begin
-  FItem[Index].Active := False;
+  for I := Low(TInvByte) to High(TInvByte) do
+  begin
+    if (Item[I].Active and (Item[I].Name = Value.Name)) then
+    begin
+      C := Item[I].Count;
+      Item[I].Assign(Value);
+      Item[I].Count := C + Value.Count;
+      Result := True;
+      Exit;
+    end;
+    Item[I].Assign(Value);
+    Result := True;
+    Exit;
+  end;
+  Result := False;
 end;
 
-procedure TItems.Clear;
+procedure TPlayer.TInventory.Clear;
+var
+  I: TInvByte;
+begin
+  for I := Low(TInvByte) to High(TInvByte) do
+    Self.Clear(I);
+end;
+
+procedure TPlayer.TInventory.Clear(I: TInvByte);
+begin
+  Item[I].Create;
+  Item[I].Active := False;
+end;
+
+function TPlayer.TInventory.Count: Integer;
+var
+  I: TInvByte;
+begin
+  Result := 0;
+  for I := Low(TInvByte) to High(TInvByte) do
+    if Item[I].Active then
+      Inc(Result);
+end;
+
+constructor TPlayer.TInventory.Create;
+var
+  I: TInvByte;
+begin
+  for I := Low(TInvByte) to High(TInvByte) do
+  begin
+    Item[I] := TItem.Create;
+    Self.Clear(I);
+  end;
+end;
+
+destructor TPlayer.TInventory.Destroy;
+var
+  I: TInvByte;
+begin
+  for I := Low(TInvByte) to High(TInvByte) do
+    Item[I].Free;
+  inherited;
+end;
+
+function TPlayer.TInventory.GetItem(I: TInvByte): TItem;
+begin
+  Result := FItem[I];
+end;
+
+procedure TPlayer.TInventory.LoadFromFile(const FileName: string);
+var
+  I: TInvByte;
+  F: TIniFile;
+  S: string;
+begin
+  Self.Clear();
+  F := TIniFile.Create(FileName);
+  try
+    for I := Low(TInvByte) to High(TInvByte) do
+    begin
+      S := IntToStr(I);
+      if F.SectionExists(S) then
+      begin
+        FItem[I].Active := True;
+        FItem[I].LoadFromFile(FileName, S);
+      end;
+    end;
+  finally
+    F.Free;
+  end;
+end;
+
+procedure TPlayer.TInventory.SaveToFile(const FileName: string);
+var
+  S: string;
+  F: TIniFile;
+  I: TInvByte;
+begin
+  F := TIniFile.Create(FileName);
+  try
+    for I := Low(TInventory.TInvByte) to High(TInventory.TInvByte) do
+    begin
+      S := IntToStr(I);
+      Item[I].SaveToFile(FileName, S);
+      if not Item[I].Active and F.SectionExists(S) then
+        F.EraseSection(S);
+    end;
+  finally
+    F.Free;
+  end;
+end;
+
+procedure TPlayer.TInventory.SetItem(I: TInvByte; const Value: TItem);
+begin
+  FItem[I] := Value;
+end;
+
+{$ENDREGION ' TPlayer.TInventor '}
+{$ENDREGION ' TPlayer '}
+{$REGION ' TEntities '}
+
+procedure TEntities.Clear;
 var
   I: Integer;
 begin
+  Sections.Clear;
   for I := 0 to Count - 1 do
-    FItem[I].Free;
-  SetLength(FItem, 0);
+    FEntity[I].Free;
+  SetLength(FEntity, 0);
 end;
 
-function TItems.Count: Integer;
+function TEntities.Count: Integer;
 begin
-  Result := Length(FItem);
+  Result := Length(FEntity);
 end;
 
-function TItems.Count(X, Y: Integer): Integer;
+function TEntities.Count(X, Y: Integer): Integer;
 var
   I: Integer;
 begin
   Result := 0;
   for I := 0 to Count - 1 do
-    if (FItem[I].Active) and (FItem[I].Pos.X = X) and (FItem[I].Pos.Y = Y) then
+    if (FEntity[I].Active) and (FEntity[I].Pos.X = X) and (FEntity[I].Pos.Y = Y)
+    then
       Inc(Result);
 end;
 
-constructor TItems.Create;
+constructor TEntities.Create;
 begin
-
+  Sections := TStringList.Create;
 end;
 
-destructor TItems.Destroy;
+procedure TEntities.Delete(const Index: Integer);
 begin
+  FEntity[Index].Active := False;
+end;
+
+destructor TEntities.Destroy;
+begin
+  Sections.Free;
   Self.Clear;
   inherited;
 end;
 
-function TItems.GetEntity(N: Integer): TItem;
+function TEntities.GetEntity(N: Integer): TEntity;
 begin
-  Result := FItem[N];
+  Result := FEntity[N];
 end;
 
-function TItems.Has(X, Y: Integer): Integer;
+function TEntities.GetIndex(SectionID: string): Integer;
 var
   I: Integer;
 begin
   Result := -1;
-  for I := Count - 1 downto 0 do
-    if (FItem[I].Active) and (FItem[I].Pos.X = X) and (FItem[I].Pos.Y = Y) then
+  for I := 0 to Sections.Count - 1 do
+    if (FEntity[I].Active) and (SectionID = Sections[I]) then
     begin
       Result := I;
       Break;
     end;
 end;
 
-function TItems.GetIndex(N, X, Y: Integer): Integer;
+function TEntities.GetIndex(N, X, Y: Integer): Integer;
 var
   I, J: Integer;
 begin
   J := 0;
   Result := -1;
-  for I := 0 to Count - 1 do
-    if (FItem[I].Active) and (FItem[I].Pos.X = X) and (FItem[I].Pos.Y = Y) then
+  for I := Count - 1 downto 0 do
+    if (FEntity[I].Active) and (FEntity[I].Pos.X = X) and (FEntity[I].Pos.Y = Y)
+    then
     begin
       if (J = N) then
       begin
@@ -1404,34 +1276,176 @@ begin
     end;
 end;
 
-procedure TItems.Render;
+function TEntities.Has(X, Y: Integer): Integer;
+var
+  I: Integer;
+begin
+  Result := -1;
+  for I := Count - 1 downto 0 do
+    if (FEntity[I].Active) and (FEntity[I].Pos.X = X) and (FEntity[I].Pos.Y = Y)
+    then
+    begin
+      Result := I;
+      Break;
+    end;
+end;
+
+procedure TEntities.Render;
 var
   I: Integer;
 begin
   for I := 0 to Count - 1 do
-    if (FItem[I].Active) then
-      FItem[I].Render;
+    if FEntity[I].Active then
+      FEntity[I].Render;
+end;
+
+{$ENDREGION ' TEntities '}
+{$REGION ' TCreatures '}
+
+constructor TCreatures.Create;
+begin
+  inherited;
+end;
+
+destructor TCreatures.Destroy;
+begin
+  inherited;
+end;
+
+procedure TCreatures.LoadFromFile(const FileName: string);
+var
+  I, L: Integer;
+  F: TIniFile;
+begin
+  Self.Clear;
+  F := TIniFile.Create(FileName);
+  try
+    F.ReadSections(Sections);
+    for I := 0 to Sections.Count - 1 do
+    begin
+      if (F.SectionExists(Sections[I])) then
+      begin
+        L := Count;
+        SetLength(FEntity, L + 1);
+        FEntity[L] := TCreature.Create;
+        FEntity[L].Name := F.ReadString(Sections[I], 'Name', '');
+        FEntity[L].SetPosition(Point(F.ReadInteger(Sections[I], 'X', 0),
+          F.ReadInteger(Sections[I], 'Y', 0)));
+        (FEntity[L] as TCreature).Atr[atLife]
+          .Add(F.ReadString(Sections[I], 'Life', Format(TEntity.BarFmt,
+          [100, 100])));
+        FEntity[L].Symbol := F.ReadString(Sections[I], 'Symbol', '?')[1];
+        FEntity[L].Color := F.ReadColor(Sections[I], 'Color', '255,255,255');
+        (FEntity[L] as TCreature).Dialog := F.ReadInteger(Sections[I],
+          'Dialog', 0);
+        FEntity[L].Level := F.ReadInteger(Sections[I], 'Level', 1);
+        (FEntity[L] as TCreature).ScriptFileName :=
+          F.ReadString(Sections[I], 'File', '');
+        (FEntity[L] as TCreature).Force := TCreature.ForceValues
+          [not F.ReadBool(Sections[I], 'NPC', False)];
+      end;
+    end;
+  finally
+    F.Free;
+  end;
+end;
+
+procedure TCreatures.SaveToFile(const FileName: string);
+var
+  I: Integer;
+  F: TIniFile;
+begin
+  F := TIniFile.Create(FileName);
+  try
+    for I := 0 to Sections.Count - 1 do
+      if (FEntity[I].Active) then
+      begin
+        F.WriteString(Sections[I], 'Name', FEntity[I].Name);
+        F.WriteInteger(Sections[I], 'X', FEntity[I].Pos.X);
+        F.WriteInteger(Sections[I], 'Y', FEntity[I].Pos.Y);
+        F.WriteString(Sections[I], 'Life', Format(TEntity.BarFmt,
+          [(FEntity[I] as TCreature).Atr[atLife].Cur, (FEntity[I] as TCreature)
+          .Atr[atLife].Max]));
+        F.WriteInteger(Sections[I], 'Level', FEntity[I].Level);
+        F.WriteString(Sections[I], 'Symbol', FEntity[I].Symbol);
+        F.WriteString(Sections[I], 'File', (FEntity[I] as TCreature).ScriptFileName);
+        F.WriteColor(Sections[I], 'Color', FEntity[I].Color);
+        F.WriteInteger(Sections[I], 'Dialog', (FEntity[I] as TCreature).Dialog);
+        F.WriteBool(Sections[I], 'NPC', (FEntity[I] as TCreature)
+          .Force = fcAlly);
+      end;
+  finally
+    F.Free;
+  end;
+end;
+
+{$ENDREGION ' TCreatures '}
+{$REGION ' TItems '}
+
+procedure TItems.Add(Symbol: Char; Color, Level: Integer; Name: string;
+  Material: TItem.TMaterial; Category: TItem.TCategory; Durability: Word;
+  Amount: Word = 1);
+var
+  I: Integer;
+
+  procedure SetItem(Index: Integer);
+  begin
+    FEntity[Index].SetPosition(Saga.Player.Pos);
+    FEntity[Index].Name := Name;
+    FEntity[Index].Color := Color;
+    FEntity[Index].Symbol := Symbol;
+    FEntity[Index].Level := Level;
+    (FEntity[Index] as TItem).Count := Amount;
+    (FEntity[Index] as TItem).Material := Material;
+    (FEntity[Index] as TItem).Category := Category;
+    (FEntity[Index] as TItem).Calc;
+    (FEntity[Index] as TItem).Durability.Cur := Durability;
+  end;
+
+begin
+  if (Amount = 0) then
+    Exit;
+  if (Count <> 0) then
+    for I := 0 to Count - 1 do
+      if not FEntity[I].Active then
+      begin
+        (FEntity[I] as TItem).Create();
+        SetItem(I);
+        Exit;
+      end;
+  SetLength(FEntity, Count + 1);
+  FEntity[Count - 1] := TItem.Create();
+  SetItem(Count - 1);
+end;
+
+constructor TItems.Create;
+begin
+  inherited;
+end;
+
+destructor TItems.Destroy;
+begin
+  inherited;
 end;
 
 procedure TItems.LoadFromFile(const FileName: string);
 var
   I, L: Integer;
   F: TIniFile;
-  S: string;
 begin
   Self.Clear;
   F := TIniFile.Create(FileName);
   try
-    for I := 0 to 99 do
+    F.ReadSections(Sections);
+    for I := 0 to Sections.Count - 1 do
     begin
-      S := Format('%d', [I]);
-      if (F.SectionExists(S)) then
+      if (F.SectionExists(Sections[I])) then
       begin
         L := Count;
-        SetLength(FItem, L + 1);
-        FItem[L] := TItem.Create;
-        FItem[L].Active := True;
-        FItem[L].LoadFromFile(FileName, S);
+        SetLength(FEntity, L + 1);
+        FEntity[L] := TItem.Create;
+        FEntity[L].Active := True;
+        (FEntity[L] as TItem).LoadFromFile(FileName, Sections[I]);
       end;
     end;
   finally
@@ -1442,17 +1456,15 @@ end;
 procedure TItems.SaveToFile(const FileName: string);
 var
   I, C: Integer;
-  S: string;
   F: TIniFile;
 begin
+  C := 0;
   F := TIniFile.Create(FileName);
   try
-    C := 0;
     for I := 0 to Count - 1 do
-      if (FItem[I].Active) then
+      if (FEntity[I].Active) then
       begin
-        S := Format('%d', [C]);
-        FItem[I].SaveToFile(FileName, S);
+        (FEntity[I] as TItem).SaveToFile(FileName, IntToStr(C));
         Inc(C);
       end;
   finally
@@ -1460,7 +1472,7 @@ begin
   end;
 end;
 
-function TItems.GetItemPropStr(Item: TItem): string;
+function TItems.ToString(Item: TItem): string;
 begin
   Result := '';
   if (Item.Count = 1) then
@@ -1476,120 +1488,15 @@ procedure TItems.Pickup(I: Integer);
 var
   Item: TItem;
 begin
-  Item := Saga.World.CurrentItems.GetEntity(I);
+  Item := Saga.World.CurrentItems.GetEntity(I) as TItem;
   if Saga.Player.Inventory.AddItem(Item) then
   begin
     Saga.Log[lgGame].Add(Format(__('You pick up a %s.'), [Item.Name]));
-    Saga.World.CurrentItems.Del(I);
+    Saga.World.CurrentItems.Delete(I);
   end;
 end;
 
 {$ENDREGION ' TItems '}
-{$REGION ' TIniFile '}
-
-function TIniFile.ReadCategory(Section, Ident: string;
-  DefaultValue: TItem.TCategory): TItem.TCategory;
-var
-  S: string;
-  C: TItem.TCategory;
-begin
-  S := LowerCase(Trim(ReadString(Section, Ident, TItem.CatStr[DefaultValue])));
-  Result := ctNone;
-  if (S = '') then
-    Exit;
-  for C := Low(TItem.TCategory) to High(TItem.TCategory) do
-    if (S = TItem.CatStr[C]) then
-    begin
-      Result := C;
-      Exit;
-    end;
-end;
-
-var
-  Color: record R, G, B: Byte;
-end;
-
-function TIniFile.ReadColor(Section, Ident, DefaultValue: string): Integer;
-var
-  S: string;
-  SL: TStringlist;
-  C: TColors;
-begin
-  Result := $00FFFFFF;
-  S := UpperCase(Trim(ReadString(Section, Ident, DefaultValue)));
-  if (S = '') then
-    Exit;
-  if (Pos(',', S) = 0) then
-  begin
-    C := TColors.Create;
-    try
-      C.LoadFromFile(TUtils.GetPath('resources') + 'colors.ini');
-      Result := C.GetColor(S);
-    finally
-      C.Free;
-    end;
-    Exit;
-  end;
-
-  SL := TUtils.ExplodeString(',', S);
-  if (SL.Count = 0) then
-    Exit;
-  if (SL.Count > 0) then
-    Color.R := StrToIntDef(SL[0], 255)
-  else
-    Color.R := 255;
-  if (SL.Count > 1) then
-    Color.G := StrToIntDef(SL[1], 255)
-  else
-    Color.G := 255;
-  if (SL.Count > 2) then
-    Color.B := StrToIntDef(SL[2], 255)
-  else
-    Color.B := 255;
-  Result := (Color.R or (Color.G shl 8) or (Color.B shl 16))
-end;
-
-function TIniFile.ReadMaterial(Section, Ident: string;
-  DefaultValue: TItem.TMaterial): TItem.TMaterial;
-var
-  S: string;
-  M: TItem.TMaterial;
-begin
-  S := LowerCase(Trim(ReadString(Section, Ident, TItem.MatStr[DefaultValue])));
-  Result := mtNone;
-  if (S = '') then
-    Exit;
-  for M := Low(TItem.TMaterial) to High(TItem.TMaterial) do
-    if (S = TItem.MatStr[M]) then
-    begin
-      Result := M;
-      Exit;
-    end;
-end;
-
-procedure TIniFile.WriteCategory(Section, Ident: string;
-  Value: TItem.TCategory);
-begin
-  if (Value = ctNone) then
-    Exit;
-  WriteString(Section, Ident, TItem.CatStr[Value]);
-end;
-
-procedure TIniFile.WriteColor(Section, Ident: string; Value: Integer);
-begin
-  WriteString(Section, Ident, Format('%d,%d,%d',
-    [Byte(Value), Byte(Value shr 8), Byte(Value shr 16)]));
-end;
-
-procedure TIniFile.WriteMaterial(Section, Ident: string;
-  Value: TItem.TMaterial);
-begin
-  if (Value = mtNone) then
-    Exit;
-  WriteString(Section, Ident, TItem.MatStr[Value]);
-end;
-
-{$ENDREGION ' TIniFile '}
 {$REGION ' TTiles '}
 
 function TTiles.GetTile(Tile: TTileEnum): TTileProp;
@@ -1642,15 +1549,15 @@ begin
   inherited;
 end;
 
-procedure TMap.LoadFromFile(AFileName: string);
+procedure TMap.LoadFromFile(const FileName: string);
 var
   Z: TLayerEnum;
   I: Integer;
   X, Y: Integer;
-  L: TStringlist;
+  L: TStringList;
 begin
-  L := TStringlist.Create;
-  L.LoadFromFile(AFileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
+  L := TStringList.Create;
+  L.LoadFromFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
   for Z := Low(TLayerEnum) to High(TLayerEnum) do
   begin
     I := L.IndexOf(Format('[%d]', [Ord(Z)])) + 1;
@@ -1661,16 +1568,16 @@ begin
   L.Free;
 end;
 
-procedure TMap.SaveToFile(AFileName: string);
+procedure TMap.SaveToFile(const FileName: string);
 var
   Z: TLayerEnum;
   X, Y: Integer;
-  L: TStringlist;
+  L: TStringList;
   S: string;
 begin
-  L := TStringlist.Create;
+  L := TStringList.Create;
 {$IFNDEF FPC}L.WriteBOM := False; {$ENDIF}
-  L.Append(Format('; %s', [ExtractFileName(AFileName)]));
+  L.Append(Format('; %s', [ExtractFileName(FileName)]));
   for Z := Low(TLayerEnum) to High(TLayerEnum) do
   begin
     L.Append(Format('[%d]', [Ord(Z)]));
@@ -1682,7 +1589,7 @@ begin
       L.Append(S);
     end;
   end;
-  L.SaveToFile(AFileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
+  L.SaveToFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
   L.Free;
 end;
 
@@ -1728,6 +1635,11 @@ end;
 procedure TMap.ClearLayer(Z: TLayerEnum);
 begin
   FillLayer(Z, tNone);
+end;
+
+function TMap.Count: Integer;
+begin
+  Result := 0;
 end;
 
 procedure TMap.Clear;
@@ -1883,26 +1795,14 @@ end;
 
 constructor TMapGenerator.Create;
 begin
-  Self.FMGTiles.Wall := tStoneWall;
-  Self.FMGTiles.Floor := tStoneFloor;
+  // Self.FMGTiles.Wall := tStoneWall;
+  // Self.FMGTiles.Floor := tStoneFloor;
 end;
 
 destructor TMapGenerator.Destroy;
 begin
 
   inherited;
-end;
-
-{ TMapGenerator.TMGTiles }
-
-procedure TMapGenerator.TMGTiles.SetFloor(Value: TTiles.TTileEnum);
-begin
-  Self.Floor := Value;
-end;
-
-procedure TMapGenerator.TMGTiles.SetWall(Value: TTiles.TTileEnum);
-begin
-  Self.Wall := Value;
 end;
 
 {$ENDREGION ' TMapGenerator '}

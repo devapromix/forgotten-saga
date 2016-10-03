@@ -2,21 +2,20 @@
 
 interface
 
-uses Classes, Types, Engine, ForgottenSaga.Scenes, ForgottenSaga.Entities;
+{$I Include.inc}
+
+uses Classes, Types, IniFiles, Engine, ForgottenSaga.Scenes,
+  ForgottenSaga.Entities;
 
 {$REGION ' TUtils '}
 function __(S: string): string;
 
 type
   TUtils = class(TObject)
-    class function Percent(N, P: Integer): Integer;
     class procedure Box(); overload;
     class procedure Box(const S: string); overload;
     class procedure Box(const I: Integer); overload;
-    class function BarWidth(CX, MX, WX: Integer): Integer;
-    class function Clamp(Value, AMin, AMax: Integer;
-      Flag: Boolean = True): Integer;
-    class function ExplodeString(const Separator, Source: string): TStringlist;
+    class function ExplodeString(const Separator, Source: string): TStringList;
     class function GetStr(const Separator: Char; S: string; I: Integer): string;
     class function RandStr(const Separator: Char; S: string): string;
     class function GetPath(SubDir: string = ''): string;
@@ -44,16 +43,32 @@ type
   end;
 
 {$ENDREGION ' TUI '}
+{$REGION ' TIniFile '}
+
+type
+  TIniFile = class(IniFiles.TIniFile)
+  public
+    function ReadCategory(Section, Ident: string; DefaultValue: TItem.TCategory)
+      : TItem.TCategory;
+    procedure WriteCategory(Section, Ident: string; Value: TItem.TCategory);
+    function ReadColor(Section, Ident: string; DefaultValue: string): Integer;
+    procedure WriteColor(Section, Ident: string; Value: Integer);
+    function ReadMaterial(Section, Ident: string; DefaultValue: TItem.TMaterial)
+      : TItem.TMaterial;
+    procedure WriteMaterial(Section, Ident: string; Value: TItem.TMaterial);
+  end;
+
+{$ENDREGION ' TIniFile '}
 {$REGION ' TScript '}
 
 type
   TScript = class(TObject)
 {$REGION ' TScript.TVars '}
   private type
-    TVars = class(TObject)
+    TVars = class(TInterfacedObject, IStorage)
     private
-      FID: TStringlist;
-      FValue: TStringlist;
+      FID: TStringList;
+      FValue: TStringList;
     public
       constructor Create;
       destructor Destroy; override;
@@ -72,7 +87,7 @@ type
   private
     FIsNext: Boolean;
     FIsIf: Boolean;
-    FList: TStringlist;
+    FList: TStringList;
     FCloseTag: string;
     FVars: TVars;
   public
@@ -95,8 +110,8 @@ type
 type
   TLanguage = class(TObject)
   private
-    FID: TStringlist;
-    FValue: TStringlist;
+    FID: TStringList;
+    FValue: TStringList;
     FCurrent: string;
   public
     constructor Create;
@@ -180,7 +195,7 @@ type
     FCreatures: array of TCreatures;
     FItems: array of TItems;
     FEngine: TEngine;
-    Sections: TStringlist;
+    Sections: TStringList;
     function FileName(Dir: string; ID: Byte; Ext: string): string;
   public
     constructor Create;
@@ -236,17 +251,19 @@ type
 {$REGION ' TQuest '}
 
 type
-  TQuest = class(TObject)
+  TQuest = class(TInterfacedObject, IStorage)
   private
-    FList: TStringlist;
+    FList: TStringList;
   public
     constructor Create;
     destructor Destroy; override;
     procedure Clear;
     function Get(Slot, N: Byte): string;
+    procedure Replace(Slot, N: Byte; S: string);
     procedure Add(Slot: Byte; Data: string);
     procedure LoadFromFile(const FileName: string);
     procedure SaveToFile(const FileName: string);
+    function Count: Integer;
   end;
 
 {$ENDREGION ' TQuest '}
@@ -300,7 +317,7 @@ type
       'Blind,Glad,Proud,Sharp-sighted,Powerful,Dancer,Guarding,Thunderous,Night|Wolfhound,Wood-goblin,Destroyer,Crusher,Pathfinder,Astrologer,Bootes,Caretaker,Befouler');
     RaceNameDiv: array [TRaceEnum] of string = ('', '-', ' ');
   private
-    FList: TStringlist;
+    FList: TStringList;
     FPlayer: TPlayer;
     FStages: TStages;
     FWorld: TWorld;
@@ -345,7 +362,7 @@ type
     property Log[I: TLogEnum]: TLog read GetLog write SetLog;
     property Race[I: TRaceEnum]: TRace read GetRace write SetRace;
     property Notification: TNotification read FNotification write FNotification;
-    property List: TStringlist read FList write FList;
+    property List: TStringList read FList write FList;
     property Recs: TRecs read FRecs write FRecs;
     property Lg: TLanguage read FLg write FLg;
     property UI: TUI read FTUI write FTUI;
@@ -360,7 +377,7 @@ var
 
 implementation
 
-uses Math, SysUtils, Dialogs, IniFiles;
+uses Math, SysUtils, Dialogs;
 
 {$REGION ' TUtils '}
 
@@ -372,16 +389,11 @@ begin
   Result := Saga.Lg.Get(S);
 end;
 
-class function TUtils.Percent(N, P: Integer): Integer;
-begin
-  Result := N * P div 100;
-end;
-
 class function TUtils.RandStr(const Separator: Char; S: string): string;
 var
-  SL: TStringlist;
+  SL: TStringList;
 begin
-  SL := TUtils.ExplodeString(Separator, S);
+  SL := ExplodeString(Separator, S);
   Result := Trim(SL[Math.RandomRange(0, SL.Count)]);
 end;
 
@@ -395,35 +407,15 @@ begin
   ShowMessage(S);
 end;
 
-class function TUtils.BarWidth(CX, MX, WX: Integer): Integer;
-begin
-  Result := Round(CX / MX * WX);
-end;
-
 class procedure TUtils.Box(const I: Integer);
 begin
   ShowMessage(Format('%d', [I]));
 end;
 
-class function TUtils.Clamp(Value, AMin, AMax: Integer; Flag: Boolean): Integer;
-begin
-  Result := Value;
-  if (Result < AMin) then
-    if Flag then
-      Result := AMin
-    else
-      Result := AMax;
-  if (Result > AMax) then
-    if Flag then
-      Result := AMax
-    else
-      Result := AMin;
-end;
-
 class function TUtils.ExplodeString(const Separator, Source: string)
-  : TStringlist;
+  : TStringList;
 begin
-  Result := TStringlist.Create();
+  Result := TStringList.Create();
   Result.Text := StringReplace(Source, Separator, #13, [rfReplaceAll]);
 end;
 
@@ -436,9 +428,9 @@ end;
 class function TUtils.GetStr(const Separator: Char; S: string;
   I: Integer): string;
 var
-  SL: TStringlist;
+  SL: TStringList;
 begin
-  SL := TUtils.ExplodeString(Separator, S);
+  SL := ExplodeString(Separator, S);
   Result := Trim(SL[I]);
 end;
 
@@ -457,7 +449,7 @@ var
 begin
   F := TIniFile.Create(TUtils.GetPath('resources') + 'world.ini');
   try
-    Sections := TStringlist.Create;
+    Sections := TStringList.Create;
     F.ReadSections(Sections);
     C := Sections.Count;
     SetLength(FMaps, C);
@@ -470,12 +462,13 @@ begin
       FItems[I] := TItems.Create;
       FMaps[I].Name := F.ReadString(Sections[I], 'Name', '');
       FMaps[I].FileName := F.ReadString(Sections[I], 'FileName', ''); // ID
-      FMaps[I].Map[drLeft] := F.ReadString(Sections[I], 'Left', '');
-      FMaps[I].Map[drUp] := F.ReadString(Sections[I], 'Up', '');
-      FMaps[I].Map[drRight] := F.ReadString(Sections[I], 'Right', '');
-      FMaps[I].Map[drDown] := F.ReadString(Sections[I], 'Down', '');
-      FMaps[I].Map[drTop] := F.ReadString(Sections[I], 'Top', '');
-      FMaps[I].Map[drBottom] := F.ReadString(Sections[I], 'Bottom', '');
+      FMaps[I].MapNeighbors[drLeft] := F.ReadString(Sections[I], 'Left', '');
+      FMaps[I].MapNeighbors[drUp] := F.ReadString(Sections[I], 'Up', '');
+      FMaps[I].MapNeighbors[drRight] := F.ReadString(Sections[I], 'Right', '');
+      FMaps[I].MapNeighbors[drDown] := F.ReadString(Sections[I], 'Down', '');
+      FMaps[I].MapNeighbors[drTop] := F.ReadString(Sections[I], 'Top', '');
+      FMaps[I].MapNeighbors[drBottom] := F.ReadString(Sections[I],
+        'Bottom', '');
     end;
   finally
     F.Free;
@@ -577,7 +570,7 @@ var
   I: Integer;
 begin
   Result := False;
-  MapID := Saga.World.CurrentMap.Map[Dir];
+  MapID := Saga.World.CurrentMap.MapNeighbors[Dir];
   if (MapID <> '') then
   begin
     I := Saga.World.GetMapIndex(MapID);
@@ -609,7 +602,7 @@ var
 begin
   FEngine := TEngine.Create(AWidth, AHeight);
   FTUI := TUI.Create(FEngine);
-  FList := TStringlist.Create;
+  FList := TStringList.Create;
 {$IFNDEF FPC}FList.WriteBOM := False; {$ENDIF}
   ClearSlots;
   ForceDirectories(TUtils.GetPath('save'));
@@ -643,12 +636,12 @@ end;
 
 procedure TSaga.Init;
 var
-  S: TStringlist;
+  S: TStringList;
   F: string;
   I: Integer;
 begin
   // Load intro
-  S := TStringlist.Create;
+  S := TStringList.Create;
   try
     F := TUtils.GetPath('resources') + Lg.Current + '.intro.txt';
     if (FileExists(F)) then
@@ -872,9 +865,9 @@ end;
 
 procedure TSaga.TLog.LoadFromFile(FileName: string);
 var
-  S: TStringlist;
+  S: TStringList;
 begin
-  S := TStringlist.Create;
+  S := TStringList.Create;
   try
     S.LoadFromFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
     FLogStr := S.Text;
@@ -885,9 +878,9 @@ end;
 
 procedure TSaga.TLog.SaveToFile(FileName: string);
 var
-  S: TStringlist;
+  S: TStringList;
 begin
-  S := TStringlist.Create;
+  S := TStringList.Create;
   try
 {$IFNDEF FPC}S.WriteBOM := False; {$ENDIF}
     S.Text := FLogStr;
@@ -927,9 +920,14 @@ begin
     FList.Append('');
 end;
 
+function TQuest.Count: Integer;
+begin
+  Result := 0;
+end;
+
 constructor TQuest.Create;
 begin
-  FList := TStringlist.Create;
+  FList := TStringList.Create;
   Self.Clear();
 end;
 
@@ -941,7 +939,7 @@ end;
 
 function TQuest.Get(Slot, N: Byte): string;
 var
-  SL: TStringlist;
+  SL: TStringList;
 begin
   SL := TUtils.ExplodeString('|', FList[Slot]);
   if (N < SL.Count) then
@@ -953,6 +951,11 @@ end;
 procedure TQuest.LoadFromFile(const FileName: string);
 begin
   FList.LoadFromFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
+end;
+
+procedure TQuest.Replace(Slot, N: Byte; S: string);
+begin
+  FList[Slot] := StringReplace(FList[Slot], Get(Slot, N), S, [rfReplaceAll]);
 end;
 
 procedure TQuest.SaveToFile(const FileName: string);
@@ -1078,8 +1081,8 @@ end;
 
 constructor TLanguage.Create;
 begin
-  FID := TStringlist.Create;
-  FValue := TStringlist.Create;
+  FID := TStringList.Create;
+  FValue := TStringList.Create;
   FCurrent := 'russian';
 end;
 
@@ -1092,13 +1095,13 @@ end;
 
 procedure TLanguage.LoadFromFile(FileName: string);
 var
-  SL: TStringlist;
+  SL: TStringList;
   I, J: Integer;
   S: string;
 begin
   if not FileExists(FileName) then
     Exit;
-  SL := TStringlist.Create;
+  SL := TStringList.Create;
   try
     SL.LoadFromFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
     for I := 0 to SL.Count - 1 do
@@ -1252,12 +1255,117 @@ begin
 end;
 
 {$ENDREGION ' TUI '}
+{$REGION ' TIniFile '}
+
+function TIniFile.ReadCategory(Section, Ident: string;
+  DefaultValue: TItem.TCategory): TItem.TCategory;
+var
+  S: string;
+  C: TItem.TCategory;
+begin
+  S := LowerCase(Trim(ReadString(Section, Ident, TItem.CatStr[DefaultValue])));
+  Result := ctNone;
+  if (S = '') then
+    Exit;
+  for C := Low(TItem.TCategory) to High(TItem.TCategory) do
+    if (S = TItem.CatStr[C]) then
+    begin
+      Result := C;
+      Exit;
+    end;
+end;
+
+var
+  Color: record R, G, B: Byte;
+end;
+
+function TIniFile.ReadColor(Section, Ident, DefaultValue: string): Integer;
+var
+  S: string;
+  SL: TStringList;
+  C: TColors;
+begin
+  Result := $00FFFFFF;
+  S := UpperCase(Trim(ReadString(Section, Ident, DefaultValue)));
+  if (S = '') then
+    Exit;
+  if (Pos(',', S) = 0) then
+  begin
+    C := TColors.Create;
+    try
+      C.LoadFromFile(TUtils.GetPath('resources') + 'colors.ini');
+      Result := C.GetColor(S);
+    finally
+      C.Free;
+    end;
+    Exit;
+  end;
+
+  SL := TUtils.ExplodeString(',', S);
+  if (SL.Count = 0) then
+    Exit;
+  if (SL.Count > 0) then
+    Color.R := StrToIntDef(SL[0], 255)
+  else
+    Color.R := 255;
+  if (SL.Count > 1) then
+    Color.G := StrToIntDef(SL[1], 255)
+  else
+    Color.G := 255;
+  if (SL.Count > 2) then
+    Color.B := StrToIntDef(SL[2], 255)
+  else
+    Color.B := 255;
+  Result := (Color.R or (Color.G shl 8) or (Color.B shl 16))
+end;
+
+function TIniFile.ReadMaterial(Section, Ident: string;
+  DefaultValue: TItem.TMaterial): TItem.TMaterial;
+var
+  S: string;
+  M: TItem.TMaterial;
+begin
+  S := LowerCase(Trim(ReadString(Section, Ident, TItem.MatStr[DefaultValue])));
+  Result := mtNone;
+  if (S = '') then
+    Exit;
+  for M := Low(TItem.TMaterial) to High(TItem.TMaterial) do
+    if (S = TItem.MatStr[M]) then
+    begin
+      Result := M;
+      Exit;
+    end;
+end;
+
+procedure TIniFile.WriteCategory(Section, Ident: string;
+  Value: TItem.TCategory);
+begin
+  if (Value = ctNone) then
+    Exit;
+  WriteString(Section, Ident, TItem.CatStr[Value]);
+end;
+
+procedure TIniFile.WriteColor(Section, Ident: string; Value: Integer);
+begin
+  WriteString(Section, Ident, Format('%d,%d,%d',
+    [Byte(Value), Byte(Value shr 8), Byte(Value shr 16)]));
+end;
+
+procedure TIniFile.WriteMaterial(Section, Ident: string;
+  Value: TItem.TMaterial);
+begin
+  if (Value = mtNone) then
+    Exit;
+  WriteString(Section, Ident, TItem.MatStr[Value]);
+end;
+
+{$ENDREGION ' TIniFile '}
 {$REGION ' TScript '}
 
 constructor TScript.Create;
 begin
   CloseTag := 'close';
-  FList := TStringlist.Create;
+  FList := TStringList.Create;
   FVars := TVars.Create;
   FIsNext := False;
   FIsIf := False;
@@ -1346,10 +1454,10 @@ end;
 
 procedure TScript.Exec(const ID: string);
 var
-  L: TStringlist;
+  L: TStringList;
   I: Integer;
 begin
-  L := TStringlist.Create;
+  L := TStringList.Create;
   L.Text := Self.GetSource(ID);
   for I := 0 to L.Count - 1 do
     if FIsNext then
@@ -1362,7 +1470,7 @@ end;
 procedure TScript.RunCode(const Code: string);
 var
   I: Integer;
-  SL: TStringlist;
+  SL: TStringList;
 begin
   SL := TUtils.ExplodeString('&', Code);
   for I := 0 to SL.Count - 1 do
@@ -1375,8 +1483,7 @@ end;
 procedure TScript.Run(const Code: string);
 var
   S, L: string;
-  I, J, K, E: Integer;
-  SL: TStringlist;
+  I, E: Integer;
 
   function GetLastCode(Tag: string; Code: string): string;
   begin
@@ -1424,6 +1531,29 @@ var
     end;
   end;
 
+  procedure SetDialog(Code: string);
+  var
+    MapIdx: Integer;
+    CrtIdx: Integer;
+    DlgIdx: Integer;
+    SL: TStringList;
+  begin
+    SL := TUtils.ExplodeString(':', Code);
+    MapIdx := Saga.World.GetMapIndex(Trim(SL[0]));
+    if (MapIdx < 0) then
+      Exit;
+    CrtIdx := Saga.World.GetMapCreatures(MapIdx).GetIndex(SL[1]);
+    if (CrtIdx < 0) then
+      Exit;
+    DlgIdx := StrToIntDef(SL[2], 0);
+    if (DlgIdx < 0) then
+      Exit;
+    (Saga.World.GetMapCreatures(MapIdx).GetEntity(CrtIdx) as TCreature).Dialog
+      := DlgIdx;
+    // ShowMessage(MapIdx.ToString + ':' + CrtIdx.ToString + ':' +
+    // DlgIdx.ToString);
+  end;
+
 begin
   if IsTag('endif') then
     FIsIf := False;
@@ -1432,7 +1562,12 @@ begin
     Exit;
 
   if IsTag('pln') then
-    Saga.Log[lgDialog].Add(GetLastCode('pln', Code));
+  begin
+    S := GetLastCode('pln', Code);
+    if (Vars.Has(S)) then
+      I := Vars.GetInt(S);
+    Saga.Log[lgDialog].Add(I.ToString());
+  end;
 
   if IsTag('log') then
     Saga.Log[lgGame].Add(GetLastCode('log', Code));
@@ -1466,10 +1601,17 @@ begin
       Saga.Log[lgGame].Add(__('The new quest is added to the log.'));
       Exit;
     end;
+    if IsTag('update', S) then
+    begin
+      Saga.Log[lgGame].Add(__('Новая запись в журнале.'));
+      Exit;
+    end;
     if IsTag(CloseTag, S) then
     begin
       Saga.Log[lgGame].Add(__('You have completed the quest.'));
       Saga.Quest.Add(I - 1, __('I have completed this quest.'));
+      Saga.Quest.Replace(I - 1, 0, TEngine.kcBegin + __('Задание выполнено') +
+        TEngine.kcEnd + ' ' + Saga.Quest.Get(I - 1, 0));
       Exit;
     end;
     Saga.Quest.Add(I - 1, S);
@@ -1494,17 +1636,9 @@ begin
       FIsIf := GetIf('<', S);
   end;
 
-  // Map:Creature:Dialog
+  // Map(ID):Creature(ID):Dialog(Num)
   if IsTag('dialog') then
-  begin
-    S := GetLastCode('dialog', Code);
-    SL := TUtils.ExplodeString(':', S);
-    I := Saga.World.GetMapIndex(Trim(SL[0]));
-    J := StrToIntDef(SL[1], 0);
-    K := StrToIntDef(SL[2], 0);
-    Saga.World.GetMapCreatures(I).GetEntity(J).Dialog := K;
-    ShowMessage(I.ToString() + ':' + J.ToString() + ':' + K.ToString());
-  end;
+    SetDialog(GetLastCode('dialog', Code));
 
   if IsTag('exp') then
   begin
@@ -1545,8 +1679,8 @@ end;
 
 constructor TScript.TVars.Create;
 begin
-  FID := TStringlist.Create;
-  FValue := TStringlist.Create;
+  FID := TStringList.Create;
+  FValue := TStringList.Create;
 end;
 
 destructor TScript.TVars.Destroy;
@@ -1616,11 +1750,11 @@ end;
 
 procedure TScript.TVars.LoadFromFile(const FileName: string);
 var
-  A: TStringlist;
+  A: TStringList;
   I, J: Integer;
   S: string;
 begin
-  A := TStringlist.Create;
+  A := TStringList.Create;
   try
     Self.Clear;
 {$IFNDEF FPC}A.WriteBOM := False; {$ENDIF}
@@ -1640,9 +1774,9 @@ end;
 procedure TScript.TVars.SaveToFile(const FileName: string);
 var
   I: Integer;
-  A: TStringlist;
+  A: TStringList;
 begin
-  A := TStringlist.Create;
+  A := TStringList.Create;
 {$IFNDEF FPC}A.WriteBOM := False; {$ENDIF}
   for I := 0 to FID.Count - 1 do
     A.Append(FID[I] + ',' + FValue[I]);

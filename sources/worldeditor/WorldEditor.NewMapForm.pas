@@ -105,8 +105,8 @@ begin
   G := TMapGenerator.Create;
   G.Map := Editor.Map;
   try
-    G.MGTiles.SetWall(fMain.GetRealTile(cbWall.ItemIndex, ltTerrain));
-    G.MGTiles.SetFloor(fMain.GetRealTile(cbFloor.ItemIndex, ltTerrain));
+    G.MGTiles.Wall := (fMain.GetRealTile(cbWall.ItemIndex, ltTerrain));
+    G.MGTiles.Floor := (fMain.GetRealTile(cbFloor.ItemIndex, ltTerrain));
     G.Num := StrToIntDef(edNum.Text, 7);
     G.Map.Clear;
     G.Map.FillLayer(lrTerrain, G.MGTiles.Wall);

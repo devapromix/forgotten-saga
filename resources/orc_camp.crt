@@ -5,10 +5,10 @@ Name=Вождь Тром-Хаш
 X=53
 Y=18
 Life=190/190
-Symbol=H
+Symbol=L
 File=orc_leader.qst
 Color=200,160,255
-Dialog=0
+Dialog=3
 NPC=1
 
 [orc_shaman]
@@ -19,7 +19,7 @@ Life=100/100
 Symbol=S
 File=orc_shaman.qst
 Color=100,128,255
-Dialog=0
+Dialog=4
 NPC=1
 
 [warg]
@@ -30,17 +30,6 @@ Life=100/100
 Symbol=W
 File=warg.qst
 Color=255,128,100
-Dialog=0
-NPC=1
-
-[well]
-Name=Магический Источник
-X=20
-Y=18
-Life=100/100
-Symbol=U
-File=well.qst
-Color=160,170,255
 Dialog=0
 NPC=1
 
@@ -62,6 +51,6 @@ Y=23
 Life=100/100
 Symbol=G
 File=goblin_virn.qst
-Color=140,200,140
+Color=140,250,110
 Dialog=0
 NPC=1

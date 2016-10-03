@@ -2,6 +2,8 @@ unit ForgottenSaga.MainForm;
 
 interface
 
+{$I Include.inc}
+
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls;

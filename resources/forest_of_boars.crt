@@ -1,4 +1,4 @@
-﻿;Forest of Boars
+;Forest of Boars
 
 [stone_idol]
 Name=Каменный Идол
@@ -19,6 +19,17 @@ Life=100/100
 Symbol=E
 File=elk.qst
 Color=200,200,160
+Dialog=0
+NPC=1
+
+[well]
+Name=Магический Источник
+X=20
+Y=18
+Life=100/100
+Symbol=U
+File=well.qst
+Color=160,170,255
 Dialog=0
 NPC=1
 

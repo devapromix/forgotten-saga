@@ -31,7 +31,7 @@ begin
         Saga.Stages.Timer;
         Tick := 0;
       end;
-      //if (Key <> 0) then
+      // if (Key <> 0) then
       terminal_refresh();
       Inc(Tick);
       terminal_delay(1);
