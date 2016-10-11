@@ -170,7 +170,7 @@ type
   public const
     InfFmt = '%s %s';
   private const
-    DefRadius = 4;
+    DefRadius = 9;
 {$REGION ' TPlayer.TLook '}
   private type
     TLook = class(TEntity)
@@ -351,6 +351,7 @@ type
     procedure Clear;
     procedure ClearLayer(Z: TLayerEnum);
     procedure FillLayer(Z: TLayerEnum; Tile: TTiles.TTileEnum);
+    procedure ClearFOV;
     constructor Create;
     destructor Destroy; override;
     function Count: Integer;
@@ -415,18 +416,14 @@ const
   FOV_CELL_VISIBLE = 2;
 
 type
+  IntPtr = ^Integer;
+
+type
   FOVCallback = function(X, Y: Integer; Opaque: IntPtr): Integer; cdecl;
 
-  {
-    * width, height: map dimensions
-    * x, y: actor position
-    * radius: actor's sight radius
-    * get_cb: function fov_calc will call to get cell opacity (it should return FOV_CELL_OPAQUE if opaque)
-    * set_cb: function fov_calc will call to mark the cell visible (result ignored)
-    * opaque: user poiter that will be passed to get_cb/set_cb functions (e. g. may be a pointer to an array).
-  }
-function FOV(Width, Height, X, Y, Radius: Integer; get_cb, set_cb: FOVCallback;
-  Opaque: IntPtr): Integer; cdecl; external 'BearLibFOV.dll' name 'fov_calc';
+function DoFOV(Width, Height, X, Y, Radius: Integer;
+  get_cb, set_cb: FOVCallback; Opaque: IntPtr): Integer; cdecl;
+  external 'BearLibFOV.dll' name 'fov_calc';
 
 function GetFOVCallback(X, Y: Integer; Opaque: IntPtr): Integer; cdecl;
 begin
@@ -435,7 +432,8 @@ end;
 
 function SetFOVCallback(X, Y: Integer; Opaque: IntPtr): Integer; cdecl;
 begin
-  Result := Saga.World.CurrentMap.MapFOV[Y][X] or FOV_CELL_VISIBLE;
+  Saga.World.CurrentMap.MapFOV[Y][X] := Saga.World.CurrentMap.MapFOV[Y][X] or
+    FOV_CELL_VISIBLE;
 end;
 
 {$REGION ' TEntity '}
@@ -1605,13 +1603,9 @@ begin
       for X := 0 to Width - 1 do
       begin
         FMap[Y][X][Z] := TTiles.TTileEnum(Ord(L[Y + I][X + 1]) - Offset);
-        if (Z = lrTerrain) then
-        begin
-          if not Saga.Tiles.GetTile(FMap[Y][X][Z]).Passable then
-            MapFOV[Y][X] := FOV_CELL_OPAQUE
-          else
-            MapFOV[Y][X] := 0;
-        end;
+        if (FMap[Y][X][Z] > tNone) and not Saga.Tiles.GetTile(FMap[Y][X][Z]).Passable
+        then
+          MapFOV[Y][X] := FOV_CELL_OPAQUE;
       end;
   end;
   L.Free;
@@ -1647,49 +1641,39 @@ var
   Z: TLayerEnum;
   X, Y: Integer;
   Color: Integer;
-  Symbol: Char;
-  // F: Boolean;
+  HasObj: Boolean;
   Tile: record Ter: TTiles.TTileProp;
   Obj: TTiles.TTileProp;
 end;
 
 begin
-  // ??????????????!!!!!!!!!!!!!!!!!!
-  FOV(Self.Size.Width, Self.Size.Height, Saga.Player.Pos.X, Saga.Player.Pos.Y,
-    Saga.Player.Radius, @GetFOVCallback, @SetFOVCallback, 0); // FOV
-  for Y := 0 to Self.Height - 1 do
-    for X := 0 to Self.Width - 1 do
-    begin
-      for Z := Low(TLayerEnum) to High(TLayerEnum) do
+  ClearFOV();
+  DoFOV(Self.Width, Self.Height, Saga.Player.Pos.X, Saga.Player.Pos.Y,
+    Saga.Player.Radius, @GetFOVCallback, @SetFOVCallback, 0);
+  for Z := Low(TLayerEnum) to High(TLayerEnum) do
+    for Y := 0 to Self.Height - 1 do
+      for X := 0 to Self.Width - 1 do
       begin
-        // F := HasTile(tNone, X, Y, lrObjects);
+        HasObj := HasTile(tNone, X, Y, lrObjects);
+        Tile.Ter := Saga.Tiles.GetTile(FMap[Y][X][lrTerrain]);
+        Tile.Ter.Color := IfThen(MapFOV[Y][X] and FOV_CELL_VISIBLE > 0,
+          Tile.Ter.Color, $00111111);
         case Z of
           lrTerrain:
+            if HasObj then
+              Saga.UI.DrawChar(X, Y, Tile.Ter.Symbol, Tile.Ter.Color,
+                Saga.Engine.DarkColor(Tile.Ter.Color, TTiles.TileDarkPercent));
+          lrObjects:
+            if not HasObj then
             begin
-              Tile.Ter := Saga.Tiles.GetTile(FMap[Y][X][Z]);
-              Color := IfThen(MapFOV[Y][X] and FOV_CELL_VISIBLE > 0, Tile.Ter.Color,
-                $00222222);
-              Symbol := Chr(IfThen(MapFOV[Y][X] and FOV_CELL_OPAQUE > 0, ord(Tile.Ter.Symbol),
-                66));
-              Saga.UI.DrawChar(X, Y, {Tile.Ter.}Symbol, { Tile.Ter. } Color,
-                Saga.Engine.DarkColor( { Tile.Ter. } Color,
-                TTiles.TileDarkPercent));
-            end;
-          {lrObjects:
-            if not HasTile(tNone, X, Y, Z) then
-            begin
-              Tile.Ter := Saga.Tiles.GetTile(FMap[Y][X][lrTerrain]);
               Tile.Obj := Saga.Tiles.GetTile(FMap[Y][X][Z]);
+              Tile.Obj.Color := IfThen(MapFOV[Y][X] and FOV_CELL_VISIBLE > 0,
+                Tile.Obj.Color, $00222222);
               Saga.UI.DrawChar(X, Y, Tile.Obj.Symbol, Tile.Obj.Color,
                 Saga.Engine.DarkColor(Tile.Ter.Color, TTiles.TileDarkPercent));
-            end;}
+            end;
         end;
-        { Saga.UI.DrawChar(X, Y, Chr(IfThen(MapFOV[Y][X] and FOV_CELL_OPAQUE > 0,
-          45, 65)), Color, Saga.Engine.DarkColor(Color,
-          TTiles.TileDarkPercent)); }
-
       end;
-    end;
 end;
 
 procedure TMap.FillLayer(Z: TLayerEnum; Tile: TTiles.TTileEnum);
@@ -1714,13 +1698,18 @@ end;
 procedure TMap.Clear;
 var
   Z: TLayerEnum;
-  X, Y: Integer;
 begin
-  // ??????????????!!!!!!!!!!!!!!!
   for Z := Low(TLayerEnum) to High(TLayerEnum) do
     ClearLayer(Z);
-  for Y := 0 to Height - 1 do
-    for X := 0 to Width - 1 do
+  ClearFOV();
+end;
+
+procedure TMap.ClearFOV;
+var
+  X, Y: Integer;
+begin
+  for Y := 0 to Self.Height - 1 do
+    for X := 0 to Self.Width - 1 do
       MapFOV[Y][X] := (MapFOV[Y][X] and (not FOV_CELL_VISIBLE));
 end;
 
