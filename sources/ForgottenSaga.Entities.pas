@@ -169,6 +169,8 @@ type
   TPlayer = class(TCreature)
   public const
     InfFmt = '%s %s';
+  private const
+    DefRadius = 4;
 {$REGION ' TPlayer.TLook '}
   private type
     TLook = class(TEntity)
@@ -207,6 +209,7 @@ type
     FPrevName: string;
     FLook: TLook;
     FInventory: TInventory;
+    function GetRadius: Integer;
   public
     constructor Create;
     destructor Destroy; override;
@@ -225,6 +228,7 @@ type
     procedure Victory;
     procedure AddExp(A: Word);
     property Look: TLook read FLook write FLook;
+    property Radius: Integer read GetRadius;
     property Inventory: TInventory read FInventory write FInventory;
   end;
 
@@ -342,6 +346,7 @@ type
     FWidth: Integer;
     FHeight: Integer;
   public
+    MapFOV: array [Byte, Byte] of Integer;
     MapNeighbors: array [TDir] of string;
     procedure Clear;
     procedure ClearLayer(Z: TLayerEnum);
@@ -400,9 +405,38 @@ uses SysUtils, Math, ForgottenSaga.Classes, ForgottenSaga.Scenes;
 
 type
   TGetXYVal = function(X, Y: Integer): Boolean; stdcall;
+
 function DoPath(MapX, MapY, FromX, FromY, ToX, ToY: Integer;
   Callback: TGetXYVal; var TargetX, TargetY: Integer): Boolean;
   external 'BearLibPF.dll' name 'DoAStar';
+
+const
+  FOV_CELL_OPAQUE = 1;
+  FOV_CELL_VISIBLE = 2;
+
+type
+  FOVCallback = function(X, Y: Integer; Opaque: IntPtr): Integer; cdecl;
+
+  {
+    * width, height: map dimensions
+    * x, y: actor position
+    * radius: actor's sight radius
+    * get_cb: function fov_calc will call to get cell opacity (it should return FOV_CELL_OPAQUE if opaque)
+    * set_cb: function fov_calc will call to mark the cell visible (result ignored)
+    * opaque: user poiter that will be passed to get_cb/set_cb functions (e. g. may be a pointer to an array).
+  }
+function FOV(Width, Height, X, Y, Radius: Integer; get_cb, set_cb: FOVCallback;
+  Opaque: IntPtr): Integer; cdecl; external 'BearLibFOV.dll' name 'fov_calc';
+
+function GetFOVCallback(X, Y: Integer; Opaque: IntPtr): Integer; cdecl;
+begin
+  Result := Saga.World.CurrentMap.MapFOV[Y][X];
+end;
+
+function SetFOVCallback(X, Y: Integer; Opaque: IntPtr): Integer; cdecl;
+begin
+  Result := Saga.World.CurrentMap.MapFOV[Y][X] or FOV_CELL_VISIBLE;
+end;
 
 {$REGION ' TEntity '}
 
@@ -892,6 +926,11 @@ begin
   Result := Saga.Race[TSaga.TRaceEnum(Race)].Name;
 end;
 
+function TPlayer.GetRadius: Integer;
+begin
+  Result := DefRadius + 1;
+end;
+
 procedure TPlayer.LoadFromFile(const FileName: string);
 var
   S: string;
@@ -1368,7 +1407,8 @@ begin
           .Atr[atLife].Max]));
         F.WriteInteger(Sections[I], 'Level', FEntity[I].Level);
         F.WriteString(Sections[I], 'Symbol', FEntity[I].Symbol);
-        F.WriteString(Sections[I], 'File', (FEntity[I] as TCreature).ScriptFileName);
+        F.WriteString(Sections[I], 'File', (FEntity[I] as TCreature)
+          .ScriptFileName);
         F.WriteColor(Sections[I], 'Color', FEntity[I].Color);
         F.WriteInteger(Sections[I], 'Dialog', (FEntity[I] as TCreature).Dialog);
         F.WriteBool(Sections[I], 'NPC', (FEntity[I] as TCreature)
@@ -1563,7 +1603,16 @@ begin
     I := L.IndexOf(Format('[%d]', [Ord(Z)])) + 1;
     for Y := 0 to Height - 1 do
       for X := 0 to Width - 1 do
+      begin
         FMap[Y][X][Z] := TTiles.TTileEnum(Ord(L[Y + I][X + 1]) - Offset);
+        if (Z = lrTerrain) then
+        begin
+          if not Saga.Tiles.GetTile(FMap[Y][X][Z]).Passable then
+            MapFOV[Y][X] := FOV_CELL_OPAQUE
+          else
+            MapFOV[Y][X] := 0;
+        end;
+      end;
   end;
   L.Free;
 end;
@@ -1597,30 +1646,50 @@ procedure TMap.Render;
 var
   Z: TLayerEnum;
   X, Y: Integer;
+  Color: Integer;
+  Symbol: Char;
+  // F: Boolean;
   Tile: record Ter: TTiles.TTileProp;
   Obj: TTiles.TTileProp;
 end;
 
 begin
-  for Z := Low(TLayerEnum) to High(TLayerEnum) do
-    for Y := 0 to Self.Height - 1 do
-      for X := 0 to Self.Width - 1 do
+  // ??????????????!!!!!!!!!!!!!!!!!!
+  FOV(Self.Size.Width, Self.Size.Height, Saga.Player.Pos.X, Saga.Player.Pos.Y,
+    Saga.Player.Radius, @GetFOVCallback, @SetFOVCallback, 0); // FOV
+  for Y := 0 to Self.Height - 1 do
+    for X := 0 to Self.Width - 1 do
+    begin
+      for Z := Low(TLayerEnum) to High(TLayerEnum) do
+      begin
+        // F := HasTile(tNone, X, Y, lrObjects);
         case Z of
           lrTerrain:
             begin
               Tile.Ter := Saga.Tiles.GetTile(FMap[Y][X][Z]);
-              Saga.UI.DrawChar(X, Y, Tile.Ter.Symbol, Tile.Ter.Color,
-                Saga.Engine.DarkColor(Tile.Ter.Color, TTiles.TileDarkPercent));
+              Color := IfThen(MapFOV[Y][X] and FOV_CELL_VISIBLE > 0, Tile.Ter.Color,
+                $00222222);
+              Symbol := Chr(IfThen(MapFOV[Y][X] and FOV_CELL_OPAQUE > 0, ord(Tile.Ter.Symbol),
+                66));
+              Saga.UI.DrawChar(X, Y, {Tile.Ter.}Symbol, { Tile.Ter. } Color,
+                Saga.Engine.DarkColor( { Tile.Ter. } Color,
+                TTiles.TileDarkPercent));
             end;
-          lrObjects:
+          {lrObjects:
             if not HasTile(tNone, X, Y, Z) then
             begin
               Tile.Ter := Saga.Tiles.GetTile(FMap[Y][X][lrTerrain]);
               Tile.Obj := Saga.Tiles.GetTile(FMap[Y][X][Z]);
               Saga.UI.DrawChar(X, Y, Tile.Obj.Symbol, Tile.Obj.Color,
                 Saga.Engine.DarkColor(Tile.Ter.Color, TTiles.TileDarkPercent));
-            end;
+            end;}
         end;
+        { Saga.UI.DrawChar(X, Y, Chr(IfThen(MapFOV[Y][X] and FOV_CELL_OPAQUE > 0,
+          45, 65)), Color, Saga.Engine.DarkColor(Color,
+          TTiles.TileDarkPercent)); }
+
+      end;
+    end;
 end;
 
 procedure TMap.FillLayer(Z: TLayerEnum; Tile: TTiles.TTileEnum);
@@ -1645,9 +1714,14 @@ end;
 procedure TMap.Clear;
 var
   Z: TLayerEnum;
+  X, Y: Integer;
 begin
+  // ??????????????!!!!!!!!!!!!!!!
   for Z := Low(TLayerEnum) to High(TLayerEnum) do
     ClearLayer(Z);
+  for Y := 0 to Height - 1 do
+    for X := 0 to Width - 1 do
+      MapFOV[Y][X] := (MapFOV[Y][X] and (not FOV_CELL_VISIBLE));
 end;
 
 function TMap.HasTile(Tile: TTiles.TTileEnum; X, Y: Integer;
@@ -1750,8 +1824,8 @@ begin
         Counter := Counter + 1;
         kx := kx + dx;
         ky := ky + dy;
-        px := round(kx);
-        py := round(ky);
+        px := Round(kx);
+        py := Round(ky);
         if (px < 0) then
         begin
           px := X;
