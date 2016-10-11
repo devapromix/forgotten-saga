@@ -272,7 +272,7 @@ type
   end;
 
 type
-  TStageDialog = class(TStage)
+  TStageDialog = class(TStageMenu)
   private
     FID: Integer;
     FLinkList: TLinks;
@@ -547,12 +547,12 @@ begin
           Saga.Player.Pos.Y) then
           TWorld.GoLoc(drBottom);
       end;
-    //BeginTest
+    // BeginTest
     TK_1:
       TWorld.GoLoc(drLeft);
     TK_2:
       TWorld.GoLoc(drRight);
-    //End Test
+    // End Test
     TK_J:
       Saga.Stages.SetStage(stQuestLog);
     TK_I:
@@ -640,8 +640,9 @@ begin
     end
     else
       Saga.Engine.ForegroundColor(Saga.Colors.clMenuDef);
-    Saga.Engine.Print(0, I + Top + 2, __(TUtils.GetStr('|', Items, I)),
-      aCenter);
+    if (Items <> '') then
+      Saga.Engine.Print(0, I + Top + 2, __(TUtils.GetStr('|', Items, I)
+        ), aCenter);
   end;
 end;
 
@@ -1033,6 +1034,8 @@ end;
 
 constructor TStageDialog.Create;
 begin
+  inherited;
+  Top := 23;
   FLinkList := TLinks.Create;
 end;
 
@@ -1044,9 +1047,21 @@ end;
 
 procedure TStageDialog.Render;
 var
-  I: Integer;
+  I, Color: Integer;
   S, N, Close: string;
 begin
+  Self.Count := LinkList.Count;
+  for I := 0 to Count - 1 do
+  begin
+    Saga.Engine.ForegroundColor(Saga.Colors.clTitle);
+    if (I = MenuPos) then
+    begin
+      RenderCursor(I + Top + 2, Saga.Colors.clCursor);
+      Saga.Engine.ForegroundColor(Saga.Colors.clMenuAct);
+    end
+    else
+      Saga.Engine.ForegroundColor(Saga.Colors.clMenuDef);
+  end;
   Saga.Engine.ForegroundColor(Saga.World.CurrentCreatures.GetEntity(ID).Color);
   Saga.Engine.Print(0, 9, __(Saga.World.CurrentCreatures.GetEntity(ID)
     .Name), aCenter);
@@ -1066,13 +1081,23 @@ begin
       Saga.Engine.GetTextLength(Saga.Dialog.CloseTag)) = Saga.Dialog.CloseTag)
     then
       S := Close;
-    Saga.UI.DrawKey(35, I + 25, Trim(N + ' ' + S), Format('%d', [I + 1]));
+    Saga.Engine.ForegroundColor(IfThen(I = MenuPos, Saga.Colors.clTitle,
+      Saga.Colors.clSplText));
+    Saga.Engine.Print(35, I + 25, Format(TEntity.KeyFmt, [IntToStr(I + 1),
+      Trim(N + ' ' + S)]));
   end;
 end;
 
 procedure TStageDialog.Update(var Key: Word);
 begin
+  inherited;
   case Key of
+    TK_ENTER:
+      begin
+        Key := MenuPos + TK_1;
+        Answer(Key);
+        Render;
+      end;
     TK_1 .. TK_5: // 1..5
       begin
         if (Key - TK_1 > LinkList.Count - 1) or (Key < TK_1) then
@@ -1091,6 +1116,7 @@ begin
   S := Trim(LinkList.GetName(Key - TK_1));
   LinkList.Clear;
   Saga.Dialog.Next(S);
+  MenuPos := 0;
 end;
 
 procedure TStageDialog.Timer;
