@@ -358,6 +358,7 @@ type
     procedure LoadFromFile(const FileName: string);
     procedure SaveToFile(const FileName: string);
     function CellInMap(X, Y: Integer): Boolean;
+    function HasCellVisible(X, Y: Integer): Boolean;
     function GetTopTileChar(X, Y: Integer): Char;
     procedure SetTile(X, Y: Integer; Z: TLayerEnum; Tile: TTiles.TTileEnum);
     function GetTile(X, Y: Integer; Z: TLayerEnum): TTiles.TTileEnum;
@@ -404,12 +405,17 @@ implementation
 
 uses SysUtils, Math, ForgottenSaga.Classes, ForgottenSaga.Scenes;
 
+{$REGION ' Path find '}
+
 type
   TGetXYVal = function(X, Y: Integer): Boolean; stdcall;
 
 function DoPath(MapX, MapY, FromX, FromY, ToX, ToY: Integer;
   Callback: TGetXYVal; var TargetX, TargetY: Integer): Boolean;
   external 'BearLibPF.dll' name 'DoAStar';
+
+{$ENDREGION ' Path find '}
+{$REGION ' Field of view '}
 
 const
   FOV_CELL_OPAQUE = 1;
@@ -436,6 +442,7 @@ begin
     FOV_CELL_VISIBLE;
 end;
 
+{$ENDREGION ' Field of view '}
 {$REGION ' TEntity '}
 
 constructor TEntity.Create(Width: Integer = 1; Height: Integer = 1);
@@ -690,7 +697,8 @@ end;
 
 procedure TCreature.Render;
 begin
-  Saga.UI.DrawChar(Pos.X, Pos.Y, Symbol, Color, BackColor);
+  if Saga.World.CurrentMap.HasCellVisible(Pos.X, Pos.Y) then
+    Saga.UI.DrawChar(Pos.X, Pos.Y, Symbol, Color, BackColor);
 end;
 
 procedure TCreature.AddAtr(Atrib: TAtrEnum; Max: Integer; IsToMax: Boolean);
@@ -798,7 +806,8 @@ end;
 
 procedure TItem.Render;
 begin
-  Saga.UI.DrawChar(Pos.X, Pos.Y, Symbol, Color, BackColor);
+  if Saga.World.CurrentMap.HasCellVisible(Pos.X, Pos.Y) then
+    Saga.UI.DrawChar(Pos.X, Pos.Y, Symbol, Color, BackColor);
 end;
 
 procedure TItem.SaveToFile(const FileName, Section: string);
@@ -1711,6 +1720,11 @@ begin
   for Y := 0 to Self.Height - 1 do
     for X := 0 to Self.Width - 1 do
       MapFOV[Y][X] := (MapFOV[Y][X] and (not FOV_CELL_VISIBLE));
+end;
+
+function TMap.HasCellVisible(X, Y: Integer): Boolean;
+begin
+  Result := MapFOV[Y][X] and FOV_CELL_VISIBLE > 0;
 end;
 
 function TMap.HasTile(Tile: TTiles.TTileEnum; X, Y: Integer;
