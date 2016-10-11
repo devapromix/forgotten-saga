@@ -1051,7 +1051,8 @@ end;
 
 procedure TPlayer.TLook.Move(AX, AY: Integer);
 begin
-  if (Saga.World.CurrentMap.CellInMap(Pos.X + AX, Pos.Y + AY)) then
+  if (Saga.World.CurrentMap.CellInMap(Pos.X + AX, Pos.Y + AY) and
+    (Saga.World.CurrentMap.HasCellVisible(Pos.X + AX, Pos.Y + AY))) then
     SetPosition(Pos.X + AX, Pos.Y + AY);
 end;
 
@@ -1658,7 +1659,7 @@ end;
 begin
   ClearFOV();
   DoFOV(Self.Width, Self.Height, Saga.Player.Pos.X, Saga.Player.Pos.Y,
-    Saga.Player.Radius, @GetFOVCallback, @SetFOVCallback, 0);
+    Saga.Player.Radius, @GetFOVCallback, @SetFOVCallback, nil);
   for Z := Low(TLayerEnum) to High(TLayerEnum) do
     for Y := 0 to Self.Height - 1 do
       for X := 0 to Self.Width - 1 do

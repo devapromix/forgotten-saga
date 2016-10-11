@@ -1,4 +1,4 @@
-Forgotten Saga=Забытая Сага
+Forgotten Saga=Забытая Сага 
 New game=Новая игра
 High scores table=Таблица рекордов
 About FS=Об авторах ЗС

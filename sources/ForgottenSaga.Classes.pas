@@ -1564,9 +1564,10 @@ begin
   if IsTag('pln') then
   begin
     S := GetLastCode('pln', Code);
-    if (Vars.Has(S)) then
+{    if (Vars.Has(S)) then
       I := Vars.GetInt(S);
-    Saga.Log[lgDialog].Add(I.ToString());
+    Saga.Log[lgDialog].Add(I.ToString());}
+    Saga.Log[lgDialog].Add(S);
   end;
 
   if IsTag('log') then
