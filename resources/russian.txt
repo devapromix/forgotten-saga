@@ -45,3 +45,4 @@ Short Spear=Короткое Копье
 Bone Sword=Костяной Меч
 
 Goblin Virn=Гоблин Вирн
+Goblin Telorgon=Гоблин Телоргон

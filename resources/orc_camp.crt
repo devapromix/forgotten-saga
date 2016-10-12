@@ -34,12 +34,12 @@ Dialog=0
 NPC=1
 
 [goblin_telorgon]
-Name=Повар Телоргон
+Name=Goblin Telorgon
 X=45
 Y=20
 Life=100/100
 Symbol=P
-File=telorgon.qst
+File=goblin_telorgon.qst
 Color=135,200,255
 Dialog=0
 NPC=1
