@@ -44,5 +44,7 @@ Battle Axe=Боевой Топор
 Short Spear=Короткое Копье
 Bone Sword=Костяной Меч
 
+Shaman Varok Tal=Шаман Варок Тал
+Chieftain Trom-Hash=Вождь Тром-Хаш
 Goblin Virn=Гоблин Вирн
 Goblin Telorgon=Гоблин Телоргон

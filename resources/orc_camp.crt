@@ -1,7 +1,7 @@
 ;Orc Camp
 
 [orc_leader]
-Name=Вождь Тром-Хаш
+Name=Chieftain Trom-Hash
 X=53
 Y=18
 Life=190/190
@@ -12,7 +12,7 @@ Dialog=3
 NPC=1
 
 [orc_shaman]
-Name=Шаман Варок Тал
+Name=Shaman Varok Tal
 X=52
 Y=17
 Life=100/100
