@@ -1548,8 +1548,7 @@ var
     DlgIdx := StrToIntDef(SL[2], 0);
     if (DlgIdx < 0) then
       Exit;
-    (Saga.World.GetMapCreatures(MapIdx).GetEntity(CrtIdx) as TCreature).Dialog
-      := DlgIdx;
+    Saga.World.GetMapCreatures(MapIdx).Entity[CrtIdx].Dialog := DlgIdx;
     // ShowMessage(MapIdx.ToString + ':' + CrtIdx.ToString + ':' +
     // DlgIdx.ToString);
   end;
@@ -1807,7 +1806,7 @@ end;
 
 function TBattle.EnemyName: string;
 begin
-  Result := Saga.World.CurrentCreatures.GetEntity(ID).Name;
+  Result := Saga.World.CurrentCreatures.Entity[ID].Name;
 end;
 
 procedure TBattle.Finish;

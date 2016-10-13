@@ -239,11 +239,15 @@ type
   TEntities = class(TInterfacedObject, IStorage)
   private
     Sections: TStringList;
+  strict private
     FEntity: array of TEntity;
+  protected
+    function GetEntity(Index: Integer): TEntity;
+    procedure SetEntity(Index: Integer; const Value: TEntity);
+    procedure  SetEntitiesLength(NewLength: Integer);
   public
     constructor Create;
     destructor Destroy; override;
-    function GetEntity(N: Integer): TEntity;
     function Has(X, Y: Integer): Integer;
     procedure Render;
     function Count: Integer; overload;
@@ -253,6 +257,7 @@ type
     procedure LoadFromFile(const FileName: string); virtual; abstract;
     procedure SaveToFile(const FileName: string); virtual; abstract;
     procedure Delete(const Index: Integer);
+    property Entity[Index: Integer]: TEntity read GetEntity write SetEntity;
     procedure Clear;
   end;
 
@@ -261,11 +266,15 @@ type
 
 type
   TCreatures = class(TEntities, IStorage)
+  protected
+    function GetEntity(Index: Integer): TCreature;
+    procedure SetEntity(Index: Integer; const Value: TCreature);
   public
     constructor Create;
     destructor Destroy; override;
     procedure LoadFromFile(const FileName: string); override;
     procedure SaveToFile(const FileName: string); override;
+    property Entity[Index: Integer]: TCreature read GetEntity write SetEntity;
   end;
 
 {$ENDREGION ' TCreatures '}
@@ -273,6 +282,9 @@ type
 
 type
   TItems = class(TEntities, IStorage)
+  protected
+    function GetEntity(Index: Integer): TItem;
+    procedure SetEntity(Index: Integer; const Value: TItem);
   public
     constructor Create;
     destructor Destroy; override;
@@ -283,6 +295,7 @@ type
       Amount: Word = 1);
     function ToString(Item: TItem): string;
     procedure Pickup(I: Integer);
+    property Entity[Index: Integer]: TItem read GetEntity write SetEntity;
   end;
 
 {$ENDREGION ' TItems '}
@@ -1264,7 +1277,7 @@ var
 begin
   Result := 0;
   for I := 0 to Count - 1 do
-    if (FEntity[I].Active) and (FEntity[I].Pos.X = X) and (FEntity[I].Pos.Y = Y)
+    if (Entity[I].Active) and (Entity[I].Pos.X = X) and (Entity[I].Pos.Y = Y)
     then
       Inc(Result);
 end;
@@ -1286,9 +1299,9 @@ begin
   inherited;
 end;
 
-function TEntities.GetEntity(N: Integer): TEntity;
+function TEntities.GetEntity(Index: Integer): TEntity;
 begin
-  Result := FEntity[N];
+  Result := FEntity[Index];
 end;
 
 function TEntities.GetIndex(SectionID: string): Integer;
@@ -1297,7 +1310,7 @@ var
 begin
   Result := -1;
   for I := 0 to Sections.Count - 1 do
-    if (FEntity[I].Active) and (SectionID = Sections[I]) then
+    if (Entity[I].Active) and (SectionID = Sections[I]) then
     begin
       Result := I;
       Break;
@@ -1311,7 +1324,7 @@ begin
   J := 0;
   Result := -1;
   for I := Count - 1 downto 0 do
-    if (FEntity[I].Active) and (FEntity[I].Pos.X = X) and (FEntity[I].Pos.Y = Y)
+    if (Entity[I].Active) and (Entity[I].Pos.X = X) and (Entity[I].Pos.Y = Y)
     then
     begin
       if (J = N) then
@@ -1329,7 +1342,7 @@ var
 begin
   Result := -1;
   for I := Count - 1 downto 0 do
-    if (FEntity[I].Active) and (FEntity[I].Pos.X = X) and (FEntity[I].Pos.Y = Y)
+    if (Entity[I].Active) and (Entity[I].Pos.X = X) and (Entity[I].Pos.Y = Y)
     then
     begin
       Result := I;
@@ -1342,8 +1355,18 @@ var
   I: Integer;
 begin
   for I := 0 to Count - 1 do
-    if FEntity[I].Active then
-      FEntity[I].Render;
+    if Entity[I].Active then
+      Entity[I].Render;
+end;
+
+procedure TEntities.SetEntitiesLength(NewLength: Integer);
+begin
+  SetLength(FEntity, NewLength);
+end;
+
+procedure TEntities.SetEntity(Index: Integer; const Value: TEntity);
+begin
+  FEntity[Index] := Value;
 end;
 
 {$ENDREGION ' TEntities '}
@@ -1357,6 +1380,11 @@ end;
 destructor TCreatures.Destroy;
 begin
   inherited;
+end;
+
+function TCreatures.GetEntity(Index: Integer): TCreature;
+begin
+  Result := inherited GetEntity(Index) as TCreature;
 end;
 
 procedure TCreatures.LoadFromFile(const FileName: string);
@@ -1373,22 +1401,22 @@ begin
       if (F.SectionExists(Sections[I])) then
       begin
         L := Count;
-        SetLength(FEntity, L + 1);
-        FEntity[L] := TCreature.Create;
-        FEntity[L].Name := F.ReadString(Sections[I], 'Name', '');
-        FEntity[L].SetPosition(Point(F.ReadInteger(Sections[I], 'X', 0),
+        SetEntitiesLength(L + 1);
+        Entity[L] := TCreature.Create;
+        Entity[L].Name := F.ReadString(Sections[I], 'Name', '');
+        Entity[L].SetPosition(Point(F.ReadInteger(Sections[I], 'X', 0),
           F.ReadInteger(Sections[I], 'Y', 0)));
-        (FEntity[L] as TCreature).Atr[atLife]
+        Entity[L].Atr[atLife]
           .Add(F.ReadString(Sections[I], 'Life', Format(TEntity.BarFmt,
           [100, 100])));
-        FEntity[L].Symbol := F.ReadString(Sections[I], 'Symbol', '?')[1];
-        FEntity[L].Color := F.ReadColor(Sections[I], 'Color', '255,255,255');
-        (FEntity[L] as TCreature).Dialog := F.ReadInteger(Sections[I],
+        Entity[L].Symbol := F.ReadString(Sections[I], 'Symbol', '?')[1];
+        Entity[L].Color := F.ReadColor(Sections[I], 'Color', '255,255,255');
+        Entity[L].Dialog := F.ReadInteger(Sections[I],
           'Dialog', 0);
-        FEntity[L].Level := F.ReadInteger(Sections[I], 'Level', 1);
-        (FEntity[L] as TCreature).ScriptFileName :=
+        Entity[L].Level := F.ReadInteger(Sections[I], 'Level', 1);
+        Entity[L].ScriptFileName :=
           F.ReadString(Sections[I], 'File', '');
-        (FEntity[L] as TCreature).Force := TCreature.ForceValues
+        Entity[L].Force := TCreature.ForceValues
           [not F.ReadBool(Sections[I], 'NPC', False)];
       end;
     end;
@@ -1405,26 +1433,28 @@ begin
   F := TIniFile.Create(FileName);
   try
     for I := 0 to Sections.Count - 1 do
-      if (FEntity[I].Active) then
+      if (Entity[I].Active) then
       begin
-        F.WriteString(Sections[I], 'Name', FEntity[I].Name);
-        F.WriteInteger(Sections[I], 'X', FEntity[I].Pos.X);
-        F.WriteInteger(Sections[I], 'Y', FEntity[I].Pos.Y);
+        F.WriteString(Sections[I], 'Name', Entity[I].Name);
+        F.WriteInteger(Sections[I], 'X', Entity[I].Pos.X);
+        F.WriteInteger(Sections[I], 'Y', Entity[I].Pos.Y);
         F.WriteString(Sections[I], 'Life', Format(TEntity.BarFmt,
-          [(FEntity[I] as TCreature).Atr[atLife].Cur, (FEntity[I] as TCreature)
-          .Atr[atLife].Max]));
-        F.WriteInteger(Sections[I], 'Level', FEntity[I].Level);
-        F.WriteString(Sections[I], 'Symbol', FEntity[I].Symbol);
-        F.WriteString(Sections[I], 'File', (FEntity[I] as TCreature)
-          .ScriptFileName);
-        F.WriteColor(Sections[I], 'Color', FEntity[I].Color);
-        F.WriteInteger(Sections[I], 'Dialog', (FEntity[I] as TCreature).Dialog);
-        F.WriteBool(Sections[I], 'NPC', (FEntity[I] as TCreature)
-          .Force = fcAlly);
+          [Entity[I].Atr[atLife].Cur, Entity[I].Atr[atLife].Max]));
+        F.WriteInteger(Sections[I], 'Level', Entity[I].Level);
+        F.WriteString(Sections[I], 'Symbol', Entity[I].Symbol);
+        F.WriteString(Sections[I], 'File', Entity[I].ScriptFileName);
+        F.WriteColor(Sections[I], 'Color', Entity[I].Color);
+        F.WriteInteger(Sections[I], 'Dialog', Entity[I].Dialog);
+        F.WriteBool(Sections[I], 'NPC', Entity[I].Force = fcAlly);
       end;
   finally
     F.Free;
   end;
+end;
+
+procedure TCreatures.SetEntity(Index: Integer; const Value: TCreature);
+begin
+  inherited SetEntity(Index, Value);
 end;
 
 {$ENDREGION ' TCreatures '}
@@ -1438,16 +1468,16 @@ var
 
   procedure SetItem(Index: Integer);
   begin
-    FEntity[Index].SetPosition(Saga.Player.Pos);
-    FEntity[Index].Name := Name;
-    FEntity[Index].Color := Color;
-    FEntity[Index].Symbol := Symbol;
-    FEntity[Index].Level := Level;
-    (FEntity[Index] as TItem).Count := Amount;
-    (FEntity[Index] as TItem).Material := Material;
-    (FEntity[Index] as TItem).Category := Category;
-    (FEntity[Index] as TItem).Calc;
-    (FEntity[Index] as TItem).Durability.Cur := Durability;
+    Entity[Index].SetPosition(Saga.Player.Pos);
+    Entity[Index].Name := Name;
+    Entity[Index].Color := Color;
+    Entity[Index].Symbol := Symbol;
+    Entity[Index].Level := Level;
+    Entity[Index].Count := Amount;
+    Entity[Index].Material := Material;
+    Entity[Index].Category := Category;
+    Entity[Index].Calc;
+    Entity[Index].Durability.Cur := Durability;
   end;
 
 begin
@@ -1455,14 +1485,14 @@ begin
     Exit;
   if (Count <> 0) then
     for I := 0 to Count - 1 do
-      if not FEntity[I].Active then
+      if not Entity[I].Active then
       begin
-        (FEntity[I] as TItem).Create();
+        Entity[I].Create();
         SetItem(I);
         Exit;
       end;
-  SetLength(FEntity, Count + 1);
-  FEntity[Count - 1] := TItem.Create();
+  SetEntitiesLength(Count + 1);
+  Entity[Count - 1] := TItem.Create();
   SetItem(Count - 1);
 end;
 
@@ -1474,6 +1504,11 @@ end;
 destructor TItems.Destroy;
 begin
   inherited;
+end;
+
+function TItems.GetEntity(Index: Integer): TItem;
+begin
+  Result := inherited GetEntity(Index) as TItem;
 end;
 
 procedure TItems.LoadFromFile(const FileName: string);
@@ -1490,10 +1525,10 @@ begin
       if (F.SectionExists(Sections[I])) then
       begin
         L := Count;
-        SetLength(FEntity, L + 1);
-        FEntity[L] := TItem.Create;
-        FEntity[L].Active := True;
-        (FEntity[L] as TItem).LoadFromFile(FileName, Sections[I]);
+        SetEntitiesLength(L + 1);
+        Entity[L] := TItem.Create;
+        Entity[L].Active := True;
+        Entity[L].LoadFromFile(FileName, Sections[I]);
       end;
     end;
   finally
@@ -1510,14 +1545,19 @@ begin
   F := TIniFile.Create(FileName);
   try
     for I := 0 to Count - 1 do
-      if (FEntity[I].Active) then
+      if (Entity[I].Active) then
       begin
-        (FEntity[I] as TItem).SaveToFile(FileName, IntToStr(C));
+        Entity[I].SaveToFile(FileName, IntToStr(C));
         Inc(C);
       end;
   finally
     F.Free;
   end;
+end;
+
+procedure TItems.SetEntity(Index: Integer; const Value: TItem);
+begin
+  inherited SetEntity(Index, Value);
 end;
 
 function TItems.ToString(Item: TItem): string;
@@ -1536,7 +1576,7 @@ procedure TItems.Pickup(I: Integer);
 var
   Item: TItem;
 begin
-  Item := Saga.World.CurrentItems.GetEntity(I) as TItem;
+  Item := Saga.World.CurrentItems.Entity[I];
   if Saga.Player.Inventory.AddItem(Item) then
   begin
     Saga.Log[lgGame].Add(Format(__('You pick up a %s.'), [Item.Name]));

@@ -425,9 +425,8 @@ begin
   D := TStageDialog(Saga.Stages.GetStage(stDialog));
   D.ID := ID;
   Saga.Dialog.LoadFromFile(TUtils.GetPath('resources') +
-    (Saga.World.CurrentCreatures.GetEntity(ID) as TCreature).ScriptFileName);
-  Saga.Dialog.Next(Format('%d', [(Saga.World.CurrentCreatures.GetEntity(ID)
-    as TCreature).Dialog]));
+    Saga.World.CurrentCreatures.Entity[ID].ScriptFileName);
+  Saga.Dialog.Next(Format('%d', [Saga.World.CurrentCreatures.Entity[ID].Dialog]));
 end;
 
 procedure TStageGame.SetDialog(ID: Byte);
@@ -454,7 +453,7 @@ begin
   ID := Saga.World.CurrentCreatures.Has(Saga.Player.Pos.X + X,
     Saga.Player.Pos.Y + Y);
   if (ID > -1) then
-    case (Saga.World.CurrentCreatures.GetEntity(ID) as TCreature).Force of
+    case Saga.World.CurrentCreatures.Entity[ID].Force of
       fcAlly:
         SetDialog(ID);
       fcEnemy:
@@ -947,6 +946,8 @@ end;
 {$REGION ' TStageBattle '}
 
 procedure TStageBattle.Render;
+var
+  Creature: TCreature;
 begin
   Saga.UI.DrawTitle(5, 'Поединок');
   Saga.UI.DrawKey(15, 6, 'Атаковать', '1');
@@ -955,12 +956,9 @@ begin
   Saga.Engine.ForegroundColor(Saga.Player.Color);
   Saga.Engine.Print(90, 6, Saga.Player.Name + ' (' + Saga.Player.Atr[atLife]
     .ToText + ')');
-  Saga.Engine.ForegroundColor(Saga.World.CurrentCreatures.GetEntity
-    (Saga.Battle.ID).Color);
-  Saga.Engine.Print(90, 7, Saga.World.CurrentCreatures.GetEntity(Saga.Battle.ID)
-    .Name + ' (' + (Saga.World.CurrentCreatures.GetEntity(Saga.Battle.ID)
-    as TCreature).Atr[atLife].ToText + ')');
-
+  Creature := Saga.World.CurrentCreatures.Entity[Saga.Battle.ID];
+  Saga.Engine.ForegroundColor(Creature.Color);
+  Saga.Engine.Print(90, 7, Creature.Name + ' (' + Creature.Atr[atLife].ToText + ')');
   Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
   Saga.Log[lgBattle].Render(35, 6, 55);
 end;
@@ -1062,9 +1060,9 @@ begin
     else
       Saga.Engine.ForegroundColor(Saga.Colors.clMenuDef);
   end;
-  Saga.Engine.ForegroundColor(Saga.World.CurrentCreatures.GetEntity(ID).Color);
-  Saga.Engine.Print(0, 9, __(Saga.World.CurrentCreatures.GetEntity(ID)
-    .Name), aCenter);
+  Saga.Engine.ForegroundColor(Saga.World.CurrentCreatures.Entity[ID].Color);
+  Saga.Engine.Print(0, 9, __(Saga.World.CurrentCreatures.Entity[ID].Name),
+    aCenter);
   Saga.Engine.ForegroundColor(Saga.Player.Color);
   Saga.Engine.Print(0, 24, Saga.Player.GetRaceName + ' ' +
     Saga.Player.Name, aCenter);
@@ -1362,7 +1360,7 @@ begin
   begin
     if (C > High(TPlayer.TInventory.TInvByte) - 1) then
       Break;
-    Entity := Saga.World.CurrentItems.GetEntity(I);
+    Entity := Saga.World.CurrentItems.Entity[I];
     if (Entity.Active) and (Entity.Pos.X = Saga.Player.Pos.X) and
       (Entity.Pos.Y = Saga.Player.Pos.Y) then
     begin
