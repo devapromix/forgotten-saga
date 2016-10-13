@@ -236,7 +236,7 @@ type
 {$REGION ' TGenericEntities '}
 type
   {$IFDEF FPC} generic {$ENDIF} TGenericEntities<T: TEntity> = class(TInterfacedObject)
-  private
+  strict private
     FEntity: array of T;
   protected
     function GetEntity(Index: Integer): T;
@@ -244,6 +244,8 @@ type
     procedure  SetEntitiesLength(NewLength: Integer);
   public
     property Entity[Index: Integer]: T read GetEntity write SetEntity;
+    function Count: Integer;
+    procedure Clear;
   end;
 
 {$ENDREGION ' TGenericEntities '}
@@ -1257,18 +1259,14 @@ end;
 {$REGION ' TEntities '}
 
 procedure TEntities{$IFNDEF FPC} <T> {$ENDIF}.Clear;
-var
-  I: Integer;
 begin
   Sections.Clear;
-  for I := 0 to Count - 1 do
-    FEntity[I].Free;
-  SetLength(FEntity, 0);
+  inherited Clear;
 end;
 
 function TEntities{$IFNDEF FPC} <T> {$ENDIF}.Count: Integer;
 begin
-  Result := Length(FEntity);
+  Result := inherited Count;
 end;
 
 function TEntities{$IFNDEF FPC} <T> {$ENDIF}.Count(X, Y: Integer): Integer;
@@ -1289,7 +1287,7 @@ end;
 
 procedure TEntities{$IFNDEF FPC} <T> {$ENDIF}.Delete(const Index: Integer);
 begin
-  FEntity[Index].Active := False;
+  Entity[Index].Active := False;
 end;
 
 destructor TEntities{$IFNDEF FPC} <T> {$ENDIF}.Destroy;
@@ -1890,6 +1888,20 @@ end;
 
 {$ENDREGION ' TMapGenerator '}
 {$REGION ' TGenericEntities '}
+
+procedure TGenericEntities{$IFNDEF FPC} <T> {$ENDIF}.Clear;
+var
+  I: Integer;
+begin
+  for I := 0 to Count - 1 do
+    FEntity[I].Free;
+  SetLength(FEntity, 0);
+end;
+
+function TGenericEntities{$IFNDEF FPC} <T> {$ENDIF}.Count: Integer;
+begin
+  Result := Length(FEntity);
+end;
 
 function TGenericEntities{$IFNDEF FPC} <T> {$ENDIF}.GetEntity(Index: Integer): T;
 begin
