@@ -115,7 +115,7 @@ var
 begin
   for I := 0 to Creatures.Count - 1 do
   begin
-    E := Creatures.GetEntity(I);
+    E := Creatures.Entity[I];
     Editor.UI.DrawChar(E.Pos.X, E.Pos.Y, E.Symbol, E.Color, E.BackColor);
   end;
 end;
@@ -127,7 +127,7 @@ var
 begin
   for I := 0 to Items.Count - 1 do
   begin
-    E := Items.GetEntity(I);
+    E := Items.Entity[I];
     Editor.UI.DrawChar(E.Pos.X, E.Pos.Y, E.Symbol, E.Color, E.BackColor);
   end;
 end;

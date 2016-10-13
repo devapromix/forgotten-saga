@@ -172,7 +172,8 @@ type
   private const
     DefRadius = 9;
 {$REGION ' TPlayer.TLook '}
-  strict private type
+  strict private
+  type
     TLook = class(TEntity)
     public
       procedure Render; override;
@@ -305,7 +306,7 @@ type
     procedure Add(Symbol: Char; Color, Level: Integer; Name: string;
       Material: TItem.TMaterial; Category: TItem.TCategory; Durability: Word;
       Amount: Word = 1);
-    function ToString(Item: TItem): string;
+    function ToText(Item: TItem): string;
     procedure Pickup(I: Integer);
   end;
 
@@ -1116,7 +1117,7 @@ procedure TPlayer.TLook.Render;
     if (I > -1) then
     begin
       Item := (Saga.World.CurrentItems.GetEntity(I) as TItem);
-      Result := Trim(Saga.World.CurrentItems.ToString(Item));
+      Result := Trim(Saga.World.CurrentItems.ToText(Item));
       C := Saga.World.CurrentItems.Count(Pos.X, Pos.Y);
       if (C > 1) then
         Result := Format(KeyFmt, [Saga.World.CurrentItems.GetEntity(I).Symbol,
@@ -1531,7 +1532,7 @@ begin
   end;
 end;
 
-function TItems.ToString(Item: TItem): string;
+function TItems.ToText(Item: TItem): string;
 begin
   Result := '';
   if (Item.Count = 1) then
@@ -1624,9 +1625,10 @@ begin
       for X := 0 to Width - 1 do
       begin
         FMap[Y][X][Z] := TTiles.TTileEnum(Ord(L[Y + I][X + 1]) - Offset);
-        if (FMap[Y][X][Z] > tNone) and not Saga.Tiles.GetTile(FMap[Y][X][Z]).Passable
-        then
-          MapFOV[Y][X] := FOV_CELL_OPAQUE;
+        if Assigned(Saga) then
+          if (FMap[Y][X][Z] > tNone) and not Saga.Tiles.GetTile(FMap[Y][X][Z]).Passable
+          then
+            MapFOV[Y][X] := FOV_CELL_OPAQUE;
       end;
   end;
   L.Free;

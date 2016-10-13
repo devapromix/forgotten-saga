@@ -103,7 +103,7 @@ type
       Width: Integer;
       Height: Integer;
     end;
-  private
+  strict private
     FSurface: TBitmap;
     FWindow: TSize;
     FChar: TSize;

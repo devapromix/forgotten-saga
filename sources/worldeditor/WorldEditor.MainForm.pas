@@ -54,9 +54,9 @@ type
     procedure ItmListBoxClick(Sender: TObject);
   private
     procedure LoadResources;
-    { Private declarations }
+    {Private declarations}
   public
-    { Public declarations }
+    {Public declarations}
     procedure UpdateCaption;
     function GetCurrentLayer(): Byte;
     function GetRealTile(Index: Integer; Layer: TTiles.TLayerTypeEnum)
@@ -297,7 +297,7 @@ begin
     for I := 0 to Editor.Items.Count - 1 do
     begin
       ItmListBox.Items.Append(Format(TPlayer.KeyFmt,
-        [Editor.Items.GetEntity(I).Symbol, Editor.Items.GetEntity(I).Name]));
+        [Editor.Items.Entity[I].Symbol, Editor.Items.Entity[I].Name]));
     end;
     ItmListBox.ItemIndex := 0;
 
@@ -306,7 +306,7 @@ begin
     for I := 0 to Editor.Creatures.Count - 1 do
     begin
       CrtListBox.Items.Append(Format(TPlayer.KeyFmt,
-        [Editor.Creatures.GetEntity(I).Symbol, Editor.Creatures.GetEntity(I).Name]));
+        [Editor.Creatures.Entity[I].Symbol, Editor.Creatures.Entity[I].Name]));
     end;
     CrtListBox.ItemIndex := 0;
 

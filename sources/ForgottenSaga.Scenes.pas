@@ -22,7 +22,7 @@ type
 
 type
   TStages = class(TStage)
-  private
+  strict private
     FStage: array [TStageEnum] of TStage;
     FStageEnum: TStageEnum;
     FPrevStageEnum: TStageEnum;
@@ -45,7 +45,7 @@ type
 
 type
   TStageGame = class(TStage)
-  private
+  strict private
     procedure SetNPC(ID: Byte);
     procedure SetDialog(ID: Byte);
     procedure SetBattle(ID: Byte);
@@ -62,7 +62,7 @@ type
 
 type
   TStageCustomMenu = class(TStage)
-  private
+  strict private
     FTop: Byte;
     FMenuPos: ShortInt;
   public
@@ -86,7 +86,7 @@ type
 
 type
   TStageMenu = class(TStageCustomMenu)
-  private
+  strict private
     FItems: string;
     FCount: Byte;
   public
@@ -99,7 +99,7 @@ type
 
 type
   TStageMainMenu = class(TStageMenu)
-  private const
+  strict private const
     FSVersion = '0.0.3';
   public const
     Copyright = 'Copyright (C) 2016 by Sergiy Tkach (DevApromix)';
@@ -157,7 +157,7 @@ type
 
 type
   TStageStorageMenu = class(TStageCustomMenu)
-  private
+  strict private
     FKeyFlag: Boolean;
   public
     constructor Create;
@@ -169,7 +169,7 @@ type
 
 type
   TStageRecMenu = class(TStageStorageMenu)
-  private
+  strict private
     FRecPos: ShortInt;
   public
     constructor Create;
@@ -261,7 +261,7 @@ type
 
 type
   TStageDialog = class(TStageMenu)
-  public type
+  strict private type
     TLinks = class
     strict private
       FLabelList: TStringList;
@@ -1332,7 +1332,7 @@ begin
     to High(TPlayer.TInventory.TInvByte) do
     if Saga.Player.Inventory.Item[I].Active then
     begin
-      F := Saga.World.CurrentItems.ToString(Saga.Player.Inventory.Item[I]);
+      F := Saga.World.CurrentItems.ToText(Saga.Player.Inventory.Item[I]);
       Saga.UI.DrawKey(15, I + 6, F, chr(I + 64));
     end;
   Saga.UI.DrawKey(0, Saga.Engine.Window.Height - 6, __('Close'), 'ESC',
@@ -1371,7 +1371,7 @@ begin
     if (Entity.Active) and (Entity.Pos.X = Saga.Player.Pos.X) and
       (Entity.Pos.Y = Saga.Player.Pos.Y) then
     begin
-      S := Saga.World.CurrentItems.ToString(Entity as TItem);
+      S := Saga.World.CurrentItems.ToText(Entity as TItem);
       Saga.UI.DrawKey(15, C + 7, S, chr(C + 65));
       Inc(C);
     end;

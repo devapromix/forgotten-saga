@@ -120,7 +120,7 @@ type
       Width: Integer;
       Height: Integer;
     end;
-  private
+  strict private
     FWindow: TSize;
     FChar: TSize;
   public
