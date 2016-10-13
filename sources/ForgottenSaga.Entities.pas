@@ -235,7 +235,7 @@ type
 {$ENDREGION ' TPlayer '}
 {$REGION ' TGenericEntities '}
 type
-  TGenericEntities<T: TEntity> = class(TInterfacedObject)
+  {$IFDEF FPC} generic {$ENDIF} TGenericEntities<T: TEntity> = class(TInterfacedObject)
   private
     FEntity: array of T;
   protected
@@ -250,7 +250,8 @@ type
 {$REGION ' TEntities '}
 
 type
-  TEntities<T: TEntity> = class(TGenericEntities<T>, IStorage)
+  {$IFDEF FPC} generic {$ENDIF} TEntities<T: TEntity> =
+      class({$IFDEF FPC} specialize {$ENDIF} TGenericEntities<T>, IStorage)
   private
     Sections: TStringList;
   public
@@ -272,7 +273,7 @@ type
 {$REGION ' TCreatures '}
 
 type
-  TCreatures = class(TEntities<TCreature>, IStorage)
+  TCreatures = class({$IFDEF FPC} specialize {$ENDIF} TEntities<TCreature>, IStorage)
   public
     constructor Create;
     destructor Destroy; override;
@@ -284,7 +285,7 @@ type
 {$REGION ' TItems '}
 
 type
-  TItems = class(TEntities<TItem>, IStorage)
+  TItems = class({$IFDEF FPC} specialize {$ENDIF} TEntities<TItem>, IStorage)
   public
     constructor Create;
     destructor Destroy; override;
@@ -1255,7 +1256,7 @@ end;
 {$ENDREGION ' TPlayer '}
 {$REGION ' TEntities '}
 
-procedure TEntities<T>.Clear;
+procedure TEntities{$IFNDEF FPC} <T> {$ENDIF}.Clear;
 var
   I: Integer;
 begin
@@ -1265,12 +1266,12 @@ begin
   SetLength(FEntity, 0);
 end;
 
-function TEntities<T>.Count: Integer;
+function TEntities{$IFNDEF FPC} <T> {$ENDIF}.Count: Integer;
 begin
   Result := Length(FEntity);
 end;
 
-function TEntities<T>.Count(X, Y: Integer): Integer;
+function TEntities{$IFNDEF FPC} <T> {$ENDIF}.Count(X, Y: Integer): Integer;
 var
   I: Integer;
 begin
@@ -1281,24 +1282,24 @@ begin
       Inc(Result);
 end;
 
-constructor TEntities<T>.Create;
+constructor TEntities{$IFNDEF FPC} <T> {$ENDIF}.Create;
 begin
   Sections := TStringList.Create;
 end;
 
-procedure TEntities<T>.Delete(const Index: Integer);
+procedure TEntities{$IFNDEF FPC} <T> {$ENDIF}.Delete(const Index: Integer);
 begin
   FEntity[Index].Active := False;
 end;
 
-destructor TEntities<T>.Destroy;
+destructor TEntities{$IFNDEF FPC} <T> {$ENDIF}.Destroy;
 begin
   Sections.Free;
   Self.Clear;
   inherited;
 end;
 
-function TEntities<T>.GetIndex(SectionID: string): Integer;
+function TEntities{$IFNDEF FPC} <T> {$ENDIF}.GetIndex(SectionID: string): Integer;
 var
   I: Integer;
 begin
@@ -1311,7 +1312,7 @@ begin
     end;
 end;
 
-function TEntities<T>.GetIndex(N, X, Y: Integer): Integer;
+function TEntities{$IFNDEF FPC} <T> {$ENDIF}.GetIndex(N, X, Y: Integer): Integer;
 var
   I, J: Integer;
 begin
@@ -1330,7 +1331,7 @@ begin
     end;
 end;
 
-function TEntities<T>.Has(X, Y: Integer): Integer;
+function TEntities{$IFNDEF FPC} <T> {$ENDIF}.Has(X, Y: Integer): Integer;
 var
   I: Integer;
 begin
@@ -1344,7 +1345,7 @@ begin
     end;
 end;
 
-procedure TEntities<T>.Render;
+procedure TEntities{$IFNDEF FPC} <T> {$ENDIF}.Render;
 var
   I: Integer;
 begin
@@ -1890,17 +1891,17 @@ end;
 {$ENDREGION ' TMapGenerator '}
 {$REGION ' TGenericEntities '}
 
-function TGenericEntities<T>.GetEntity(Index: Integer): T;
+function TGenericEntities{$IFNDEF FPC} <T> {$ENDIF}.GetEntity(Index: Integer): T;
 begin
   Result := FEntity[Index];
 end;
 
-procedure TGenericEntities<T>.SetEntitiesLength(NewLength: Integer);
+procedure TGenericEntities{$IFNDEF FPC} <T> {$ENDIF}.SetEntitiesLength(NewLength: Integer);
 begin
   SetLength(FEntity, NewLength);
 end;
 
-procedure TGenericEntities<T>.SetEntity(Index: Integer; const Value: T);
+procedure TGenericEntities{$IFNDEF FPC} <T> {$ENDIF}.SetEntity(Index: Integer; const Value: T);
 begin
   FEntity[Index] := Value;
 end;
