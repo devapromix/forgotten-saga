@@ -27,7 +27,7 @@ type
 {$REGION ' TEntity.TBar '}
   public type
     TBar = class(TObject)
-    private
+    strict private
       FCur: Integer;
       FMax: Integer;
       FAdv: Integer;
@@ -52,7 +52,7 @@ type
       procedure SetToMax;
     end;
 {$ENDREGION ' TEntity.TBar '}
-  private
+  strict private
     FPos: TPoint;
     FHeight: Integer;
     FWidth: Integer;
@@ -101,7 +101,7 @@ type
     cExp = 15;
     AtrStr: array [TAtrEnum] of string = ('Exp', 'Life', 'Mana', 'Adrenalin');
     ForceValues: array [Boolean] of TForce = (fcAlly, fcEnemy);
-  private
+  strict private
     FForce: TForce;
     FScriptFileName: string;
     FDialog: Integer;
@@ -110,7 +110,7 @@ type
     FStatPoints: Byte;
     procedure SetSkillPoints(const Value: Byte);
     procedure SetStatPoints(const Value: Byte);
-  protected
+  strict protected
     function GetAtr(I: TAtrEnum): TEntity.TBar;
     procedure SetAtr(I: TAtrEnum; const Value: TEntity.TBar);
   public
@@ -142,7 +142,7 @@ type
       'sword');
     MatStr: array [TMaterial] of string = ('', 'wood', 'bone', 'stone',
       'metal');
-  private
+  strict private
     FCount: Integer;
     FCategory: TCategory;
     FMaterial: TMaterial;
@@ -172,7 +172,7 @@ type
   private const
     DefRadius = 9;
 {$REGION ' TPlayer.TLook '}
-  private type
+  strict private type
     TLook = class(TEntity)
     public
       procedure Render; override;
@@ -185,9 +185,9 @@ type
     TInventory = class(TObject)
     public type
       TInvByte = 1 .. 26;
-    private
+    strict private
       FItem: array [TInvByte] of TItem;
-    protected
+    strict protected
       function GetItem(I: TInvByte): TItem;
       procedure SetItem(I: TInvByte; const Value: TItem);
     public
@@ -202,7 +202,7 @@ type
       procedure Clear; overload;
     end;
 {$ENDREGION ' TPlayer.TInventory '}
-  private
+  strict private
     FMap: Integer;
     FRace: Byte;
     FScore: Word;
@@ -234,48 +234,57 @@ type
 
 {$ENDREGION ' TPlayer '}
 {$REGION ' TGenericEntities '}
+
 type
-  {$IFDEF FPC} generic {$ENDIF} TGenericEntities<T: TEntity> = class(TInterfacedObject)
-  strict private
-    FEntity: array of T;
-  protected
-    function GetEntity(Index: Integer): T;
-    procedure SetEntity(Index: Integer; const Value: T);
-    procedure  SetEntitiesLength(NewLength: Integer);
-  public
-    property Entity[Index: Integer]: T read GetEntity write SetEntity;
-    function Count: Integer;
-    procedure Clear;
+{$IFDEF FPC}generic{$ENDIF}
+  TGenericEntities<T: TEntity> = class(TInterfacedObject)strict private FEntity
+  : array of T;
+protected
+  function GetEntity(Index: Integer): T;
+  procedure SetEntity(Index: Integer; const Value: T);
+  procedure SetEntitiesLength(NewLength: Integer);
+public
+  property Entity[Index: Integer]: T read GetEntity write SetEntity;
+  function Count: Integer;
+  procedure Clear;
   end;
 
 {$ENDREGION ' TGenericEntities '}
 {$REGION ' TEntities '}
 
 type
-  {$IFDEF FPC} generic {$ENDIF} TEntities<T: TEntity> =
-      class({$IFDEF FPC} specialize {$ENDIF} TGenericEntities<T>, IStorage)
-  private
-    Sections: TStringList;
-  public
-    constructor Create;
-    destructor Destroy; override;
-    function Has(X, Y: Integer): Integer;
-    procedure Render;
-    function Count: Integer; overload;
-    function Count(X, Y: Integer): Integer; overload;
-    function GetIndex(N, X, Y: Integer): Integer; overload;
-    function GetIndex(SectionID: string): Integer; overload;
-    procedure LoadFromFile(const FileName: string); virtual; abstract;
-    procedure SaveToFile(const FileName: string); virtual; abstract;
-    procedure Delete(const Index: Integer);
-    procedure Clear;
+{$IFDEF FPC}generic{$ENDIF} TEntities<T: TEntity> = class({$IFDEF FPC}specialized{$ENDIF}
+  TGenericEntities<T>, IStorage)private Sections: TStringList;
+public
+  constructor Create;
+  destructor Destroy;
+  override;
+  function Has(X, Y: Integer): Integer;
+  procedure Render;
+  function Count: Integer;
+  overload;
+  function Count(X, Y: Integer): Integer;
+  overload;
+  function GetIndex(N, X, Y: Integer): Integer;
+  overload;
+  function GetIndex(SectionID: string): Integer;
+  overload;
+  procedure LoadFromFile(const FileName: string);
+  virtual;
+  abstract;
+  procedure SaveToFile(const FileName: string);
+  virtual;
+  abstract;
+  procedure Delete(const Index: Integer);
+  procedure Clear;
   end;
 
 {$ENDREGION ' TEntities '}
 {$REGION ' TCreatures '}
 
 type
-  TCreatures = class({$IFDEF FPC} specialize {$ENDIF} TEntities<TCreature>, IStorage)
+  TCreatures = class({$IFDEF FPC} specialize
+{$ENDIF} TEntities<TCreature>, IStorage)
   public
     constructor Create;
     destructor Destroy; override;
@@ -335,7 +344,7 @@ type
       Color: Integer;
       Layer: TLayerTypeEnum;
     end;
-  private
+  strict private
     FTiles: array [TTileEnum] of TTileProp;
   public
     function GetTile(Tile: TTileEnum): TTileProp;
@@ -354,7 +363,7 @@ type
     TDir = (drLeft, drUp, drRight, drDown, drTop, drBottom);
     TLayerEnum = (lrTerrain, lrObjects);
     TLayer = array [Byte, Byte, TLayerEnum] of TTiles.TTileEnum;
-  private
+  strict private
     FMap: TLayer;
     FName: string;
     FFileName: string;
@@ -397,7 +406,7 @@ type
       Wall: TTiles.TTileEnum;
       Floor: TTiles.TTileEnum;
     end;
-  private
+  strict private
     FMap: TMap;
     FStart: TPoint;
     // ?    FMGTiles: TMGTiles;
@@ -853,10 +862,10 @@ procedure TPlayer.AddExp(A: Word);
 begin
   if (Atr[atExp].Cur + A >= Atr[atExp].Max) then
   begin
-    Atr[atExp].SetCur(Atr[atExp].Cur + A - Atr[atExp].Max);
+    Atr[atExp].Cur := (Atr[atExp].Cur + A - Atr[atExp].Max);
     Score := Score + (Level * 10);
     Level := Level + 1;
-    Atr[atExp].SetMax(Atr[atExp].Max + (Atr[atExp].Max * 20 div 100));
+    Atr[atExp].Max := (Atr[atExp].Max + (Atr[atExp].Max * 20 div 100));
   end
   else
     Atr[atExp].Inc(A);
@@ -1297,7 +1306,8 @@ begin
   inherited;
 end;
 
-function TEntities{$IFNDEF FPC} <T> {$ENDIF}.GetIndex(SectionID: string): Integer;
+function TEntities{$IFNDEF FPC} <T>
+{$ENDIF}.GetIndex(SectionID: string): Integer;
 var
   I: Integer;
 begin
@@ -1310,7 +1320,8 @@ begin
     end;
 end;
 
-function TEntities{$IFNDEF FPC} <T> {$ENDIF}.GetIndex(N, X, Y: Integer): Integer;
+function TEntities{$IFNDEF FPC} <T>
+{$ENDIF}.GetIndex(N, X, Y: Integer): Integer;
 var
   I, J: Integer;
 begin
@@ -1384,16 +1395,13 @@ begin
         Entity[L].Name := F.ReadString(Sections[I], 'Name', '');
         Entity[L].SetPosition(Point(F.ReadInteger(Sections[I], 'X', 0),
           F.ReadInteger(Sections[I], 'Y', 0)));
-        Entity[L].Atr[atLife]
-          .Add(F.ReadString(Sections[I], 'Life', Format(TEntity.BarFmt,
-          [100, 100])));
+        Entity[L].Atr[atLife].Add(F.ReadString(Sections[I], 'Life',
+          Format(TEntity.BarFmt, [100, 100])));
         Entity[L].Symbol := F.ReadString(Sections[I], 'Symbol', '?')[1];
         Entity[L].Color := F.ReadColor(Sections[I], 'Color', '255,255,255');
-        Entity[L].Dialog := F.ReadInteger(Sections[I],
-          'Dialog', 0);
+        Entity[L].Dialog := F.ReadInteger(Sections[I], 'Dialog', 0);
         Entity[L].Level := F.ReadInteger(Sections[I], 'Level', 1);
-        Entity[L].ScriptFileName :=
-          F.ReadString(Sections[I], 'File', '');
+        Entity[L].ScriptFileName := F.ReadString(Sections[I], 'File', '');
         Entity[L].Force := TCreature.ForceValues
           [not F.ReadBool(Sections[I], 'NPC', False)];
       end;
@@ -1889,7 +1897,7 @@ end;
 {$ENDREGION ' TMapGenerator '}
 {$REGION ' TGenericEntities '}
 
-procedure TGenericEntities{$IFNDEF FPC} <T> {$ENDIF}.Clear;
+procedure TGenericEntities{$IFNDEF FPC}<T>{$ENDIF}.Clear;
 var
   I: Integer;
 begin
@@ -1898,22 +1906,24 @@ begin
   SetLength(FEntity, 0);
 end;
 
-function TGenericEntities{$IFNDEF FPC} <T> {$ENDIF}.Count: Integer;
+function TGenericEntities{$IFNDEF FPC}<T>{$ENDIF}.Count: Integer;
 begin
   Result := Length(FEntity);
 end;
 
-function TGenericEntities{$IFNDEF FPC} <T> {$ENDIF}.GetEntity(Index: Integer): T;
+function TGenericEntities{$IFNDEF FPC}<T>{$ENDIF}.GetEntity(Index: Integer): T;
 begin
   Result := FEntity[Index];
 end;
 
-procedure TGenericEntities{$IFNDEF FPC} <T> {$ENDIF}.SetEntitiesLength(NewLength: Integer);
+procedure TGenericEntities{$IFNDEF FPC}<T>{$ENDIF}.SetEntitiesLength
+  (NewLength: Integer);
 begin
   SetLength(FEntity, NewLength);
 end;
 
-procedure TGenericEntities{$IFNDEF FPC} <T> {$ENDIF}.SetEntity(Index: Integer; const Value: T);
+procedure TGenericEntities{$IFNDEF FPC}<T>{$ENDIF}.SetEntity(Index: Integer;
+  const Value: T);
 begin
   FEntity[Index] := Value;
 end;

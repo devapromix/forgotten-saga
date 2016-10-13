@@ -231,7 +231,7 @@ type
   end;
 
 {$ENDREGION ' Stages Inventory and Items '}
-{$REGION ' Stages Quests '}
+{$REGION ' TStageQuestLog '}
 
 type
   TStageQuestLog = class(TStageStorageMenu)
@@ -242,9 +242,12 @@ type
     procedure Update(var Key: Word); override;
   end;
 
+{$ENDREGION ' TStageQuestLog '}
+{$REGION ' TStageQuestInfo '}
+
 type
   TStageQuestInfo = class(TStage)
-  private
+  strict private
     FID: Integer;
   public
     procedure Render; override;
@@ -253,27 +256,26 @@ type
     property ID: Integer read FID write FID;
   end;
 
-{$ENDREGION ' Stages Quests '}
+{$ENDREGION ' TStageQuestInfo '}
 {$REGION ' Stage Dialog '}
 
 type
-  TLinks = class
-  private
-    FLabelList: TStringList;
-    FNameList: TStringList;
-  public
-    constructor Create;
-    destructor Destroy; override;
-    procedure Clear;
-    function Count: Integer;
-    procedure Append(const ALabel, AName: string);
-    function GetLabel(const I: Integer): string;
-    function GetName(const I: Integer): string;
-  end;
-
-type
   TStageDialog = class(TStageMenu)
-  private
+  public type
+    TLinks = class
+    strict private
+      FLabelList: TStringList;
+      FNameList: TStringList;
+    public
+      constructor Create;
+      destructor Destroy; override;
+      procedure Clear;
+      function Count: Integer;
+      procedure Append(const ALabel, AName: string);
+      function GetLabel(const I: Integer): string;
+      function GetName(const I: Integer): string;
+    end;
+  strict private
     FID: Integer;
     FLinkList: TLinks;
     procedure Answer(var Key: Word);
@@ -426,7 +428,8 @@ begin
   D.ID := ID;
   Saga.Dialog.LoadFromFile(TUtils.GetPath('resources') +
     Saga.World.CurrentCreatures.Entity[ID].ScriptFileName);
-  Saga.Dialog.Next(Format('%d', [Saga.World.CurrentCreatures.Entity[ID].Dialog]));
+  Saga.Dialog.Next(Format('%d', [Saga.World.CurrentCreatures.Entity[ID]
+    .Dialog]));
 end;
 
 procedure TStageGame.SetDialog(ID: Byte);
@@ -958,7 +961,8 @@ begin
     .ToText + ')');
   Creature := Saga.World.CurrentCreatures.Entity[Saga.Battle.ID];
   Saga.Engine.ForegroundColor(Creature.Color);
-  Saga.Engine.Print(90, 7, Creature.Name + ' (' + Creature.Atr[atLife].ToText + ')');
+  Saga.Engine.Print(90, 7, Creature.Name + ' (' + Creature.Atr[atLife]
+    .ToText + ')');
   Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
   Saga.Log[lgBattle].Render(35, 6, 55);
 end;
@@ -987,48 +991,51 @@ begin
 end;
 
 {$ENDREGION ' TStageBattle '}
-{$REGION ' TStageDialog '}
+{$REGION ' TStageDialog.TLinks '}
 
-procedure TLinks.Append(const ALabel, AName: string);
+procedure TStageDialog.TLinks.Append(const ALabel, AName: string);
 begin
   FLabelList.Append(ALabel);
   FNameList.Append(AName);
 end;
 
-procedure TLinks.Clear;
+procedure TStageDialog.TLinks.Clear;
 begin
   FLabelList.Clear;
   FNameList.Clear;
 end;
 
-function TLinks.Count: Integer;
+function TStageDialog.TLinks.Count: Integer;
 begin
   Result := FLabelList.Count;
 end;
 
-constructor TLinks.Create;
+constructor TStageDialog.TLinks.Create;
 begin
   FLabelList := TStringList.Create;
   FNameList := TStringList.Create;
   Self.Clear;
 end;
 
-destructor TLinks.Destroy;
+destructor TStageDialog.TLinks.Destroy;
 begin
   FLabelList.Free;
   FNameList.Free;
   inherited;
 end;
 
-function TLinks.GetLabel(const I: Integer): string;
+function TStageDialog.TLinks.GetLabel(const I: Integer): string;
 begin
   Result := FLabelList[I];
 end;
 
-function TLinks.GetName(const I: Integer): string;
+function TStageDialog.TLinks.GetName(const I: Integer): string;
 begin
   Result := FNameList[I];
 end;
+
+{$ENDREGION ' TStageDialog.TLinks '}
+{$REGION ' TStageDialog '}
 
 constructor TStageDialog.Create;
 begin
@@ -1061,8 +1068,8 @@ begin
       Saga.Engine.ForegroundColor(Saga.Colors.clMenuDef);
   end;
   Saga.Engine.ForegroundColor(Saga.World.CurrentCreatures.Entity[ID].Color);
-  Saga.Engine.Print(0, 9, __(Saga.World.CurrentCreatures.Entity[ID].Name),
-    aCenter);
+  Saga.Engine.Print(0, 9, __(Saga.World.CurrentCreatures.Entity[ID]
+    .Name), aCenter);
   Saga.Engine.ForegroundColor(Saga.Player.Color);
   Saga.Engine.Print(0, 24, Saga.Player.GetRaceName + ' ' +
     Saga.Player.Name, aCenter);
@@ -1180,7 +1187,7 @@ var
   I: ShortInt;
 begin
   Saga.UI.DrawTitle(Top, __('Quest log'));
-  for I := 0 to 9 do
+  for I := 0 to Saga.Quest.Count - 1 do
   begin
     Saga.Engine.ForegroundColor(Saga.Colors.clTitle);
     if (I = MenuPos) then
@@ -1219,7 +1226,7 @@ begin
       if (Saga.Quest.Get(MenuPos, 0) <> '') then
       begin
         Saga.Log[lgQuest].Clear;
-        for I := 1 to 9 do
+        for I := 1 to 24 do
           Saga.Log[lgQuest].Add(Saga.Quest.Get(MenuPos, I), False);
         TStageQuestInfo(Saga.Stages.GetStage(stQuestInfo)).ID := MenuPos;
         Saga.Stages.SetStage(stQuestInfo);

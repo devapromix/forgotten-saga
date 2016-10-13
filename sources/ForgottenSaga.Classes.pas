@@ -28,7 +28,7 @@ type
   TUI = class(TObject)
   public const
     PanelWidth = 40;
-  private
+  strict private
     FEngine: TEngine;
   public
     constructor Create(AEngine: TEngine);
@@ -64,9 +64,9 @@ type
 type
   TScript = class(TObject)
 {$REGION ' TScript.TVars '}
-  private type
+  strict private type
     TVars = class(TInterfacedObject, IStorage)
-    private
+    strict private
       FID: TStringList;
       FValue: TStringList;
     public
@@ -84,7 +84,7 @@ type
       procedure SetInt(const AVar: string; const AValue: Integer);
     end;
 {$ENDREGION ' TScript.TVars '}
-  private
+  strict private
     FIsNext: Boolean;
     FIsIf: Boolean;
     FList: TStringList;
@@ -109,7 +109,7 @@ type
 
 type
   TLanguage = class(TObject)
-  private
+  strict private
     FID: TStringList;
     FValue: TStringList;
     FCurrent: string;
@@ -131,7 +131,7 @@ type
     TColorsEnum = (ceBlack, ceBlue, ceGreen, ceCyan, ceRed, ceMagenta, ceBrown,
       ceLGray, ceDGray, ceLBlue, ceLGreen, ceLCyan, ceLRed, ceLMagenta,
       ceYellow, ceWhite);
-  private const
+  strict private const
     ColorsStr: array [TColorsEnum] of string = ('BLACK', 'BLUE', 'GREEN',
       'CYAN', 'RED', 'MAGENTA', 'BROWN', 'LGRAY', 'DGRAY', 'LBLUE', 'LGREEN',
       'LCYAN', 'LRED', 'LMAGENTA', 'YELLOW', 'WHITE');
@@ -147,7 +147,7 @@ type
     clMenuAct: Integer;
     clMenuDef: Integer;
     clCursor: Integer;
-  private
+  strict private
     FColors: array [TColorsEnum] of Integer;
     procedure SetColors;
   public
@@ -161,7 +161,7 @@ type
 
 type
   TConfig = class(TObject)
-  private
+  strict private
 
   public
     procedure LoadFromFile(FileName: string);
@@ -172,7 +172,7 @@ type
 
 type
   TNotification = class(TObject)
-  private
+  strict private
     FMessage: string;
     FDuration: Byte;
     FCounter: Byte;
@@ -190,7 +190,7 @@ type
 
 type
   TWorld = class(TObject)
-  private
+  strict private
     FMaps: array of TMap;
     FCreatures: array of TCreatures;
     FItems: array of TItems;
@@ -220,7 +220,7 @@ type
 
 type
   TRecs = class(TObject)
-  private
+  strict private
     FFileName: string;
     procedure Add(Slot: Byte);
   public
@@ -234,7 +234,7 @@ type
 
 type
   TBattle = class(TObject)
-  private
+  strict private
     FID: Integer;
     function EnemyName(): string;
   public
@@ -252,7 +252,7 @@ type
 
 type
   TQuest = class(TInterfacedObject, IStorage)
-  private
+  strict private
     FList: TStringList;
   public
     constructor Create;
@@ -274,7 +274,7 @@ type
 {$REGION ' TSaga.TRace '}
   public type
     TRace = class(TObject)
-    private
+    strict private
       FColor: Integer;
       FName: string;
       FPos: TPoint;
@@ -293,7 +293,7 @@ type
 {$REGION ' TSaga.TLog '}
   public type
     TLog = class(TObject)
-    private
+    strict private
       FLogStr: string;
       FLen: Word;
     public
@@ -316,7 +316,7 @@ type
       'Had,Rod,Shag,Dor,Lid,Tar,Kreg,Bron,Shung|Garum,Turum,Ur,Utak,Udoom,Ud,Urak,Doon,Vuug|Kat,Shak,Gir,Bood,Dreg,Din,Grok,Rig,Sadr',
       'Blind,Glad,Proud,Sharp-sighted,Powerful,Dancer,Guarding,Thunderous,Night|Wolfhound,Wood-goblin,Destroyer,Crusher,Pathfinder,Astrologer,Bootes,Caretaker,Befouler');
     RaceNameDiv: array [TRaceEnum] of string = ('', '-', ' ');
-  private
+  strict private
     FList: TStringList;
     FPlayer: TPlayer;
     FStages: TStages;
@@ -333,7 +333,7 @@ type
     FLog: array [TLogEnum] of TLog;
     FRace: array [TRaceEnum] of TRace;
     FDialog: TScript;
-  protected
+  strict protected
     function GetLog(I: TLogEnum): TLog;
     procedure SetLog(I: TLogEnum; const Value: TLog);
     function GetRace(I: TRaceEnum): TRace;
@@ -764,7 +764,7 @@ begin
   World.SaveToDir(GetSlotPath(Slot));
   Dialog.Vars.SaveToFile(GetSlotPath(Slot) + 'vars.txt');
   FList[Slot] := Format('%s %s - %s', [DateTimeToStr(Now), Player.GetFullName,
-    World.GetMap(Player.Map).Name]);
+    __(World.GetMap(Player.Map).Name)]);
   FList.SaveToFile(TUtils.GetPath('save') + 'list.txt'{$IFNDEF FPC},
     TEncoding.UTF8{$ENDIF});
   Saga.Notification.Add('Игра успешно сохранена');
@@ -922,7 +922,7 @@ end;
 
 function TQuest.Count: Integer;
 begin
-  Result := 0;
+  Result := 10;
 end;
 
 constructor TQuest.Create;
