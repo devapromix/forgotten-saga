@@ -297,7 +297,7 @@ begin
     for I := 0 to Editor.Items.Count - 1 do
     begin
       ItmListBox.Items.Append(Format(TPlayer.KeyFmt,
-        [Editor.Items.Entity[I].Symbol, Editor.Items.Entity[I].Name]));
+        [Editor.Items.Entity[I].Symbol, __(Editor.Items.Entity[I].Name)]));
     end;
     ItmListBox.ItemIndex := 0;
 
@@ -306,7 +306,7 @@ begin
     for I := 0 to Editor.Creatures.Count - 1 do
     begin
       CrtListBox.Items.Append(Format(TPlayer.KeyFmt,
-        [Editor.Creatures.Entity[I].Symbol, Editor.Creatures.Entity[I].Name]));
+        [Editor.Creatures.Entity[I].Symbol, __(Editor.Creatures.Entity[I].Name)]));
     end;
     CrtListBox.ItemIndex := 0;
 

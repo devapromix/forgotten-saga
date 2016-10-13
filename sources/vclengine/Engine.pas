@@ -120,7 +120,7 @@ type
     property Surface: TBitmap read FSurface write FSurface;
     property Window: TSize read FWindow write FWindow;
     property Char: TSize read FChar write FChar;
-    function GetTextLength(Text: string): Integer;
+    class function GetTextLength(Text: string): Integer;
     procedure Close;
   end;
 
@@ -166,7 +166,7 @@ begin
   Surface.Canvas.Font.Color := Color;
 end;
 
-function TEngine.GetTextLength(Text: string): Integer;
+class function TEngine.GetTextLength(Text: string): Integer;
 begin
   Result := Length(Text);
 end;

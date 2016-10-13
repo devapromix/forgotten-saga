@@ -254,7 +254,7 @@ public
 {$REGION ' TEntities '}
 
 type
-{$IFDEF FPC}generic{$ENDIF} TEntities<T: TEntity> = class({$IFDEF FPC}specialized{$ENDIF}
+{$IFDEF FPC}generic{$ENDIF} TEntities<T: TEntity> = class({$IFDEF FPC}specialize{$ENDIF}
   TGenericEntities<T>, IStorage)private Sections: TStringList;
 public
   constructor Create;

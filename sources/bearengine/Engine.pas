@@ -136,7 +136,7 @@ type
     function GetColor(Color: Integer): Cardinal;
     property Window: TSize read FWindow write FWindow;
     property Char: TSize read FChar write FChar;
-    function GetTextLength(Text: string): Integer;
+    class function GetTextLength(Text: string): Integer;
     procedure Close;
   end;
 
@@ -265,7 +265,7 @@ begin
   Result := color_from_argb(255, R, G, B);
 end;
 
-function TEngine.GetTextLength(Text: string): Integer;
+class function TEngine.GetTextLength(Text: string): Integer;
 begin
 {$IFNDEF FPC}
   Result := Length(Text);

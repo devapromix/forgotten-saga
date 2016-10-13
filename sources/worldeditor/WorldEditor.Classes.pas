@@ -7,6 +7,8 @@ uses Windows, Graphics, Types, Controls, ForgottenSaga.Classes,
 
 {$REGION ' TEditor '}
 
+function __(S: string): string;
+
 type
   TEditor = class(TSaga)
   private
@@ -19,6 +21,7 @@ type
     FModified: Boolean;
     FCreatures: TCreatures;
     FItems: TItems;
+    FLg: TLanguage;
   public
     constructor Create;
     destructor Destroy; override;
@@ -38,6 +41,7 @@ type
     property Modified: Boolean read FModified write FModified;
     property Creatures: TCreatures read FCreatures write FCreatures;
     property Items: TItems read FItems write FItems;
+    property Lg: TLanguage read FLg write FLg;
   end;
 
 var
@@ -51,12 +55,22 @@ uses Engine;
 
 {$REGION ' TEditor '}
 
+function __(S: string): string;
+begin
+  Result := '';
+  if (S = '') then
+    Exit;
+  Result := Editor.Lg.Get(S);
+end;
+
 constructor TEditor.Create;
 begin
   inherited Create(TMap.Size.Width, TMap.Size.Height);
   Map := TMap.Create;
   Creatures := TCreatures.Create;
   Items := TItems.Create;
+  Lg := TLanguage.Create;
+  Lg.SetLanguage('russian');
   CurrentMapFile := '';
   Modified := False;
   // Tiles
@@ -66,6 +80,7 @@ end;
 
 destructor TEditor.Destroy;
 begin
+  Lg.Free;
   Items.Free;
   Creatures.Free;
   Tiles.Free;

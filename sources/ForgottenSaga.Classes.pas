@@ -119,6 +119,7 @@ type
     procedure Clear;
     procedure LoadFromFile(FileName: string);
     function Get(S: string): string;
+    procedure SetLanguage(CurrentLanguage: string);
     property Current: string read FCurrent write FCurrent;
   end;
 
@@ -655,12 +656,7 @@ begin
   end;
 
   // Localization
-  Lg.Clear;
-  Lg.LoadFromFile(TUtils.GetPath('resources') + Lg.Current + '.txt');
-  Lg.LoadFromFile(TUtils.GetPath('resources') + Lg.Current + '.names.txt');
-  Lg.LoadFromFile(TUtils.GetPath('resources') + Lg.Current + '.world.txt');
-  Lg.LoadFromFile(TUtils.GetPath('resources') + Lg.Current + '.terrain.txt');
-  Lg.LoadFromFile(TUtils.GetPath('resources') + Lg.Current + '.objects.txt');
+  Lg.SetLanguage('russian');
 
   // Colors
   Colors.LoadFromFile(TUtils.GetPath('resources') + 'colors.ini');
@@ -819,9 +815,9 @@ begin
     FLogStr := Text + ' ' + FLogStr
   else
     FLogStr := FLogStr + ' ' + Text;
-  if (Saga.Engine.GetTextLength(FLogStr) > FLen) then
+  if (TEngine.GetTextLength(FLogStr) > FLen) then
   begin
-    Delete(FLogStr, FLen, Saga.Engine.GetTextLength(FLogStr));
+    Delete(FLogStr, FLen, TEngine.GetTextLength(FLogStr));
     FLogStr := FLogStr + '...';
   end;
 end;
@@ -837,7 +833,7 @@ var
   F: Boolean;
 begin
   F := False;
-  for I := 1 to Saga.Engine.GetTextLength(FLogStr) do
+  for I := 1 to TEngine.GetTextLength(FLogStr) do
   begin
     if (FLogStr[I] = '[') then
       F := True;
@@ -1002,7 +998,7 @@ var
   N: string;
 begin
   S := Saga.Engine.Window.Width - 55;
-  L := Saga.Engine.GetTextLength(Saga.Player.GetFullName);
+  L := TEngine.GetTextLength(Saga.Player.GetFullName);
   if (L < S) then
     N := StringOfChar(#32, S - L)
   else
@@ -1038,7 +1034,7 @@ begin
     begin
       Score := StrToIntDef(Trim(Copy(Saga.List[Slot],
         Pos(#32#32, Saga.List[Slot]),
-        Saga.Engine.GetTextLength(Saga.List[Slot]))), 0);
+        TEngine.GetTextLength(Saga.List[Slot]))), 0);
       if (Score < Saga.Player.Score) then
       begin
         if (Slot < 9) then
@@ -1109,11 +1105,22 @@ begin
       S := Trim(SL[I]);
       J := Pos('=', S);
       Self.FID.Append(Trim(Copy(S, 1, J - 1)));
-      Self.FValue.Append(Trim(Copy(S, J + 1, Saga.Engine.GetTextLength(S))));
+      Self.FValue.Append(Trim(Copy(S, J + 1, TEngine.GetTextLength(S))));
     end;
   finally
     SL.Free;
   end;
+end;
+
+procedure TLanguage.SetLanguage(CurrentLanguage: string);
+begin
+  Current := CurrentLanguage;
+  Clear;
+  LoadFromFile(TUtils.GetPath('resources') + Current + '.txt');
+  LoadFromFile(TUtils.GetPath('resources') + Current + '.names.txt');
+  LoadFromFile(TUtils.GetPath('resources') + Current + '.world.txt');
+  LoadFromFile(TUtils.GetPath('resources') + Current + '.terrain.txt');
+  LoadFromFile(TUtils.GetPath('resources') + Current + '.objects.txt');
 end;
 
 procedure TLanguage.Clear;
@@ -1215,7 +1222,7 @@ begin
     FEngine.ForegroundColor(FEngine.DarkColor(Saga.Colors.clHotKey, 60));
   FEngine.Print(X, Y, S);
   FEngine.ForegroundColor(Saga.Colors.clButton);
-  FEngine.Print(X + FEngine.GetTextLength(S) + 1, Y, Caption);
+  FEngine.Print(X + TEngine.GetTextLength(S) + 1, Y, Caption);
 end;
 
 procedure TUI.DrawKey(X, Y: Integer; Caption, Key: string;
@@ -1232,7 +1239,7 @@ begin
         S := TEngine.kcBegin + Key + TEngine.kcEnd + ' ' + Caption;
         L := ((((FEngine.Char.Width * FEngine.Window.Width) +
           (X * FEngine.Char.Width)) div 2)) -
-          ((FEngine.GetTextLength(S) * FEngine.Char.Width) div 2);
+          ((TEngine.GetTextLength(S) * FEngine.Char.Width) div 2);
         DrawKey(L div FEngine.Char.Width, Y, Caption, Key, Active);
       end;
     aRight:
@@ -1251,7 +1258,7 @@ procedure TUI.DrawTitle(Y: Word; Text: string);
 begin
   Engine.ForegroundColor(Saga.Colors.clTitle);
   Engine.Print(0, Y - 1, Text, aCenter);
-  Engine.Print(0, Y, StringOfChar('=', Engine.GetTextLength(Text)), aCenter);
+  Engine.Print(0, Y, StringOfChar('=', TEngine.GetTextLength(Text)), aCenter);
 end;
 
 {$ENDREGION ' TUI '}
@@ -1398,7 +1405,7 @@ begin
       Continue;
     end;
     if (Pos(';', S) > 0) then
-      Delete(S, Pos(';', S), Saga.Engine.GetTextLength(S));
+      Delete(S, Pos(';', S), TEngine.GetTextLength(S));
     FList[I] := S;
   end;
   // ShowMessage(SL.Text);
@@ -1438,7 +1445,7 @@ begin
   P := Pos('(', Link);
   if (P > 0) then
   begin
-    Code := Trim(Copy(Link, P + 1, Saga.Engine.GetTextLength(Link) - P - 1));
+    Code := Trim(Copy(Link, P + 1, TEngine.GetTextLength(Link) - P - 1));
     Link := Trim(Copy(Link, 1, P - 1));
   end;
   if (Code <> '') then
@@ -1487,8 +1494,8 @@ var
 
   function GetLastCode(Tag: string; Code: string): string;
   begin
-    Result := Trim(Copy(Code, Saga.Engine.GetTextLength(Tag) + 2,
-      Saga.Engine.GetTextLength(Code)));
+    Result := Trim(Copy(Code, TEngine.GetTextLength(Tag) + 2,
+      TEngine.GetTextLength(Code)));
   end;
 
   procedure SetNext(Flag: Boolean);
@@ -1503,7 +1510,7 @@ var
   begin
     ACode := Trim(ACode);
     if (ACode = '') then
-      R := Copy(Code, 1, Saga.Engine.GetTextLength(Tag))
+      R := Copy(Code, 1, TEngine.GetTextLength(Tag))
     else
       R := ACode;
     Result := R = Tag;
@@ -1516,7 +1523,7 @@ var
   begin
     Result := False;
     N := AnsiLowerCase(Trim(Copy(S, 1, Pos(K, S) - 1)));
-    Val(Trim(Copy(S, Pos(K, S) + 1, Saga.Engine.GetTextLength(S))), V, A);
+    Val(Trim(Copy(S, Pos(K, S) + 1, TEngine.GetTextLength(S))), V, A);
     if (Vars.Has(N)) then
       A := Vars.GetInt(N)
     else
@@ -1620,7 +1627,7 @@ begin
   if (Pos('=', Code) > 0) and not IsTag('if') and not IsTag('btn') then
   begin
     S := AnsiLowerCase(Trim(Copy(Code, 1, Pos('=', Code) - 1)));
-    L := Trim(Copy(Code, Pos('=', Code) + 1, Saga.Engine.GetTextLength(Code)));
+    L := Trim(Copy(Code, Pos('=', Code) + 1, TEngine.GetTextLength(Code)));
     Vars.SetStr(S, L);
     // Box(S + '=>' + L);
   end;
@@ -1764,7 +1771,7 @@ begin
       S := Trim(A[I]);
       J := Pos(',', S);
       Self.FID.Append(Trim(Copy(S, 1, J - 1)));
-      Self.FValue.Append(Trim(Copy(S, J + 1, Saga.Engine.GetTextLength(S))));
+      Self.FValue.Append(Trim(Copy(S, J + 1, TEngine.GetTextLength(S))));
     end;
   finally
     A.Free;

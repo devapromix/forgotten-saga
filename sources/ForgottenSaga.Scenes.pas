@@ -1083,7 +1083,7 @@ begin
     N := SysUtils.StringReplace(N, '(' + Saga.Dialog.CloseTag + ')', Close,
       [SysUtils.rfIgnoreCase]);
     if (Copy(Trim(LinkList.GetName(I)), 1,
-      Saga.Engine.GetTextLength(Saga.Dialog.CloseTag)) = Saga.Dialog.CloseTag)
+      TEngine.GetTextLength(Saga.Dialog.CloseTag)) = Saga.Dialog.CloseTag)
     then
       S := Close;
     Saga.Engine.ForegroundColor(IfThen(I = MenuPos, Saga.Colors.clTitle,
