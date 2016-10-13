@@ -233,18 +233,26 @@ type
   end;
 
 {$ENDREGION ' TPlayer '}
+{$REGION ' TGenericEntities '}
+type
+  TGenericEntities<T: TEntity> = class(TInterfacedObject)
+  private
+    FEntity: array of T;
+  protected
+    function GetEntity(Index: Integer): T;
+    procedure SetEntity(Index: Integer; const Value: T);
+    procedure  SetEntitiesLength(NewLength: Integer);
+  public
+    property Entity[Index: Integer]: T read GetEntity write SetEntity;
+  end;
+
+{$ENDREGION ' TGenericEntities '}
 {$REGION ' TEntities '}
 
 type
-  TEntities = class(TInterfacedObject, IStorage)
+  TEntities<T: TEntity> = class(TGenericEntities<T>, IStorage)
   private
     Sections: TStringList;
-  strict private
-    FEntity: array of TEntity;
-  protected
-    function GetEntity(Index: Integer): TEntity;
-    procedure SetEntity(Index: Integer; const Value: TEntity);
-    procedure  SetEntitiesLength(NewLength: Integer);
   public
     constructor Create;
     destructor Destroy; override;
@@ -257,7 +265,6 @@ type
     procedure LoadFromFile(const FileName: string); virtual; abstract;
     procedure SaveToFile(const FileName: string); virtual; abstract;
     procedure Delete(const Index: Integer);
-    property Entity[Index: Integer]: TEntity read GetEntity write SetEntity;
     procedure Clear;
   end;
 
@@ -265,26 +272,19 @@ type
 {$REGION ' TCreatures '}
 
 type
-  TCreatures = class(TEntities, IStorage)
-  protected
-    function GetEntity(Index: Integer): TCreature;
-    procedure SetEntity(Index: Integer; const Value: TCreature);
+  TCreatures = class(TEntities<TCreature>, IStorage)
   public
     constructor Create;
     destructor Destroy; override;
     procedure LoadFromFile(const FileName: string); override;
     procedure SaveToFile(const FileName: string); override;
-    property Entity[Index: Integer]: TCreature read GetEntity write SetEntity;
   end;
 
 {$ENDREGION ' TCreatures '}
 {$REGION ' TItems '}
 
 type
-  TItems = class(TEntities, IStorage)
-  protected
-    function GetEntity(Index: Integer): TItem;
-    procedure SetEntity(Index: Integer; const Value: TItem);
+  TItems = class(TEntities<TItem>, IStorage)
   public
     constructor Create;
     destructor Destroy; override;
@@ -295,7 +295,6 @@ type
       Amount: Word = 1);
     function ToString(Item: TItem): string;
     procedure Pickup(I: Integer);
-    property Entity[Index: Integer]: TItem read GetEntity write SetEntity;
   end;
 
 {$ENDREGION ' TItems '}
@@ -1256,7 +1255,7 @@ end;
 {$ENDREGION ' TPlayer '}
 {$REGION ' TEntities '}
 
-procedure TEntities.Clear;
+procedure TEntities<T>.Clear;
 var
   I: Integer;
 begin
@@ -1266,12 +1265,12 @@ begin
   SetLength(FEntity, 0);
 end;
 
-function TEntities.Count: Integer;
+function TEntities<T>.Count: Integer;
 begin
   Result := Length(FEntity);
 end;
 
-function TEntities.Count(X, Y: Integer): Integer;
+function TEntities<T>.Count(X, Y: Integer): Integer;
 var
   I: Integer;
 begin
@@ -1282,29 +1281,24 @@ begin
       Inc(Result);
 end;
 
-constructor TEntities.Create;
+constructor TEntities<T>.Create;
 begin
   Sections := TStringList.Create;
 end;
 
-procedure TEntities.Delete(const Index: Integer);
+procedure TEntities<T>.Delete(const Index: Integer);
 begin
   FEntity[Index].Active := False;
 end;
 
-destructor TEntities.Destroy;
+destructor TEntities<T>.Destroy;
 begin
   Sections.Free;
   Self.Clear;
   inherited;
 end;
 
-function TEntities.GetEntity(Index: Integer): TEntity;
-begin
-  Result := FEntity[Index];
-end;
-
-function TEntities.GetIndex(SectionID: string): Integer;
+function TEntities<T>.GetIndex(SectionID: string): Integer;
 var
   I: Integer;
 begin
@@ -1317,7 +1311,7 @@ begin
     end;
 end;
 
-function TEntities.GetIndex(N, X, Y: Integer): Integer;
+function TEntities<T>.GetIndex(N, X, Y: Integer): Integer;
 var
   I, J: Integer;
 begin
@@ -1336,7 +1330,7 @@ begin
     end;
 end;
 
-function TEntities.Has(X, Y: Integer): Integer;
+function TEntities<T>.Has(X, Y: Integer): Integer;
 var
   I: Integer;
 begin
@@ -1350,23 +1344,13 @@ begin
     end;
 end;
 
-procedure TEntities.Render;
+procedure TEntities<T>.Render;
 var
   I: Integer;
 begin
   for I := 0 to Count - 1 do
     if Entity[I].Active then
       Entity[I].Render;
-end;
-
-procedure TEntities.SetEntitiesLength(NewLength: Integer);
-begin
-  SetLength(FEntity, NewLength);
-end;
-
-procedure TEntities.SetEntity(Index: Integer; const Value: TEntity);
-begin
-  FEntity[Index] := Value;
 end;
 
 {$ENDREGION ' TEntities '}
@@ -1380,11 +1364,6 @@ end;
 destructor TCreatures.Destroy;
 begin
   inherited;
-end;
-
-function TCreatures.GetEntity(Index: Integer): TCreature;
-begin
-  Result := inherited GetEntity(Index) as TCreature;
 end;
 
 procedure TCreatures.LoadFromFile(const FileName: string);
@@ -1452,11 +1431,6 @@ begin
   end;
 end;
 
-procedure TCreatures.SetEntity(Index: Integer; const Value: TCreature);
-begin
-  inherited SetEntity(Index, Value);
-end;
-
 {$ENDREGION ' TCreatures '}
 {$REGION ' TItems '}
 
@@ -1506,11 +1480,6 @@ begin
   inherited;
 end;
 
-function TItems.GetEntity(Index: Integer): TItem;
-begin
-  Result := inherited GetEntity(Index) as TItem;
-end;
-
 procedure TItems.LoadFromFile(const FileName: string);
 var
   I, L: Integer;
@@ -1553,11 +1522,6 @@ begin
   finally
     F.Free;
   end;
-end;
-
-procedure TItems.SetEntity(Index: Integer; const Value: TItem);
-begin
-  inherited SetEntity(Index, Value);
 end;
 
 function TItems.ToString(Item: TItem): string;
@@ -1924,5 +1888,23 @@ begin
 end;
 
 {$ENDREGION ' TMapGenerator '}
+{$REGION ' TGenericEntities '}
+
+function TGenericEntities<T>.GetEntity(Index: Integer): T;
+begin
+  Result := FEntity[Index];
+end;
+
+procedure TGenericEntities<T>.SetEntitiesLength(NewLength: Integer);
+begin
+  SetLength(FEntity, NewLength);
+end;
+
+procedure TGenericEntities<T>.SetEntity(Index: Integer; const Value: T);
+begin
+  FEntity[Index] := Value;
+end;
+
+{$ENDREGION ' TGenericEntities '}
 
 end.
