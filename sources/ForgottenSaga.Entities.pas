@@ -166,7 +166,7 @@ type
 {$REGION ' TPlayer '}
 
 type
-  TPlayer = class(TCreature)
+  TPlayer = class sealed(TCreature)
   public const
     InfFmt = '%s %s';
   private const

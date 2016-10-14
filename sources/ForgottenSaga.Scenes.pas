@@ -50,9 +50,9 @@ type
     procedure SetDialog(ID: Byte);
     procedure SetBattle(ID: Byte);
     procedure PlayerMove(X, Y: Integer);
+    procedure RenderPlayerInfo;
   public
     procedure Render; override;
-    procedure RenderPlayerInfo;
     procedure Update(var Key: Word); override;
     procedure Timer; override;
   end;
@@ -513,12 +513,12 @@ begin
       end;
     TK_F2:
       begin
-        Saga.LoadSlots;
+        Saga.InitSlots;
         Saga.Stages.SetStage(stSaveMenu, stGame);
       end;
     TK_F3:
       begin
-        Saga.LoadSlots;
+        Saga.InitSlots;
         Saga.Stages.SetStage(stLoadMenu, stGame);
       end;
     TK_LEFT, TK_KP_4, TK_A:
@@ -689,7 +689,7 @@ begin
           end;
         1:
           begin
-            Saga.LoadSlots;
+            Saga.InitSlots;
             Saga.Stages.SetStage(stLoadMenu, stMainMenu);
           end;
         2:
@@ -734,12 +734,12 @@ begin
           Saga.Stages.SetStage(stGame);
         1:
           begin
-            Saga.LoadSlots;
+            Saga.InitSlots;
             Saga.Stages.SetStage(stSaveMenu, stGameMenu);
           end;
         2:
           begin
-            Saga.LoadSlots;
+            Saga.InitSlots;
             Saga.Stages.SetStage(stLoadMenu, stGameMenu);
           end;
         3:

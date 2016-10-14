@@ -344,7 +344,7 @@ type
     destructor Destroy; override;
     procedure New();
     procedure Init;
-    procedure LoadSlots;
+    procedure InitSlots;
     procedure ClearLogs;
     procedure ClearSlots;
     procedure AddRace(ID: TRaceEnum; Name: string; Life, Mana: Word;
@@ -730,11 +730,11 @@ end;
 procedure TSaga.New;
 begin
   Player.Clear;
-  Saga.ClearLogs;
+  ClearLogs;
   World.LoadFromDir(TUtils.GetPath('resources'));
   // World.Gen(0); // Пока вместо редактора
   Stages.SetStage(stGame);
-  Saga.Notification.Add('Создан новый мир');
+  Notification.Add('Создан новый мир');
 end;
 
 function TSaga.LoadFromSlot(Slot: Byte): Boolean;
@@ -749,7 +749,7 @@ begin
   Dialog.Vars.LoadFromFile(GetSlotPath(Slot) + 'vars.txt');
   Result := True;
   if Result then
-    Saga.Notification.Add('Игра успешно загружена');
+    Notification.Add('Игра успешно загружена');
 end;
 
 procedure TSaga.SaveToSlot(Slot: Byte);
@@ -763,7 +763,7 @@ begin
     __(World.GetMap(Player.Map).Name)]);
   FList.SaveToFile(TUtils.GetPath('save') + 'list.txt'{$IFNDEF FPC},
     TEncoding.UTF8{$ENDIF});
-  Saga.Notification.Add('Игра успешно сохранена');
+  Notification.Add('Игра успешно сохранена');
 end;
 
 procedure TSaga.SetLog(I: TLogEnum; const Value: TLog);
@@ -787,7 +787,7 @@ begin
   Race[ID].Map := Map;
 end;
 
-procedure TSaga.LoadSlots;
+procedure TSaga.InitSlots;
 var
   F: string;
 begin
