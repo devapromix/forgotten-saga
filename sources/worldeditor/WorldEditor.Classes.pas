@@ -12,7 +12,7 @@ function __(S: string): string;
 type
   TEditor = class(TSaga)
   private
-    FMap: TMap;
+    FCurrentMap: TMap;
     FPos: TPoint;
     FToolBarHeight: Integer;
     FTile: TTiles.TTileEnum;
@@ -33,7 +33,7 @@ type
     property CurrentMapFile: string read FCurrentMapFile write FCurrentMapFile;
     property Pos: TPoint read FPos write FPos;
     property ToolBarHeight: Integer read FToolBarHeight write FToolBarHeight;
-    property Map: TMap read FMap write FMap;
+    property CurrentMap: TMap read FCurrentMap write FCurrentMap;
     property Tile: TTiles.TTileEnum read FTile write FTile;
     property Modified: Boolean read FModified write FModified;
     property Creatures: TCreatures read FCreatures write FCreatures;
@@ -62,10 +62,10 @@ end;
 constructor TEditor.Create;
 begin
   inherited Create(TMap.Size.Width, TMap.Size.Height);
-  Map := TMap.Create;
+  CurrentMap := TMap.Create;
+  CurrentMapFile := '';
   Creatures := TCreatures.Create;
   Items := TItems.Create;
-  CurrentMapFile := '';
   Modified := False;
 end;
 
@@ -73,7 +73,7 @@ destructor TEditor.Destroy;
 begin
   Items.Free;
   Creatures.Free;
-  Map.Free;
+  CurrentMap.Free;
   inherited;
 end;
 
@@ -89,7 +89,7 @@ begin
       begin
         case Layer of
           lrTerrain, lrObjects:
-            Map.SetTile(Pos.X, Pos.Y, Layer, Self.Tile);
+            CurrentMap.SetTile(Pos.X, Pos.Y, Layer, Self.Tile);
         end;
         Modified := True;
       end;
@@ -97,7 +97,7 @@ begin
       begin
         case Layer of
           lrTerrain, lrObjects:
-            Map.SetTile(Pos.X, Pos.Y, Layer, tNone);
+            CurrentMap.SetTile(Pos.X, Pos.Y, Layer, tNone);
         end;
         Modified := True;
       end;
@@ -108,8 +108,8 @@ procedure TEditor.MouseMove(Layer: TMap.TLayerEnum; X, Y: Integer);
 begin
   Pos := Point(X div Engine.Char.Width, (Y - ToolBarHeight)
     div Engine.Char.Height);
-  if (GetKeyState(VK_LBUTTON) < 0) and (Map.CellInMap(Pos.X, Pos.Y)) then
-    Map.SetTile(Pos.X, Pos.Y, Layer, Self.Tile);
+  if (GetKeyState(VK_LBUTTON) < 0) and (CurrentMap.CellInMap(Pos.X, Pos.Y)) then
+    CurrentMap.SetTile(Pos.X, Pos.Y, Layer, Self.Tile);
 end;
 
 procedure TEditor.RenderCreatures;
@@ -141,12 +141,12 @@ var
   X, Y: Integer;
   TerTile, ObjTile: TTiles.TTileProp;
 begin
-  for Y := 0 to Map.Height - 1 do
-    for X := 0 to Map.Width - 1 do
-      if not Map.HasTile(tNone, X, Y, lrObjects) then
+  for Y := 0 to CurrentMap.Height - 1 do
+    for X := 0 to CurrentMap.Width - 1 do
+      if not CurrentMap.HasTile(tNone, X, Y, lrObjects) then
       begin
-        TerTile := Editor.Tiles.GetTile(Map.GetTile(X, Y, lrTerrain));
-        ObjTile := Editor.Tiles.GetTile(Map.GetTile(X, Y, lrObjects));
+        TerTile := Editor.Tiles.GetTile(CurrentMap.GetTile(X, Y, lrTerrain));
+        ObjTile := Editor.Tiles.GetTile(CurrentMap.GetTile(X, Y, lrObjects));
         Editor.UI.DrawChar(X, Y, ObjTile.Symbol, ObjTile.Color,
           Editor.Engine.DarkColor(TerTile.Color, TTiles.TileDarkPercent));
       end;
@@ -157,10 +157,10 @@ var
   X, Y: Integer;
   TerTile: TTiles.TTileProp;
 begin
-  for Y := 0 to Map.Height - 1 do
-    for X := 0 to Map.Width - 1 do
+  for Y := 0 to CurrentMap.Height - 1 do
+    for X := 0 to CurrentMap.Width - 1 do
     begin
-      TerTile := Editor.Tiles.GetTile(Map.GetTile(X, Y, lrTerrain));
+      TerTile := Editor.Tiles.GetTile(CurrentMap.GetTile(X, Y, lrTerrain));
       Editor.UI.DrawChar(X, Y, TerTile.Symbol, TerTile.Color,
         Editor.Engine.DarkColor(TerTile.Color, TTiles.TileDarkPercent));
     end;

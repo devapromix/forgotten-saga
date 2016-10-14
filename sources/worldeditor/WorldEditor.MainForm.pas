@@ -290,7 +290,7 @@ begin
   if OD.Execute then
   begin
     Editor.CurrentMapFile := OD.FileName;
-    Editor.Map.LoadFromFile(Editor.CurrentMapFile);
+    Editor.CurrentMap.LoadFromFile(Editor.CurrentMapFile);
 
     Editor.Items.LoadFromFile(ChangeFileExt(Editor.CurrentMapFile, '.itm'));
     ItmListBox.Clear;
@@ -318,7 +318,7 @@ procedure TfMain.ToolButton4Click(Sender: TObject);
 begin
   if (Editor.CurrentMapFile <> '') then
   begin
-    Editor.Map.SaveToFile(Editor.CurrentMapFile);
+    Editor.CurrentMap.SaveToFile(Editor.CurrentMapFile);
     Editor.Modified := False;
     UpdateCaption;
   end;

@@ -62,7 +62,7 @@ var
 begin
   fMain.ObjListBox.ItemIndex := fNew.cbObjSpot.ItemIndex;
   G := TMapGenerator.Create;
-  G.Map := Editor.Map;
+  G.Map := Editor.CurrentMap;
   try
     G.Num := StrToIntDef(edObjSpotSize.Text, 25);
     C := StrToIntDef(edObjSpotCount.Text, 10);
@@ -83,7 +83,7 @@ var
 begin
   fMain.TerListBox.ItemIndex := fNew.cbTerSpot.ItemIndex;
   G := TMapGenerator.Create;
-  G.Map := Editor.Map;
+  G.Map := Editor.CurrentMap;
   try
     G.Num := StrToIntDef(edTerSpotSize.Text, 25);
     C := StrToIntDef(edTerSpotCount.Text, 10);
@@ -103,7 +103,7 @@ var
   I: Integer;
 begin
   G := TMapGenerator.Create;
-  G.Map := Editor.Map;
+  G.Map := Editor.CurrentMap;
   try
     G.MGTiles.Wall := (fMain.GetRealTile(cbWall.ItemIndex, ltTerrain));
     G.MGTiles.Floor := (fMain.GetRealTile(cbFloor.ItemIndex, ltTerrain));
@@ -124,7 +124,7 @@ procedure TfNew.btObjFillClick(Sender: TObject);
 begin
   fMain.ObjListBox.ItemIndex := fNew.cbObjects.ItemIndex;
   fMain.ObjListBoxClick(Self);
-  Editor.Map.FillLayer(lrObjects, Editor.Tile);
+  Editor.CurrentMap.FillLayer(lrObjects, Editor.Tile);
   Editor.Modified := True;
   fMain.UpdateCaption();
   fMain.Refresh;
@@ -134,7 +134,7 @@ procedure TfNew.btTerFillClick(Sender: TObject);
 begin
   fMain.TerListBox.ItemIndex := fNew.cbTerrain.ItemIndex;
   fMain.TerListBoxClick(Self);
-  Editor.Map.FillLayer(lrTerrain, Editor.Tile);
+  Editor.CurrentMap.FillLayer(lrTerrain, Editor.Tile);
   Editor.Modified := True;
   fMain.UpdateCaption();
   fMain.Refresh;

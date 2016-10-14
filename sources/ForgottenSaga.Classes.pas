@@ -371,10 +371,10 @@ type
     property Dialog: TScript read FDialog write FDialog;
   end;
 
+{$ENDREGION ' TSaga '}
+
 var
   Saga: TSaga;
-
-{$ENDREGION ' TSaga '}
 
 implementation
 
