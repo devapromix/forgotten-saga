@@ -384,7 +384,7 @@ uses Math, SysUtils, Dialogs;
 
 function __(S: string): string;
 begin
-  Result := '';
+  Result := '?';
   if (S = '') then
     Exit;
   Result := Saga.Lg.Get(S);
@@ -614,9 +614,12 @@ begin
     Self.Log[L] := TLog.Create(LogLen[L]);
 
   Lg := TLanguage.Create;
+  Lg.SetLanguage('russian');
 
   FPlayer := TPlayer.Create;
+
   FStages := TStages.Create;
+
   FWorld := TWorld.Create;
 
   for R := Low(TRaceEnum) to High(TRaceEnum) do
@@ -625,11 +628,16 @@ begin
   FColors := TColors.Create;
 
   FBattle := TBattle.Create;
+
   FQuest := TQuest.Create;
-  FTiles := TTiles.Create;
+
+  Tiles := TTiles.Create;
+  Tiles.LoadFromFile(TUtils.GetPath('resources') + 'terrain.ini');
+
   FDialog := TScript.Create;
 
   FNotification := TNotification.Create();
+
   FRecs := TRecs.Create(TUtils.GetPath('save') + 'records.txt');
 
   Stages.SetStage(stMainMenu);
@@ -655,15 +663,8 @@ begin
     S.Free;
   end;
 
-  // Localization
-  Lg.SetLanguage('russian');
-
   // Colors
   Colors.LoadFromFile(TUtils.GetPath('resources') + 'colors.ini');
-
-  // Tiles
-  Tiles.LoadFromFile(TUtils.GetPath('resources') + 'terrain.ini');
-  // Tiles.LoadFromFile(GetPath('resources') + 'objects.ini');
 
   // Races
   AddRace(rcGoblin, __('Goblin'), 90, 100, Point(40, 20), 0, $00882295);

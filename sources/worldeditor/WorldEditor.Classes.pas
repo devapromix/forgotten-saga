@@ -15,13 +15,11 @@ type
     FMap: TMap;
     FPos: TPoint;
     FToolBarHeight: Integer;
-    FTiles: TTiles;
     FTile: TTiles.TTileEnum;
     FCurrentMapFile: string;
     FModified: Boolean;
     FCreatures: TCreatures;
     FItems: TItems;
-    FLg: TLanguage;
   public
     constructor Create;
     destructor Destroy; override;
@@ -36,12 +34,10 @@ type
     property Pos: TPoint read FPos write FPos;
     property ToolBarHeight: Integer read FToolBarHeight write FToolBarHeight;
     property Map: TMap read FMap write FMap;
-    property Tiles: TTiles read FTiles write FTiles;
     property Tile: TTiles.TTileEnum read FTile write FTile;
     property Modified: Boolean read FModified write FModified;
     property Creatures: TCreatures read FCreatures write FCreatures;
     property Items: TItems read FItems write FItems;
-    property Lg: TLanguage read FLg write FLg;
   end;
 
 var
@@ -57,7 +53,7 @@ uses Engine;
 
 function __(S: string): string;
 begin
-  Result := '';
+  Result := '?';
   if (S = '') then
     Exit;
   Result := Editor.Lg.Get(S);
@@ -69,21 +65,14 @@ begin
   Map := TMap.Create;
   Creatures := TCreatures.Create;
   Items := TItems.Create;
-  Lg := TLanguage.Create;
-  Lg.SetLanguage('russian');
   CurrentMapFile := '';
   Modified := False;
-  // Tiles
-  Tiles := TTiles.Create;
-  Tiles.LoadFromFile(TUtils.GetPath('resources') + 'terrain.ini');
 end;
 
 destructor TEditor.Destroy;
 begin
-  Lg.Free;
   Items.Free;
   Creatures.Free;
-  Tiles.Free;
   Map.Free;
   inherited;
 end;
