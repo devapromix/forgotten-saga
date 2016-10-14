@@ -461,8 +461,8 @@ begin
       FMaps[I] := TMap.Create;
       FCreatures[I] := TCreatures.Create;
       FItems[I] := TItems.Create;
+      FMaps[I].FileName := Sections[I];
       FMaps[I].Name := F.ReadString(Sections[I], 'Name', '');
-      FMaps[I].FileName := F.ReadString(Sections[I], 'FileName', ''); // ID
       FMaps[I].MapNeighbors[drLeft] := F.ReadString(Sections[I], 'Left', '');
       FMaps[I].MapNeighbors[drUp] := F.ReadString(Sections[I], 'Up', '');
       FMaps[I].MapNeighbors[drRight] := F.ReadString(Sections[I], 'Right', '');

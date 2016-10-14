@@ -289,10 +289,10 @@ var
 begin
   if OD.Execute then
   begin
-    Editor.CurrentMapFile := OD.FileName;
-    Editor.CurrentMap.LoadFromFile(Editor.CurrentMapFile);
+    Editor.CurrentMap.FileName := OD.FileName;
+    Editor.CurrentMap.LoadFromFile(Editor.CurrentMap.FileName);
 
-    Editor.Items.LoadFromFile(ChangeFileExt(Editor.CurrentMapFile, '.itm'));
+    Editor.Items.LoadFromFile(ChangeFileExt(Editor.CurrentMap.FileName, '.itm'));
     ItmListBox.Clear;
     for I := 0 to Editor.Items.Count - 1 do
     begin
@@ -301,7 +301,7 @@ begin
     end;
     ItmListBox.ItemIndex := 0;
 
-    Editor.Creatures.LoadFromFile(ChangeFileExt(Editor.CurrentMapFile, '.crt'));
+    Editor.Creatures.LoadFromFile(ChangeFileExt(Editor.CurrentMap.FileName, '.crt'));
     CrtListBox.Clear;
     for I := 0 to Editor.Creatures.Count - 1 do
     begin
@@ -316,9 +316,9 @@ end;
 
 procedure TfMain.ToolButton4Click(Sender: TObject);
 begin
-  if (Editor.CurrentMapFile <> '') then
+  if (Editor.CurrentMap.FileName <> '') then
   begin
-    Editor.CurrentMap.SaveToFile(Editor.CurrentMapFile);
+    Editor.CurrentMap.SaveToFile(Editor.CurrentMap.FileName);
     Editor.Modified := False;
     UpdateCaption;
   end;
@@ -351,10 +351,10 @@ begin
     S := '*'
   else
     S := '';
-  if (Editor.CurrentMapFile = '') then
+  if (Editor.CurrentMap.FileName = '') then
     Caption := Application.Title
   else
-    Caption := Format('%s%s - %s', [ExtractFileName(Editor.CurrentMapFile), S,
+    Caption := Format('%s%s - %s', [ExtractFileName(Editor.CurrentMap.FileName), S,
       Application.Title]);
 end;
 

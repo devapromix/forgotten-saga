@@ -16,7 +16,6 @@ type
     FPos: TPoint;
     FToolBarHeight: Integer;
     FTile: TTiles.TTileEnum;
-    FCurrentMapFile: string;
     FModified: Boolean;
     FCreatures: TCreatures;
     FItems: TItems;
@@ -30,7 +29,6 @@ type
     procedure MouseMove(Layer: TMap.TLayerEnum; X, Y: Integer);
     procedure MouseDown(Layer: TMap.TLayerEnum; Button: TMouseButton; X, Y: Integer);
     procedure KeyDown(var Key: Word);
-    property CurrentMapFile: string read FCurrentMapFile write FCurrentMapFile;
     property Pos: TPoint read FPos write FPos;
     property ToolBarHeight: Integer read FToolBarHeight write FToolBarHeight;
     property CurrentMap: TMap read FCurrentMap write FCurrentMap;
@@ -63,7 +61,6 @@ constructor TEditor.Create;
 begin
   inherited Create(TMap.Size.Width, TMap.Size.Height);
   CurrentMap := TMap.Create;
-  CurrentMapFile := '';
   Creatures := TCreatures.Create;
   Items := TItems.Create;
   Modified := False;

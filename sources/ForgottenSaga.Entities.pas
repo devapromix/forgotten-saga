@@ -1601,6 +1601,7 @@ constructor TMap.Create;
 begin
   Self.Width := Self.Size.Width;
   Self.Height := Self.Size.Height;
+  Self.FileName := '';
   Clear;
 end;
 
