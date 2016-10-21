@@ -22,14 +22,14 @@ Color=100,128,255
 Dialog=4
 NPC=1
 
-[warg]
-Name=Варг Вождя
+[black_warg]
+Name=Black Warg
 X=8
 Y=10
 Life=100/100
 Symbol=W
-File=warg.qst
-Color=255,128,100
+File=black_warg.qst
+Color=125,125,125
 Dialog=0
 NPC=1
 

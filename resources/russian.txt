@@ -48,3 +48,4 @@ Shaman Varok Tal=Шаман Варок Тал
 Chieftain Trom-Hash=Вождь Тром-Хаш
 Goblin Virn=Гоблин Вирн
 Goblin Telorgon=Гоблин Телоргон
+Black Warg=Черный Варг
