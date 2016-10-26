@@ -573,7 +573,7 @@ end;
 class function TWorld.GoLoc(Dir: TMap.TDir): Boolean;
 var
   MapID: string;
-  I, E: Integer;
+  I: Integer;
   S, N: string;
 begin
   Result := False;
@@ -586,15 +586,16 @@ begin
     begin
       S := Format(FMFmt, [I]);
       N := __(Saga.World.GetMap(I).Name);
-      E := Saga.World.GetMap(I).Level + Round(Saga.Player.Level * 1.25);
       Saga.Log[lgGame].Add(Format(__('You walked in <RED>%s.</>'), [N]));
       if (Pos(S, Saga.Player.Maps) <= 0) then
       begin
         if (I > 0) then
         begin
-          Saga.Log[lgGame].Add(Format('Открыта новая территория: %s. Опыт: +%d.', [N, E]));
           Saga.Player.Maps := Saga.Player.Maps + S;
-          Saga.Player.AddExp(E);
+          Saga.Player.AddExp(Saga.World.GetMap(I).Level +
+            Round(Saga.Player.Level * 0.20));
+          Saga.Log[lgGame]
+            .Add(Format(__('You have opened a new territory: %s.'), [N]));
         end;
       end;
       Saga.Player.Map := I;
