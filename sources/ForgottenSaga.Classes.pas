@@ -64,7 +64,8 @@ type
 type
   TScript = class(TObject)
 {$REGION ' TScript.TVars '}
-  strict private type
+  strict private
+  type
     TVars = class(TInterfacedObject, IStorage)
     strict private
       FID: TStringList;
@@ -132,7 +133,8 @@ type
     TColorsEnum = (ceBlack, ceBlue, ceGreen, ceCyan, ceRed, ceMagenta, ceBrown,
       ceLGray, ceDGray, ceLBlue, ceLGreen, ceLCyan, ceLRed, ceLMagenta,
       ceYellow, ceWhite);
-  strict private const
+  strict private
+  const
     ColorsStr: array [TColorsEnum] of string = ('BLACK', 'BLUE', 'GREEN',
       'CYAN', 'RED', 'MAGENTA', 'BROWN', 'LGRAY', 'DGRAY', 'LBLUE', 'LGREEN',
       'LCYAN', 'LRED', 'LMAGENTA', 'YELLOW', 'WHITE');
@@ -191,6 +193,8 @@ type
 
 type
   TWorld = class(TObject)
+  private const
+    FMFmt = '%d,';
   strict private
     FMaps: array of TMap;
     FCreatures: array of TCreatures;
@@ -463,6 +467,7 @@ begin
       FItems[I] := TItems.Create;
       FMaps[I].FileName := Sections[I];
       FMaps[I].Name := F.ReadString(Sections[I], 'Name', '');
+      FMaps[I].Level := F.ReadInteger(Sections[I], 'Level', 0);
       FMaps[I].MapNeighbors[drLeft] := F.ReadString(Sections[I], 'Left', '');
       FMaps[I].MapNeighbors[drUp] := F.ReadString(Sections[I], 'Up', '');
       FMaps[I].MapNeighbors[drRight] := F.ReadString(Sections[I], 'Right', '');
@@ -568,7 +573,8 @@ end;
 class function TWorld.GoLoc(Dir: TMap.TDir): Boolean;
 var
   MapID: string;
-  I: Integer;
+  I, E: Integer;
+  S, N: string;
 begin
   Result := False;
   MapID := Saga.World.CurrentMap.MapNeighbors[Dir];
@@ -577,10 +583,23 @@ begin
     I := Saga.World.GetMapIndex(MapID);
     if (I < 0) then
       Exit;
-    Saga.Log[lgGame].Add(Format(__('You walked in <RED>%s.</>'),
-      [Saga.World.GetMap(I).Name]));
-    Saga.Player.Map := I;
-    Result := True;
+    begin
+      S := Format(FMFmt, [I]);
+      N := __(Saga.World.GetMap(I).Name);
+      E := Saga.World.GetMap(I).Level + Round(Saga.Player.Level * 1.25);
+      Saga.Log[lgGame].Add(Format(__('You walked in <RED>%s.</>'), [N]));
+      if (Pos(S, Saga.Player.Maps) <= 0) then
+      begin
+        if (I > 0) then
+        begin
+          Saga.Log[lgGame].Add(Format('Открыта новая территория: %s. Опыт: +%d.', [N, E]));
+          Saga.Player.Maps := Saga.Player.Maps + S;
+          Saga.Player.AddExp(E);
+        end;
+      end;
+      Saga.Player.Map := I;
+      Result := True;
+    end;
   end;
 end;
 
@@ -1571,7 +1590,7 @@ begin
   if IsTag('pln') then
   begin
     S := GetLastCode('pln', Code);
-{    if (Vars.Has(S)) then
+{if (Vars.Has(S)) then
       I := Vars.GetInt(S);
     Saga.Log[lgDialog].Add(I.ToString());}
     Saga.Log[lgDialog].Add(S);

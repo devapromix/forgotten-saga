@@ -210,6 +210,7 @@ type
     FPrevName: string;
     FLook: TLook;
     FInventory: TInventory;
+    FMaps: string;
     function GetRadius: Integer;
   public
     constructor Create;
@@ -227,6 +228,7 @@ type
     procedure Defeat;
     procedure Pickup;
     procedure Victory;
+    property Maps: string read FMaps write FMaps;
     procedure AddExp(A: Word);
     property Look: TLook read FLook write FLook;
     property Radius: Integer read GetRadius;
@@ -368,6 +370,7 @@ type
     FMap: TLayer;
     FName: string;
     FFileName: string;
+    FLevel: Integer;
     FWidth: Integer;
     FHeight: Integer;
   public
@@ -393,6 +396,7 @@ type
     procedure Gen;
     property Name: string read FName write FName;
     property FileName: string read FFileName write FFileName;
+    property Level: Integer read FLevel write FLevel;
     property Width: Integer read FWidth write FWidth;
     property Height: Integer read FHeight write FHeight;
   end;
@@ -889,6 +893,7 @@ begin
   Look.Active := False;
   Inventory.Clear();
   FPrevName := '';
+  Maps := '';
 end;
 
 constructor TPlayer.Create;
@@ -902,6 +907,7 @@ begin
   Color := $00FFFFFF;
   Symbol := '@';
   Force := fcAlly;
+  Maps := '';
   Race := 0;
   Map := 0;
 end;
@@ -987,6 +993,7 @@ begin
       Atr[atLife].Add(F.ReadString(S, 'Life', Format(BarFmt, [100, 100])));
       Atr[atMana].Add(F.ReadString(S, 'Mana', Format(BarFmt, [100, 100])));
       Score := F.ReadInteger(S, 'Score', 0);
+      Maps := F.ReadString(S, 'Maps', '');
     end;
   finally
     F.Free;
@@ -1045,6 +1052,7 @@ begin
     F.WriteString(S, 'Mana', Format(BarFmt, [Atr[atMana].Cur,
       Atr[atMana].Max]));
     F.WriteInteger(S, 'Score', Score);
+    F.WriteString(S, 'Maps', Maps);
   finally
     F.Free;
   end;
