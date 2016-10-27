@@ -575,7 +575,9 @@ var
   MapID: string;
   I: Integer;
   S, N: string;
+  F: Boolean;
 begin
+  F := False;
   Result := False;
   MapID := Saga.World.CurrentMap.MapNeighbors[Dir];
   if (MapID <> '') then
@@ -586,7 +588,6 @@ begin
     begin
       S := Format(FMFmt, [I]);
       N := __(Saga.World.GetMap(I).Name);
-      Saga.Log[lgGame].Add(Format(__('You walked in <RED>%s.</>'), [N]));
       if (Pos(S, Saga.Player.Maps) <= 0) then
       begin
         if (I > 0) then
@@ -596,10 +597,14 @@ begin
             Round(Saga.Player.Level * 0.20));
           Saga.Log[lgGame]
             .Add(Format(__('You have opened a new territory: %s.'), [N]));
+          F := True;
         end;
       end;
       Saga.Player.Map := I;
       Result := True;
+      if F then
+        Exit;
+      Saga.Log[lgGame].Add(Format(__('You walked in <RED>%s.</>'), [N]));
     end;
   end;
 end;
