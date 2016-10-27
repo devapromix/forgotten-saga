@@ -33,6 +33,7 @@ Defeat!=Поражение!
 Inventory=Инвентарь
 Pickup all items=Поднять все предметы
 Items=Предметы
+Quest Items=Квестовые Предметы
 You pick up a %s.=Ты поднял %s.
 You are carrying a too much!=Ты перегружен!
 Empty slot=Пустой слот
