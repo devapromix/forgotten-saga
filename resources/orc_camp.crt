@@ -12,7 +12,7 @@ Dialog=3
 NPC=1
 
 [orc_shaman]
-Name=Shaman Varok Tal
+Name=Shaman Varok-Tal
 X=52
 Y=17
 Life=100/100
@@ -20,6 +20,17 @@ Symbol=S
 File=orc_shaman.qst
 Color=100,128,255
 Dialog=4
+NPC=1
+
+[orc_tashak_suum]
+Name=Tashak-Suum
+X=48
+Y=19
+Life=100/100
+Symbol=D
+File=orc_tashak_suum.qst
+Color=45,98,155
+Dialog=0
 NPC=1
 
 [black_warg]

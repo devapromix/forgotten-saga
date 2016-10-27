@@ -48,6 +48,7 @@ Bone Sword=Костяной Меч
 
 Shaman Varok Tal=Шаман Варок Тал
 Chieftain Trom-Hash=Вождь Тром-Хаш
+Tashak-Suum=Ташак-Суум
 Goblin Virn=Гоблин Вирн
 Goblin Telorgon=Гоблин Телоргон
 Black Warg=Черный Варг
