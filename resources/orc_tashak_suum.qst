@@ -26,12 +26,12 @@ dialog orc_camp:orc_tashak_suum:1
 end
 
 :1
-pln У тебя хорошие новости для меня? Ты принес свиную кожу?
+pln Приветствую! У тебя хорошие новости для меня? Ты принес свиную кожу?
 if quest4=1 then
-btn close, Я еще не охотился на кабанов.
+btn close, Нет, но я добуду кожу.
 endif
 if quest4=2 then
-btn bonus4, Кабаны мертвы, а их кожа у меня.
+btn bonus4, Вепри мертвы, а их кожа у меня.
 endif
 end
 
@@ -41,6 +41,7 @@ dialog orc_camp:orc_tashak_suum:2
 qlog 4:Я отдал кожу кожевнику. В награду он дал мне пятьдесят золотых монет - по десять за каждую шкуру.
 qlog 4:close
 inv+ Gold, 50
+inv- Boar Pelt, 5
 exp 9
 btn close, До встречи!
 end

@@ -64,7 +64,7 @@ type
 type
   TScript = class(TObject)
 {$REGION ' TScript.TVars '}
-  strict private
+  public
   type
     TVars = class(TInterfacedObject, IStorage)
     strict private
@@ -1546,12 +1546,21 @@ var
   var
     N: string;
     V, A: Integer;
+    F: Boolean;
   begin
+    F := False;
     Result := False;
     N := AnsiLowerCase(Trim(Copy(S, 1, Pos(K, S) - 1)));
+    if (Copy(N, 1, 4) = 'inv?') then
+    begin
+      System.Delete(N, 1, 5);
+      F := True;
+    end;
     Val(Trim(Copy(S, Pos(K, S) + 1, TEngine.GetTextLength(S))), V, A);
     if (Vars.Has(N)) then
       A := Vars.GetInt(N)
+    else if F then
+      A := Saga.Player.QuestItems.Value(Trim(N))
     else
       A := 0;
     case K of
@@ -1625,27 +1634,36 @@ begin
     case S[1] of
       '-':
         begin
-          ShowMessage('-');
+          //ShowMessage('-');
           InitInv();
+          // Gold
           if (A = 'Gold') then
           begin
-            ShowMessage(IntToStr(V));
+            //ShowMessage(IntToStr(V));
             if (Saga.Player.Gold >= V) then
               Saga.Player.Gold := Saga.Player.Gold - V;
+            Exit;
           end;
+          // Any Item
+          //if (Saga.Player.QuestItems.) then
+          Saga.Player.QuestItems.Del(A, V);
         end;
       '+':
         begin
-          ShowMessage('+');
+          //ShowMessage('+');
           InitInv();
+          // Gold
           if (A = 'Gold') then
           begin
-            ShowMessage(IntToStr(V));
+            //ShowMessage(IntToStr(V));
             Saga.Player.Gold := Saga.Player.Gold + V;
+            Exit;
           end;
+          // Any Item
+          Saga.Player.QuestItems.Add(A, V, False);
         end;
     end;
-    ShowMessage(Format('>%s,%d<', [A, V]));
+    //ShowMessage(Format('>%s,%d<', [A, V]));
   end;
 
   if IsTag('log') then

@@ -11,7 +11,8 @@ uses Classes;
 type
   TStageEnum = (stGame, stMainMenu, stGameMenu, stRaceMenu, stNameMenu,
     stTextMenu, stSaveMenu, stLoadMenu, stBattle, stDefeat, stVictory, stDialog,
-    stQuestLog, stQuestInfo, stAboutMenu, stRecMenu, stItems, stInv);
+    stQuestLog, stQuestInfo, stAboutMenu, stRecMenu, stItems, stInv,
+    stQuestItems);
 
 type
   TStage = class(TInterfacedObject, IInterface)
@@ -99,7 +100,8 @@ type
 
 type
   TStageMainMenu = class(TStageMenu)
-  strict private const
+  strict private
+  const
     FSVersion = '0.0.3';
   public const
     Copyright = 'Copyright (C) 2016 by Sergiy Tkach (DevApromix)';
@@ -221,6 +223,16 @@ type
   end;
 
 type
+  TStageQuestItems = class(TStage)
+  private
+
+  public
+    procedure Render; override;
+    procedure Update(var Key: Word); override;
+    procedure Timer; override;
+  end;
+
+type
   TStageItems = class(TStage)
   private
 
@@ -261,7 +273,8 @@ type
 
 type
   TStageDialog = class(TStageMenu)
-  strict private type
+  strict private
+  type
     TLinks = class
     strict private
       FLabelList: TStringList;
@@ -317,7 +330,8 @@ type
 
 implementation
 
-uses SysUtils, Math, Engine, ForgottenSaga.Classes, ForgottenSaga.Entities;
+uses SysUtils, Dialogs, Math, Engine, ForgottenSaga.Classes,
+  ForgottenSaga.Entities;
 
 {$REGION ' TStages '}
 
@@ -376,6 +390,8 @@ begin
         FStage[I] := TStageItems.Create;
       stInv:
         FStage[I] := TStageInv.Create;
+      stQuestItems:
+        FStage[I] := TStageQuestItems.Create;
     end;
 end;
 
@@ -1053,7 +1069,7 @@ end;
 
 procedure TStageDialog.Render;
 var
-  I, Color: Integer;
+  I: Integer;
   S, N, Close: string;
 begin
   Self.Count := LinkList.Count;
@@ -1084,8 +1100,7 @@ begin
     N := SysUtils.StringReplace(N, '(' + Saga.Dialog.CloseTag + ')', Close,
       [SysUtils.rfIgnoreCase]);
     if (Copy(Trim(LinkList.GetName(I)), 1,
-      TEngine.GetTextLength(Saga.Dialog.CloseTag)) = Saga.Dialog.CloseTag)
-    then
+      TEngine.GetTextLength(Saga.Dialog.CloseTag)) = Saga.Dialog.CloseTag) then
       S := Close;
     Saga.Engine.ForegroundColor(IfThen(I = MenuPos, Saga.Colors.clTitle,
       Saga.Colors.clSplText));
@@ -1336,8 +1351,10 @@ begin
       F := Saga.World.CurrentItems.ToText(Saga.Player.Inventory.Item[I]);
       Saga.UI.DrawKey(15, I + 6, F, chr(I + 64));
     end;
-  Saga.UI.DrawKey(0, Saga.Engine.Window.Height - 6, __('Close'), 'ESC',
-    aCenter);
+  Saga.UI.DrawKey(44, Saga.Engine.Window.Height - 6, __('Close'), 'ESC');
+  Saga.UI.DrawKey(58, Saga.Engine.Window.Height - 6,
+    Format('%s (%d)', [__('Quest Items'), Saga.Player.QuestItems.Count]
+    ), 'SPACE', (Saga.Player.QuestItems.Count > 0));
 end;
 
 procedure TStageInv.Timer;
@@ -1348,6 +1365,9 @@ end;
 procedure TStageInv.Update(var Key: Word);
 begin
   case Key of
+    TK_SPACE:
+      if (Saga.Player.QuestItems.Count > 0) then
+      Saga.Stages.SetStage(stQuestItems);
     TK_ESCAPE:
       Saga.Stages.SetStage(stGame);
   end;
@@ -1421,5 +1441,39 @@ begin
 end;
 
 {$ENDREGION ' TStageItems '}
+{$REGION ' TStageQuestItems '}
+
+procedure TStageQuestItems.Render;
+var
+  I, C: Integer;
+  S: string;
+begin
+  Saga.UI.DrawTitle(5, __('Quest Items'));
+  C := Saga.Player.QuestItems.Count;
+  if (C > 26) then C := 26;
+  for I := 0 to C - 1 do
+  begin
+    S := Format('%s (%d)', [Saga.Player.QuestItems.Name(I),
+      Saga.Player.QuestItems.Value(I)]);
+    Saga.UI.DrawKey(15, I + 6, S, chr(I + 65));
+  end;
+  Saga.UI.DrawKey(0, Saga.Engine.Window.Height - 6, __('Close'),
+    'SPACE', aCenter);
+end;
+
+procedure TStageQuestItems.Timer;
+begin
+
+end;
+
+procedure TStageQuestItems.Update(var Key: Word);
+begin
+  case Key of
+    TK_SPACE:
+      Saga.Stages.SetStage(stInv);
+  end;
+end;
+
+{$ENDREGION ' TStageQuestItems '}
 
 end.

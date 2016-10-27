@@ -163,13 +163,40 @@ type
   end;
 
 {$ENDREGION ' TItem '}
+{$REGION ' TTimeVars '}
+
+type
+  TTimeVars = class(TInterfacedObject, IStorage)
+  strict private const
+    FLS = '%s=%d';
+  strict private
+    FList: TStringList;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    function Count: Integer;
+    function Name(I: Integer): string;
+    function Value(I: Integer): Integer; overload;
+    function Value(I: string): Integer; overload;
+    function IsMove: Boolean;
+    function IsVar(I: string): Boolean;
+    procedure Add(AName: string; AValue: Integer; F: Boolean = True);
+    procedure Del(AName: string; AValue: Integer); overload;
+    procedure Del(AName: string); overload;
+    procedure Clear;
+    procedure Move;
+    procedure LoadFromFile(const FileName: string);
+    procedure SaveToFile(const FileName: string);
+  end;
+
+{$ENDREGION ' TTimeVars '}
 {$REGION ' TPlayer '}
 
 type
   TPlayer = class sealed(TCreature)
   public const
     InfFmt = '%s %s';
-  private const
+  strict private const
     DefRadius = 9;
 {$REGION ' TPlayer.TLook '}
   strict private
@@ -212,6 +239,7 @@ type
     FInventory: TInventory;
     FMaps: string;
     FGold: Integer;
+    FQuestItems: TTimeVars;
     function GetRadius: Integer;
   public
     constructor Create;
@@ -232,6 +260,7 @@ type
     property Maps: string read FMaps write FMaps;
     procedure AddExp(A: Word);
     property Look: TLook read FLook write FLook;
+    property QuestItems: TTimeVars read FQuestItems write FQuestItems;
     property Radius: Integer read GetRadius;
     property Inventory: TInventory read FInventory write FInventory;
     property Gold: Integer read FGold write FGold;
@@ -434,7 +463,7 @@ type
 
 implementation
 
-uses SysUtils, Math, ForgottenSaga.Classes, ForgottenSaga.Scenes;
+uses SysUtils, Dialogs, Math, ForgottenSaga.Classes, ForgottenSaga.Scenes;
 
 {$REGION ' Path find '}
 
@@ -896,6 +925,7 @@ begin
   AddAtr(atMana, Saga.Race[R].Mana, True);
   Look.Active := False;
   Inventory.Clear();
+  QuestItems.Clear;
   FPrevName := '';
   Maps := '';
 end;
@@ -906,6 +936,7 @@ begin
   FPrevName := '';
   Look := TLook.Create;
   Inventory := TInventory.Create();
+  QuestItems := TTimeVars.Create();
   Look.Active := False;
   SetPosition(40, 20);
   Color := $00FFFFFF;
@@ -931,6 +962,7 @@ end;
 
 destructor TPlayer.Destroy;
 begin
+  QuestItems.Free;
   Inventory.Free;
   Look.Free;
   inherited;
@@ -1955,5 +1987,141 @@ begin
 end;
 
 {$ENDREGION ' TGenericEntities '}
+{$REGION ' TTimeVars '}
+
+procedure TTimeVars.Clear;
+begin
+  FList.Clear;
+end;
+
+function TTimeVars.Count: Integer;
+begin
+  Result := FList.Count;
+end;
+
+constructor TTimeVars.Create;
+begin
+  FList := TStringList.Create;
+end;
+
+destructor TTimeVars.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TTimeVars.IsMove: Boolean;
+begin
+  Result := (FList.Count > 0);
+end;
+
+function TTimeVars.Name(I: Integer): string;
+begin
+  Result := FList.Names[I];
+end;
+
+procedure TTimeVars.SaveToFile(const FileName: string);
+begin
+{$IFNDEF FPC}FList.WriteBOM := False; {$ENDIF}
+  FList.SaveToFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
+end;
+
+procedure TTimeVars.Move;
+var
+  I, V: Integer;
+begin
+  if IsMove then
+    with FList do
+      for I := Count - 1 downto 0 do
+      begin
+        V := Value(I);
+        System.Dec(V);
+        if (V > 0) then
+          FList[I] := Format(FLS, [Name(I), V])
+        else
+          Delete(I);
+      end;
+end;
+
+function TTimeVars.Value(I: Integer): Integer;
+begin
+  Result := StrToIntDef(FList.ValueFromIndex[I], 0);
+end;
+
+function TTimeVars.Value(I: string): Integer;
+begin
+  Result := StrToIntDef(FList.Values[I], 0);
+end;
+
+function TTimeVars.IsVar(I: string): Boolean;
+begin
+  Result := (Value(I) > 0);
+end;
+
+procedure TTimeVars.LoadFromFile(const FileName: string);
+begin
+  FList.LoadFromFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
+end;
+
+procedure TTimeVars.Add(AName: string; AValue: Integer; F: Boolean = True);
+var
+  I, V: Integer;
+begin
+  if (Trim(AName) = '') or (AValue <= 0) then
+    Exit;
+  if IsMove then
+    with FList do
+      for I := 0 to Count - 1 do
+      begin
+        if (AName = Name(I)) then
+        begin
+          if F then
+          begin
+          V := Value(I);
+          if (AValue > V) then
+            V := AValue;
+          end else begin
+            V := Value(I) + AValue;
+          end;
+          FList[I] := Format(FLS, [Name(I), V]);
+          Exit;
+        end;
+      end;
+  FList.Append(Format(FLS, [AName, AValue]));
+end;
+
+procedure TTimeVars.Del(AName: string);
+var
+  I: Integer;
+begin
+  with FList do
+    for I := 0 to Count - 1 do
+      if (AName = Name(I)) then
+      begin
+        FList.Delete(I);
+        Exit;
+      end;
+end;
+
+procedure TTimeVars.Del(AName: string; AValue: Integer);
+var
+  I, V: Integer;
+begin
+  with FList do
+    for I := 0 to Count - 1 do
+      if (AName = Name(I)) then
+      begin
+        V := Value(I);
+        System.Dec(V, AValue);
+        if (V > 0) then
+          FList[I] := Format(FLS, [Name(I), V])
+        else
+          Delete(I);
+        Exit;
+      end;
+
+end;
+
+{$ENDREGION ' TTimeVars '}
 
 end.
