@@ -30,9 +30,11 @@ end
 
 :bonus7
 dialog orc_camp:goblin_telorgon:2
+inv- Elk Meat
+inv+ Gold, 75
 qlog 7:Повар взял мясо. Должно получиться хорошее рагу.
 qlog 7:close
-exp 15
+exp 8
 end
 
 :2

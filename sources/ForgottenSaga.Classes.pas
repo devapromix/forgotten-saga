@@ -1515,12 +1515,12 @@ end;
 
 procedure TScript.Run(const Code: string);
 var
-  S, L: string;
-  I, E: Integer;
+  A, S, L: string;
+  I, E, V: Integer;
 
   function GetLastCode(Tag: string; Code: string): string;
   begin
-    Result := Trim(Copy(Code, TEngine.GetTextLength(Tag) + 2,
+    Result := Trim(Copy(Code, TEngine.GetTextLength(Tag) + 1,
       TEngine.GetTextLength(Code)));
   end;
 
@@ -1586,7 +1586,24 @@ var
     // DlgIdx.ToString);
   end;
 
+  procedure InitVars();
+  begin
+
+  end;
+
+  procedure InitInv();
+  begin
+    System.Delete(S, 1, 2);
+    if (Pos(',', S) > 0) then
+      A := Trim(Copy(S, 1, Pos(',', S) - 1))
+    else
+      A := Trim(S);
+    V := StrToIntDef(Trim(Copy(S, Pos(',', S) + 1, Length(S))), 1);
+  end;
+
 begin
+  InitVars();
+
   if IsTag('endif') then
     FIsIf := False;
 
@@ -1600,6 +1617,35 @@ begin
       I := Vars.GetInt(S);
     Saga.Log[lgDialog].Add(I.ToString());}
     Saga.Log[lgDialog].Add(S);
+  end;
+
+  if IsTag('inv') then
+  begin
+    S := GetLastCode('inv', Code);
+    case S[1] of
+      '-':
+        begin
+          ShowMessage('-');
+          InitInv();
+          if (A = 'Gold') then
+          begin
+            ShowMessage(IntToStr(V));
+            if (Saga.Player.Gold >= V) then
+              Saga.Player.Gold := Saga.Player.Gold - V;
+          end;
+        end;
+      '+':
+        begin
+          ShowMessage('+');
+          InitInv();
+          if (A = 'Gold') then
+          begin
+            ShowMessage(IntToStr(V));
+            Saga.Player.Gold := Saga.Player.Gold + V;
+          end;
+        end;
+    end;
+    ShowMessage(Format('>%s,%d<', [A, V]));
   end;
 
   if IsTag('log') then

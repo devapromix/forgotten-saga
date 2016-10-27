@@ -69,6 +69,7 @@ qlog 2:begin
 qlog 2:Дух Варга
 qlog 2:Где-то на Равнине Костей сейчас рыбачит троль Дух Варга. Нужно найти его и отдать пакет.
 dialog orc_camp:orc_leader:4
+inv+ Pack
 end
 
 :4

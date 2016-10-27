@@ -27,6 +27,7 @@ Life=Жизнь
 Mana=Магия
 Adrenalin=Адреналин
 Honor=Слава
+Gold=Золото
 Victory!=Победа!
 Defeat!=Поражение!
 Inventory=Инвентарь

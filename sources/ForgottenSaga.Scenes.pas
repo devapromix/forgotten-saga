@@ -487,8 +487,9 @@ begin
   Saga.Engine.Print(81, 0, __(Saga.World.CurrentMap.Name));
   Saga.Engine.Print(81, 1, Saga.Player.GetFullName);
   Saga.Engine.Print(81, 2, __('Honor') + ' ' + IntToStr(Saga.Player.Score));
+  Saga.Engine.Print(81, 3, __('Gold') + ' ' + IntToStr(Saga.Player.Gold));
   for I := Low(TCreature.TAtrEnum) to High(TCreature.TAtrEnum) do
-    Saga.Engine.Print(81, ord(I) + 3, __(TCreature.AtrStr[I]) + ' ' +
+    Saga.Engine.Print(81, ord(I) + 4, __(TCreature.AtrStr[I]) + ' ' +
       Saga.Player.Atr[I].ToText);
 end;
 

@@ -211,6 +211,7 @@ type
     FLook: TLook;
     FInventory: TInventory;
     FMaps: string;
+    FGold: Integer;
     function GetRadius: Integer;
   public
     constructor Create;
@@ -233,6 +234,7 @@ type
     property Look: TLook read FLook write FLook;
     property Radius: Integer read GetRadius;
     property Inventory: TInventory read FInventory write FInventory;
+    property Gold: Integer read FGold write FGold;
   end;
 
 {$ENDREGION ' TPlayer '}
@@ -886,6 +888,7 @@ begin
   SetPosition(Saga.Race[R].Pos);
   Map := Saga.Race[R].Map;
   Score := 0;
+  Gold := 0;
   Level := 1;
   AddAtr(atExp, cExp, False);
   AddAtr(atAdr, cAdr, False);
@@ -910,6 +913,7 @@ begin
   Force := fcAlly;
   Maps := '';
   Race := 0;
+  Gold := 0;
   Map := 0;
 end;
 
@@ -988,6 +992,7 @@ begin
       SetPosition(X, Y);
       Race := F.ReadInteger(S, 'Race', 0);
       Map := F.ReadInteger(S, 'Map', 0);
+      Gold := F.ReadInteger(S, 'Gold', 0);
       Level := F.ReadInteger(S, 'Level', 1);
       Atr[atExp].Add(F.ReadString(S, 'Exp', Format(BarFmt, [0, cExp])));
       Atr[atAdr].Add(F.ReadString(S, 'Adr', Format(BarFmt, [0, cAdr])));
@@ -1045,6 +1050,7 @@ begin
     F.WriteInteger(S, 'Y', Pos.Y);
     F.WriteInteger(S, 'Race', Race);
     F.WriteInteger(S, 'Map', Map);
+    F.WriteInteger(S, 'Gold', Gold);
     F.WriteInteger(S, 'Level', Level);
     F.WriteString(S, 'Exp', Format(BarFmt, [Atr[atExp].Cur, Atr[atExp].Max]));
     F.WriteString(S, 'Adr', Format(BarFmt, [Atr[atAdr].Cur, Atr[atAdr].Max]));

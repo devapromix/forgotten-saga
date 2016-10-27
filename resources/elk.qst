@@ -11,6 +11,7 @@ dialog orc_camp:goblin_telorgon:1
 dialog forest_of_boars:elk:1
 exp 12
 quest7=2
+inv+ Elk Meat
 qlog 7:В густой чаще я выследил лося и хорошо поохотился. Отнесу мясо Телоргону.
 qlog 7:update
 end
