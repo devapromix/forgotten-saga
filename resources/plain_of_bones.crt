@@ -14,11 +14,11 @@ NPC=1
 [troll_warg_spirit]
 Name=Дух Варга
 X=15
-Y=37
+Y=29
 Life=100/100
 Symbol=T
 File=warg_spirit.qst
-Color=80,140,150
+Color=190,140,150
 Dialog=0
 NPC=1
 
