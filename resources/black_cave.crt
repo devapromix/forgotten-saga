@@ -1,7 +1,7 @@
 ;Black Cave
 
 [0]
-Name=Паук
+Name=Spider
 X=24
 Y=12
 Life=100/100
@@ -11,7 +11,7 @@ Color=255,255,255
 Dialog=0
 NPC=0
 [1]
-Name=Паук
+Name=Spider
 X=22
 Y=25
 Life=100/100
@@ -21,7 +21,7 @@ Color=255,255,255
 Dialog=0
 NPC=0
 [2]
-Name=Паук
+Name=Spider
 X=10
 Y=14
 Life=100/100

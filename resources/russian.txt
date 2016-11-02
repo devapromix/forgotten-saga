@@ -53,3 +53,4 @@ Tashak-Suum=Ташак-Суум
 Goblin Virn=Гоблин Вирн
 Goblin Telorgon=Гоблин Телоргон
 Black Warg=Черный Варг
+Spider=Паук
