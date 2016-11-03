@@ -54,3 +54,10 @@ Goblin Virn=Гоблин Вирн
 Goblin Telorgon=Гоблин Телоргон
 Black Warg=Черный Варг
 Spider=Паук
+
+Vial of water=
+Empty Vial=
+Black Ring=
+Pack=
+Elk Meat=
+Boar Pelt=
