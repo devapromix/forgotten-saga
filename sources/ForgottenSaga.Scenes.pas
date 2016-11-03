@@ -163,7 +163,7 @@ type
     FKeyFlag: Boolean;
   public
     constructor Create;
-    procedure RenderNum;
+    procedure RenderNum(N: Integer = 9);
     procedure Render; override;
     procedure Update(var Key: Word); override;
     property KeyFlag: Boolean read FKeyFlag write FKeyFlag;
@@ -248,7 +248,7 @@ type
 type
   TStageQuestLog = class(TStageStorageMenu)
   private
-
+    function GetRealMenuPos(CurrentMenuPos: Integer): Integer;
   public
     procedure Render; override;
     procedure Update(var Key: Word); override;
@@ -860,14 +860,14 @@ begin
   FKeyFlag := True;
 end;
 
-procedure TStageStorageMenu.RenderNum;
+procedure TStageStorageMenu.RenderNum(N: Integer = 9);
 var
   I, H: ShortInt;
 begin
   Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceLGray));
-  for I := 0 to 9 do
+  for I := 0 to N do
   begin
-    if (I < 9) then
+    if (I < N) then
       H := 2
     else
       H := 1;
@@ -1198,14 +1198,30 @@ end;
 {$ENDREGION ' TStageDefeat '}
 {$REGION ' TStageQuestLog '}
 
+function TStageQuestLog.GetRealMenuPos(CurrentMenuPos: Integer): Integer;
+var
+  I, J: Integer;
+begin
+  J := -1;
+  for I := 0 to Saga.Quest.Count - 1 do
+    if (Saga.Quest.Get(I, 0) <> '') then
+    begin
+      Inc(J);
+      if (J = CurrentMenuPos) then
+      begin
+        Result := J;
+        Break;
+      end;
+    end;
+end;
+
 procedure TStageQuestLog.Render;
 var
-  I: ShortInt;
-begin
-  Saga.UI.DrawTitle(Top, __('Quest log'));
-  for I := 0 to Saga.Quest.Count - 1 do
+  I, J: Integer;
+  SL: TStringList;
+
+  procedure RenderQuestLogCursor(I: Integer);
   begin
-    Saga.Engine.ForegroundColor(Saga.Colors.clTitle);
     if (I = MenuPos) then
     begin
       RenderCursor(I + Top + 2, Saga.Colors.clCursor);
@@ -1213,39 +1229,66 @@ begin
     end
     else
       Saga.Engine.ForegroundColor(Saga.Colors.clMenuDef);
-    if (Saga.Quest.Get(I, 0) <> '') then
+  end;
+
+  procedure RenderQuestLogTitles(I: Integer);
+  begin
+    Saga.Engine.ForegroundColor(Saga.Colors.clTitle);
+    if (Saga.Quest.Get(I - 1, 0) <> '') then
     begin
-      Saga.Engine.Print(25, Top + I + 2, Saga.Quest.Get(I, 0), aLeft)
+      Saga.Engine.Print(25, Top + J + 2, Saga.Quest.Get(I - 1, 0), aLeft)
     end
     else
     begin
       if (I <> MenuPos) then
         Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
-      Saga.Engine.Print(25, Top + I + 2, __('Empty slot'), aLeft);
+      Saga.Engine.Print(25, Top + J + 2, __('Empty slot'), aLeft);
     end;
   end;
-  Self.RenderNum;
+
+begin
+  Saga.UI.DrawTitle(Top, __('Quest log'));
+  SL := TUtils.ExplodeString(',', Saga.Player.Quests);
+  Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
+  for I := 0 to Saga.Quest.Count - 1 do
+  begin
+    RenderQuestLogCursor(I);
+    Saga.Engine.Print(25, Top + I + 2, __('Empty slot'), aLeft);
+  end;
+  for J := 0 to SL.Count - 1 do
+  begin
+    RenderQuestLogTitles(StrToInt(SL[J]));
+  end;
+  // Saga.Engine.Print(0, 0, SL.Text, aLeft); // Debug
+  Self.RenderNum();
   Saga.UI.DrawKey(45, Top + 13, __('Back'), 'ESC');
-  Saga.UI.DrawKey(57, Top + 13, __('Read'), 'ENTER',
-    (Saga.Quest.Get(MenuPos, 0) <> ''));
+  Saga.UI.DrawKey(57, Top + 13, __('Read'), 'ENTER', (MenuPos <= SL.Count - 1));
 end;
 
 procedure TStageQuestLog.Update(var Key: Word);
 var
-  I: Byte;
+  I, J: Integer;
+  SL: TStringList;
 begin
   inherited;
   case Key of
     TK_ESCAPE:
       Saga.Stages.SetStage(stGame);
     TK_ENTER:
-      if (Saga.Quest.Get(MenuPos, 0) <> '') then
       begin
-        Saga.Log[lgQuest].Clear;
-        for I := 1 to 24 do
-          Saga.Log[lgQuest].Add(Saga.Quest.Get(MenuPos, I), False);
-        TStageQuestInfo(Saga.Stages.GetStage(stQuestInfo)).ID := MenuPos;
-        Saga.Stages.SetStage(stQuestInfo);
+        SL := TUtils.ExplodeString(',', Saga.Player.Quests);
+        if (MenuPos < SL.Count) then
+        begin
+          J := StrToInt(SL[MenuPos]) - 1;
+          if (Saga.Quest.Get(J, 0) <> '') then
+          begin
+            Saga.Log[lgQuest].Clear;
+            for I := 1 to 24 do
+              Saga.Log[lgQuest].Add(Saga.Quest.Get(J, I), False);
+            TStageQuestInfo(Saga.Stages.GetStage(stQuestInfo)).ID := J;
+            Saga.Stages.SetStage(stQuestInfo);
+          end;
+        end;
       end;
   end;
 end;
@@ -1353,8 +1396,8 @@ begin
     end;
   Saga.UI.DrawKey(44, Saga.Engine.Window.Height - 6, __('Close'), 'ESC');
   Saga.UI.DrawKey(58, Saga.Engine.Window.Height - 6,
-    Format('%s (%d)', [__('Quest Items'), Saga.Player.QuestItems.Count]
-    ), 'SPACE', (Saga.Player.QuestItems.Count > 0));
+    Format('%s (%d)', [__('Quest Items'), Saga.Player.QuestItems.Count]),
+    'SPACE', (Saga.Player.QuestItems.Count > 0));
 end;
 
 procedure TStageInv.Timer;
@@ -1367,7 +1410,7 @@ begin
   case Key of
     TK_SPACE:
       if (Saga.Player.QuestItems.Count > 0) then
-      Saga.Stages.SetStage(stQuestItems);
+        Saga.Stages.SetStage(stQuestItems);
     TK_ESCAPE:
       Saga.Stages.SetStage(stGame);
   end;
@@ -1450,7 +1493,8 @@ var
 begin
   Saga.UI.DrawTitle(5, __('Quest Items'));
   C := Saga.Player.QuestItems.Count;
-  if (C > 26) then C := 26;
+  if (C > 26) then
+    C := 26;
   for I := 0 to C - 1 do
   begin
     S := Format('%s (%d)', [Saga.Player.QuestItems.Name(I),

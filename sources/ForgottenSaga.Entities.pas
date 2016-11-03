@@ -236,9 +236,10 @@ type
     FScore: Word;
     FPrevName: string;
     FLook: TLook;
+    FGold: Integer;
     FInventory: TInventory;
     FMaps: string;
-    FGold: Integer;
+    FQuests: string;
     FQuestItems: TTimeVars;
     function GetRadius: Integer;
   public
@@ -258,6 +259,7 @@ type
     procedure Pickup;
     procedure Victory;
     property Maps: string read FMaps write FMaps;
+    property Quests: string read FQuests write FQuests;
     procedure AddExp(A: Word);
     property Look: TLook read FLook write FLook;
     property QuestItems: TTimeVars read FQuestItems write FQuestItems;
@@ -928,6 +930,7 @@ begin
   QuestItems.Clear;
   FPrevName := '';
   Maps := '';
+  Quests := '';
 end;
 
 constructor TPlayer.Create;
@@ -943,6 +946,7 @@ begin
   Symbol := '@';
   Force := fcAlly;
   Maps := '';
+  Quests := '';
   Race := 0;
   Gold := 0;
   Map := 0;
@@ -1032,6 +1036,7 @@ begin
       Atr[atMana].Add(F.ReadString(S, 'Mana', Format(BarFmt, [100, 100])));
       Score := F.ReadInteger(S, 'Score', 0);
       Maps := F.ReadString(S, 'Maps', '');
+      Quests := F.ReadString(S, 'Quests', '');
     end;
   finally
     F.Free;
@@ -1092,6 +1097,7 @@ begin
       Atr[atMana].Max]));
     F.WriteInteger(S, 'Score', Score);
     F.WriteString(S, 'Maps', Maps);
+    F.WriteString(S, 'Quests', Quests);
   finally
     F.Free;
   end;

@@ -193,7 +193,7 @@ type
 
 type
   TWorld = class(TObject)
-  private const
+  public const
     FMFmt = '%d,';
   strict private
     FMaps: array of TMap;
@@ -1515,7 +1515,7 @@ end;
 
 procedure TScript.Run(const Code: string);
 var
-  A, S, L: string;
+  A, S, Q, L: string;
   I, E, V: Integer;
 
   function GetLastCode(Tag: string; Code: string): string;
@@ -1695,8 +1695,13 @@ begin
     Val(L, I, E);
     if IsTag('begin', S) then
     begin
-      Saga.Log[lgGame].Add(__('The new quest is added to the log.'));
-      Exit;
+      Q := Format(TWorld.FMFmt, [I]);
+      if (Pos(S, Saga.Player.Maps) <= 0) and (I > 0) then
+      begin
+        Saga.Player.Quests := Saga.Player.Quests + Q;
+        Saga.Log[lgGame].Add(__('The new quest is added to the log.'));
+      end;
+     Exit;
     end;
     if IsTag('update', S) then
     begin
