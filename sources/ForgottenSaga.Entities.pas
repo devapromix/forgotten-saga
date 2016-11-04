@@ -150,6 +150,8 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+    class function GetCategory(S: string): TCategory;
+    class function GetMaterial(S: string): TMaterial;
     procedure Render; override;
     procedure Assign(Value: TItem);
     procedure Calc;
@@ -167,7 +169,8 @@ type
 
 type
   TTimeVars = class(TInterfacedObject, IStorage)
-  strict private const
+  strict private
+  const
     FLS = '%s=%d';
   strict private
     FList: TStringList;
@@ -196,7 +199,8 @@ type
   TPlayer = class sealed(TCreature)
   public const
     InfFmt = '%s %s';
-  strict private const
+  strict private
+  const
     DefRadius = 9;
 {$REGION ' TPlayer.TLook '}
   strict private
@@ -842,6 +846,38 @@ destructor TItem.Destroy;
 begin
   Durability.Free;
   inherited;
+end;
+
+class function TItem.GetCategory(S: string): TCategory;
+var
+  C: TItem.TCategory;
+begin
+  S := LowerCase(Trim(S));
+  Result := ctNone;
+  if (S = '') then
+    Exit;
+  for C := Low(TItem.TCategory) to High(TItem.TCategory) do
+    if (S = TItem.CatStr[C]) then
+    begin
+      Result := C;
+      Exit;
+    end;
+end;
+
+class function TItem.GetMaterial(S: string): TMaterial;
+var
+  M: TItem.TMaterial;
+begin
+  S := LowerCase(Trim(S));
+  Result := mtNone;
+  if (S = '') then
+    Exit;
+  for M := Low(TItem.TMaterial) to High(TItem.TMaterial) do
+    if (S = TItem.MatStr[M]) then
+    begin
+      Result := M;
+      Exit;
+    end;
 end;
 
 procedure TItem.LoadFromFile(const FileName, Section: string);
@@ -1597,8 +1633,11 @@ function TItems.ToText(Item: TItem): string;
 begin
   Result := '';
   if (Item.Count = 1) then
-    Result := Format('(' + TEntity.BarFmt + ')',
-      [Item.Durability.Cur, Item.Durability.Max])
+  begin
+    if (Ord(Item.Material) > 0) then
+      Result := Format('(' + TEntity.BarFmt + ')',
+        [Item.Durability.Cur, Item.Durability.Max])
+  end
   else if (Item.Count > 1) then
     Result := Format('(%dx)', [Item.Count]);
   Result := Format(TEntity.KeyFmt + ' %s', [Item.Symbol, __(Item.Name),
@@ -2083,10 +2122,12 @@ begin
         begin
           if F then
           begin
-          V := Value(I);
-          if (AValue > V) then
-            V := AValue;
-          end else begin
+            V := Value(I);
+            if (AValue > V) then
+              V := AValue;
+          end
+          else
+          begin
             V := Value(I) + AValue;
           end;
           FList[I] := Format(FLS, [Name(I), V]);

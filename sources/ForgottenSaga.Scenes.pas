@@ -1497,7 +1497,7 @@ begin
     C := 26;
   for I := 0 to C - 1 do
   begin
-    S := Format('%s (%d)', [Saga.Player.QuestItems.Name(I),
+    S := Format('%s (%dx)', [Saga.Player.QuestItems.Name(I),
       Saga.Player.QuestItems.Value(I)]);
     Saga.UI.DrawKey(15, I + 6, S, chr(I + 65));
   end;

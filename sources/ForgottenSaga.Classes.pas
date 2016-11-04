@@ -64,8 +64,7 @@ type
 type
   TScript = class(TObject)
 {$REGION ' TScript.TVars '}
-  public
-  type
+  public type
     TVars = class(TInterfacedObject, IStorage)
     strict private
       FID: TStringList;
@@ -1294,18 +1293,9 @@ function TIniFile.ReadCategory(Section, Ident: string;
   DefaultValue: TItem.TCategory): TItem.TCategory;
 var
   S: string;
-  C: TItem.TCategory;
 begin
   S := LowerCase(Trim(ReadString(Section, Ident, TItem.CatStr[DefaultValue])));
-  Result := ctNone;
-  if (S = '') then
-    Exit;
-  for C := Low(TItem.TCategory) to High(TItem.TCategory) do
-    if (S = TItem.CatStr[C]) then
-    begin
-      Result := C;
-      Exit;
-    end;
+  Result := TItem.GetCategory(S);
 end;
 
 var
@@ -1356,18 +1346,9 @@ function TIniFile.ReadMaterial(Section, Ident: string;
   DefaultValue: TItem.TMaterial): TItem.TMaterial;
 var
   S: string;
-  M: TItem.TMaterial;
 begin
   S := LowerCase(Trim(ReadString(Section, Ident, TItem.MatStr[DefaultValue])));
-  Result := mtNone;
-  if (S = '') then
-    Exit;
-  for M := Low(TItem.TMaterial) to High(TItem.TMaterial) do
-    if (S = TItem.MatStr[M]) then
-    begin
-      Result := M;
-      Exit;
-    end;
+  Result := TItem.GetMaterial(S);
 end;
 
 procedure TIniFile.WriteCategory(Section, Ident: string;
@@ -1515,7 +1496,7 @@ end;
 
 procedure TScript.Run(const Code: string);
 var
-  A, S, Q, L: string;
+  A, S, Q, L, T: string;
   I, E, V: Integer;
 
   function GetLastCode(Tag: string; Code: string): string;
@@ -1607,7 +1588,39 @@ var
       A := Trim(Copy(S, 1, Pos(',', S) - 1))
     else
       A := Trim(S);
-    V := StrToIntDef(Trim(Copy(S, Pos(',', S) + 1, Length(S))), 1);
+    T := Trim(Copy(S, Pos(',', S) + 1, Length(S)));
+    V := StrToIntDef(T, 1);
+  end;
+
+  procedure AddItem(S: string);
+  var
+    SL: TStringList;
+    Item: TItem;
+    R, G, B: Byte;
+  begin
+    SL := TUtils.ExplodeString(',', S);
+    Item := TItem.Create;
+    try
+    with Item do
+    begin
+      Name := Trim(SL[0]);
+      Level := StrToIntDef(SL[1], 1);
+      Category := TItem.GetCategory(SL[2]);
+      Material := TItem.GetMaterial(SL[3]);
+      Symbol := Trim(SL[4])[1];
+      R := StrToIntDef(SL[5], 200);
+      G := StrToIntDef(SL[6], 200);
+      B := StrToIntDef(SL[7], 200);
+      Color := R or (G shl 8) or (B shl 16);
+      Count := StrToIntDef(SL[8], 1);
+      Calc;
+      Durability.Cur := StrToIntDef(SL[9], Durability.Max);
+    end;
+    if Saga.Player.Inventory.AddItem(Item) then
+      Saga.Log[lgGame].Add(Format(__('You pick up a %s.'), [Item.Name]));
+    finally
+      Item.Free;
+    end;
   end;
 
 begin
@@ -1634,36 +1647,41 @@ begin
     case S[1] of
       '-':
         begin
-          //ShowMessage('-');
+          // ShowMessage('-');
           InitInv();
           // Gold
           if (A = 'Gold') then
           begin
-            //ShowMessage(IntToStr(V));
+            // ShowMessage(IntToStr(V));
             if (Saga.Player.Gold >= V) then
               Saga.Player.Gold := Saga.Player.Gold - V;
             Exit;
           end;
           // Any Item
-          //if (Saga.Player.QuestItems.) then
+          // if (Saga.Player.QuestItems.) then
           Saga.Player.QuestItems.Del(A, V);
         end;
       '+':
         begin
-          //ShowMessage('+');
+          // ShowMessage('+');
           InitInv();
           // Gold
           if (A = 'Gold') then
           begin
-            //ShowMessage(IntToStr(V));
+            // ShowMessage(IntToStr(V));
             Saga.Player.Gold := Saga.Player.Gold + V;
+            Exit;
+          end;
+          if (A = 'Item') then
+          begin
+            AddItem(T);
             Exit;
           end;
           // Any Item
           Saga.Player.QuestItems.Add(A, V, False);
         end;
     end;
-    //ShowMessage(Format('>%s,%d<', [A, V]));
+    // ShowMessage(Format('>%s,%d<', [A, V]));
   end;
 
   if IsTag('log') then
@@ -1701,7 +1719,7 @@ begin
         Saga.Player.Quests := Saga.Player.Quests + Q;
         Saga.Log[lgGame].Add(__('The new quest is added to the log.'));
       end;
-     Exit;
+      Exit;
     end;
     if IsTag('update', S) then
     begin

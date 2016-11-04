@@ -2,37 +2,46 @@
 
 [0]
 Name=Battle Axe
+Level=2
 Category=Axe
 Material=Metal
-Level=2
-Durability=31
 X=40
 Y=22
 Symbol=)
 Color=255,255,255
 Count=1
+Durability=31
 
 [1]
 Name=Short Spear
+Level=1
 Category=Spear
 Material=Wood
-Level=1
-Durability=11
 X=41
 Y=22
 Symbol=)
 Color=255,255,255
 Count=1
+Durability=11
 
 [2]
 Name=Bone Sword
+Level=2
 Category=Sword
 Material=Bone
-Level=2
-Durability=19
 X=42
 Y=22
 Symbol=)
 Color=255,255,255
+Count=1
+Durability=19
+
+[3]
+Name=Healing Potion
+Level=3
+X=43
+Y=22
+Symbol=!
+Color=255,40,40
 Count=1
 
