@@ -8,7 +8,7 @@ Life=190/190
 Symbol=L
 File=orc_leader.qst
 Color=200,160,255
-Dialog=3
+Dialog=0
 NPC=1
 
 [orc_shaman]
@@ -19,7 +19,7 @@ Life=100/100
 Symbol=S
 File=orc_shaman.qst
 Color=100,128,255
-Dialog=4
+Dialog=0
 NPC=1
 
 [orc_tashak_suum]
