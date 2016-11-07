@@ -39,6 +39,7 @@ type
       Active: Boolean = True); overload;
     procedure DrawKey(X, Y: Integer; Caption: string; Key: string;
       Align: TEngine.TAlign; Active: Boolean = True); overload;
+    procedure DrawKeys(Y: Integer; S: string);
     property Engine: TEngine read FEngine write FEngine;
   end;
 
@@ -1272,6 +1273,11 @@ begin
 
       end;
   end;
+end;
+
+procedure TUI.DrawKeys(Y: Integer; S: string);
+begin
+
 end;
 
 constructor TUI.Create(AEngine: TEngine);

@@ -228,6 +228,7 @@ type
       function Count: Integer;
       property Item[I: TInvByte]: TItem read GetItem write SetItem;
       function AddItem(Value: TItem): Boolean;
+      function Add(Value: TItem): Boolean;
       procedure LoadFromFile(const FileName: string);
       procedure SaveToFile(const FileName: string);
       procedure Clear(I: TInvByte); overload;
@@ -345,7 +346,7 @@ type
     procedure Add(Symbol: Char; Color, Level: Integer; Name: string;
       Material: TItem.TMaterial; Category: TItem.TCategory; Durability: Word;
       Amount: Word = 1);
-    function ToText(Item: TItem): string;
+    class function ToText(Item: TItem): string;
     procedure Pickup(I: Integer);
   end;
 
@@ -1234,6 +1235,11 @@ end;
 {$ENDREGION ' TPlayer.TLook '}
 {$REGION ' TPlayer.TInventor '}
 
+function TPlayer.TInventory.Add(Value: TItem): Boolean;
+begin
+
+end;
+
 function TPlayer.TInventory.AddItem(Value: TItem): Boolean;
 var
   I: TInvByte;
@@ -1245,7 +1251,7 @@ begin
     begin
       C := Item[I].Count;
       Item[I].Assign(Value);
-      Item[I].Count := C + Value.Count;
+      Item[I].Count := Value.Count + C;
       Result := True;
       Exit;
     end;
@@ -1629,7 +1635,7 @@ begin
   end;
 end;
 
-function TItems.ToText(Item: TItem): string;
+class function TItems.ToText(Item: TItem): string;
 begin
   Result := '';
   if (Item.Count = 1) then

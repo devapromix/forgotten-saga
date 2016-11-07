@@ -1391,9 +1391,12 @@ begin
     to High(TPlayer.TInventory.TInvByte) do
     if Saga.Player.Inventory.Item[I].Active then
     begin
-      F := Saga.World.CurrentItems.ToText(Saga.Player.Inventory.Item[I]);
+      F := TItems.ToText(Saga.Player.Inventory.Item[I]);
       Saga.UI.DrawKey(15, I + 6, F, chr(I + 64));
     end;
+  Saga.UI.Engine.Print(15, Saga.Engine.Window.Height - 6,
+    __('Gold') + ': ' + IntToStr(Saga.Player.Gold));
+  //
   Saga.UI.DrawKey(44, Saga.Engine.Window.Height - 6, __('Close'), 'ESC');
   Saga.UI.DrawKey(58, Saga.Engine.Window.Height - 6,
     Format('%s (%d)', [__('Quest Items'), Saga.Player.QuestItems.Count]),
