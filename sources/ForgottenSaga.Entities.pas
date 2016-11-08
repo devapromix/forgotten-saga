@@ -1246,22 +1246,22 @@ var
   C: Integer;
 begin
   for I := Low(TInvByte) to High(TInvByte) do
-    case Item[I].Active of
-      True:
-        if (Item[I].Name = Value.Name) then
-        begin
-          C := Item[I].Count;
-          Item[I].Assign(Value);
-          Item[I].Count := Value.Count + C;
-          Result := True;
-          Exit;
-        end;
-      False:
-        begin
-          Item[I].Assign(Value);
-          Result := True;
-          Exit;
-        end;
+    if Item[I].Active then
+    begin
+      if (Item[I].Name = Value.Name) then
+      begin
+        C := Item[I].Count;
+        Item[I].Assign(Value);
+        Item[I].Count := Value.Count + C;
+        Result := True;
+        Exit;
+      end;
+    end
+    else
+    begin
+      Item[I].Assign(Value);
+      Result := True;
+      Exit;
     end;
   Result := False;
 end;
