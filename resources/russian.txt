@@ -21,6 +21,7 @@ Save=Сохранить
 Load=Загрузить
 Read=Читать
 Back=Назад
+Throw=Бросить
 %s %s %d level=%s %s %d-го уровня
 Exp=Опыт
 Life=Жизнь

@@ -219,6 +219,7 @@ type
       TInvByte = 1 .. 26;
     strict private
       FItem: array [TInvByte] of TItem;
+      FSelected: Integer;
     strict protected
       function GetItem(I: TInvByte): TItem;
       procedure SetItem(I: TInvByte; const Value: TItem);
@@ -227,6 +228,7 @@ type
       destructor Destroy; override;
       function Count: Integer;
       property Item[I: TInvByte]: TItem read GetItem write SetItem;
+      property Selected: Integer read FSelected write FSelected;
       function AddItem(Value: TItem): Boolean;
       function Add(Value: TItem): Boolean;
       procedure LoadFromFile(const FileName: string);
@@ -262,6 +264,7 @@ type
     procedure Clear;
     procedure Defeat;
     procedure Pickup;
+    procedure Throw;
     procedure Victory;
     property Maps: string read FMaps write FMaps;
     property Quests: string read FQuests write FQuests;
@@ -1141,6 +1144,21 @@ begin
   Inventory.SaveToFile(FileName);
 end;
 
+procedure TPlayer.Throw;
+var
+  Item: TItem;
+  I: Integer;
+begin
+  I := Saga.Player.Inventory.Selected + 1;
+  if Saga.Player.Inventory.Item[I].Active then
+  begin
+    Item := Saga.Player.Inventory.Item[I];
+    Saga.World.CurrentItems.Add(Item.Symbol, Item.Color, Item.Level, Item.Name,
+      Item.Material, Item.Category, Item.Durability.Cur, Item.Count);
+    Saga.Player.Inventory.Item[I].Active := False;
+  end;
+end;
+
 procedure TPlayer.Pickup;
 var
   I, C: Integer;
@@ -1294,6 +1312,7 @@ constructor TPlayer.TInventory.Create;
 var
   I: TInvByte;
 begin
+  Selected := 0;
   for I := Low(TInvByte) to High(TInvByte) do
   begin
     Item[I] := TItem.Create;

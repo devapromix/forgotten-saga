@@ -213,7 +213,18 @@ type
 {$REGION ' Stages Inventory and Items '}
 
 type
-  TStageInv = class(TStage)
+  TStageInv = class(TStageCustomMenu)
+  private
+
+  public
+    constructor Create;
+    procedure Render; override;
+    procedure Update(var Key: Word); override;
+    procedure Timer; override;
+  end;
+
+type
+  TStageQuestItems = class(TStage)
   private
 
   public
@@ -223,7 +234,7 @@ type
   end;
 
 type
-  TStageQuestItems = class(TStage)
+  TStageItem = class(TStage)
   private
 
   public
@@ -1381,22 +1392,33 @@ end;
 {$ENDREGION ' TStageRecMenu '}
 {$REGION ' TStageInv '}
 
+constructor TStageInv.Create;
+begin
+  inherited;
+end;
+
 procedure TStageInv.Render;
 var
   I: TPlayer.TInventory.TInvByte;
   F: string;
+  P: Integer;
 begin
+  P := 0;
   Saga.UI.DrawTitle(5, __('Inventory'));
   for I := Low(TPlayer.TInventory.TInvByte)
     to High(TPlayer.TInventory.TInvByte) do
     if Saga.Player.Inventory.Item[I].Active then
     begin
+      if (P = Saga.Player.Inventory.Selected) then
+      Self.RenderCursor(P + 7, Saga.Colors.clCursor);
       F := TItems.ToText(Saga.Player.Inventory.Item[I]);
-      Saga.UI.DrawKey(15, I + 6, F, chr(I + 64));
+      Saga.UI.DrawKey(15, P + 7, F, chr(P + 65));
+      Inc(P);
     end;
   Saga.UI.Engine.Print(15, Saga.Engine.Window.Height - 6,
     __('Gold') + ': ' + IntToStr(Saga.Player.Gold));
   //
+  Saga.UI.DrawKey(30, Saga.Engine.Window.Height - 6, __('Throw'), 'TAB');
   Saga.UI.DrawKey(44, Saga.Engine.Window.Height - 6, __('Close'), 'ESC');
   Saga.UI.DrawKey(58, Saga.Engine.Window.Height - 6,
     Format('%s (%d)', [__('Quest Items'), Saga.Player.QuestItems.Count]),
@@ -1416,6 +1438,8 @@ begin
         Saga.Stages.SetStage(stQuestItems);
     TK_ESCAPE:
       Saga.Stages.SetStage(stGame);
+    TK_TAB:
+      Saga.Player.Throw;
   end;
 end;
 
@@ -1522,5 +1546,23 @@ begin
 end;
 
 {$ENDREGION ' TStageQuestItems '}
+{$REGION ' TStageItem '}
+
+procedure TStageItem.Render;
+begin
+
+end;
+
+procedure TStageItem.Timer;
+begin
+
+end;
+
+procedure TStageItem.Update(var Key: Word);
+begin
+
+end;
+
+{$ENDREGION ' TStageItem '}
 
 end.
