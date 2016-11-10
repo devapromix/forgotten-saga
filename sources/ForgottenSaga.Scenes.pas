@@ -259,7 +259,7 @@ type
 type
   TStageQuestLog = class(TStageStorageMenu)
   private
-    function GetRealMenuPos(CurrentMenuPos: Integer): Integer;
+    function GetIndex(Index: Integer): Integer;
   public
     procedure Render; override;
     procedure Update(var Key: Word); override;
@@ -1209,7 +1209,7 @@ end;
 {$ENDREGION ' TStageDefeat '}
 {$REGION ' TStageQuestLog '}
 
-function TStageQuestLog.GetRealMenuPos(CurrentMenuPos: Integer): Integer;
+function TStageQuestLog.GetIndex(Index: Integer): Integer;
 var
   I, J: Integer;
 begin
@@ -1218,7 +1218,7 @@ begin
     if (Saga.Quest.Get(I, 0) <> '') then
     begin
       Inc(J);
-      if (J = CurrentMenuPos) then
+      if (J = Index) then
       begin
         Result := J;
         Break;
@@ -1401,7 +1401,7 @@ procedure TStageInv.Render;
 var
   I: TPlayer.TInventory.TInvByte;
   F: string;
-  P: Integer;
+  P, H, D: Integer;
 begin
   P := 0;
   Saga.UI.DrawTitle(5, __('Inventory'));
@@ -1410,19 +1410,21 @@ begin
     if Saga.Player.Inventory.Item[I].Active then
     begin
       if (P = Saga.Player.Inventory.Selected) then
-      Self.RenderCursor(P + 7, Saga.Colors.clCursor);
+        Self.RenderCursor(P + 7, Saga.Colors.clCursor);
       F := TItems.ToText(Saga.Player.Inventory.Item[I]);
+      if (Saga.Player.Inventory.Item[I].Doll > 0) then F := F + ' (+)';
       Saga.UI.DrawKey(15, P + 7, F, chr(P + 65));
       Inc(P);
     end;
-  Saga.UI.Engine.Print(15, Saga.Engine.Window.Height - 6,
-    __('Gold') + ': ' + IntToStr(Saga.Player.Gold));
+  D := Saga.Engine.Window.Height - 6;
+  Saga.UI.Engine.Print(15, D, __('Gold') + ': ' + IntToStr(Saga.Player.Gold));
   //
-  Saga.UI.DrawKey(30, Saga.Engine.Window.Height - 6, __('Throw'), 'TAB');
-  Saga.UI.DrawKey(44, Saga.Engine.Window.Height - 6, __('Close'), 'ESC');
-  Saga.UI.DrawKey(58, Saga.Engine.Window.Height - 6,
-    Format('%s (%d)', [__('Quest Items'), Saga.Player.QuestItems.Count]),
-    'SPACE', (Saga.Player.QuestItems.Count > 0));
+  Saga.UI.DrawKey(30, D, __('Drop'), 'TAB');
+  Saga.UI.DrawKey(44, D, __('Close'), 'ESC');
+  Saga.UI.DrawKey(58, D, Format('%s (%d)', [__('Quest Items'),
+    Saga.Player.QuestItems.Count]), 'SPACE',
+    (Saga.Player.QuestItems.Count > 0));
+  Saga.UI.DrawKey(90, D, __('Equip'), 'ENTER');
 end;
 
 procedure TStageInv.Timer;
@@ -1431,16 +1433,40 @@ begin
 end;
 
 procedure TStageInv.Update(var Key: Word);
+var
+  V: Integer;
 begin
-  case Key of
-    TK_SPACE:
-      if (Saga.Player.QuestItems.Count > 0) then
-        Saga.Stages.SetStage(stQuestItems);
-    TK_ESCAPE:
-      Saga.Stages.SetStage(stGame);
-    TK_TAB:
-      Saga.Player.Throw;
-  end;
+  with Saga.Player.Inventory do
+    case Key of
+      TK_SPACE:
+        if (Saga.Player.QuestItems.Count > 0) then
+          Saga.Stages.SetStage(stQuestItems);
+      TK_ESCAPE:
+        Saga.Stages.SetStage(stGame);
+      TK_TAB:
+        begin
+          Saga.Player.Drop;
+          Selected := Clamp(Selected, 0, Count - 1, True);
+        end;
+      TK_A .. TK_Z:
+        begin
+          V := Key - TK_A;
+          if ((V >= 0) and (V < Count)) then
+            Selected := V;
+        end;
+      TK_DOWN:
+        Selected := Clamp(Selected + 1, 0, Count - 1, False);
+      TK_UP:
+        Selected := Clamp(Selected - 1, 0, Count - 1, False);
+      TK_ENTER:
+        case Item[Selected + 1].Doll of
+          0:
+            Saga.Player.Equip();
+          1:
+            Saga.Player.UnEquip;
+        end;
+
+    end;
 end;
 
 {$ENDREGION ' TStageInv '}

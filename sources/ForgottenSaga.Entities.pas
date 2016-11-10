@@ -143,6 +143,7 @@ type
     MatStr: array [TMaterial] of string = ('', 'wood', 'bone', 'stone',
       'metal');
   strict private
+    FDoll: Integer;
     FCount: Integer;
     FCategory: TCategory;
     FMaterial: TMaterial;
@@ -156,6 +157,7 @@ type
     procedure Assign(Value: TItem);
     procedure Calc;
     function BackColor: Integer; override;
+    property Doll: Integer read FDoll write FDoll;
     property Count: Integer read FCount write FCount;
     property Category: TCategory read FCategory write FCategory;
     property Material: TMaterial read FMaterial write FMaterial;
@@ -230,6 +232,7 @@ type
       property Item[I: TInvByte]: TItem read GetItem write SetItem;
       property Selected: Integer read FSelected write FSelected;
       function AddItem(Value: TItem): Boolean;
+      function GetIndex(Index: Integer): Integer;
       function Add(Value: TItem): Boolean;
       procedure LoadFromFile(const FileName: string);
       procedure SaveToFile(const FileName: string);
@@ -264,7 +267,9 @@ type
     procedure Clear;
     procedure Defeat;
     procedure Pickup;
-    procedure Throw;
+    procedure Drop;
+    procedure Equip;
+    procedure UnEquip;
     procedure Victory;
     property Maps: string read FMaps write FMaps;
     property Quests: string read FQuests write FQuests;
@@ -841,6 +846,7 @@ begin
   FDurability.SetToMax;
   Color := $00FFFF00;
   Symbol := '/';
+  Doll := 0;
   Count := 1;
   Category := ctNone;
   Material := mtNone;
@@ -897,6 +903,7 @@ begin
     Symbol := F.ReadString(Section, 'Symbol', '/')[1];
     Color := F.ReadColor(Section, 'Color', '200,200,200');
     Count := F.ReadInteger(Section, 'Count', 1);
+    Doll := F.ReadInteger(Section, 'Doll', 0);
     SetPosition(Point(F.ReadInteger(Section, 'X', 0), F.ReadInteger(Section,
       'Y', 0)));
     Calc;
@@ -925,6 +932,7 @@ begin
     F.WriteString(Section, 'Symbol', Symbol);
     F.WriteColor(Section, 'Color', Color);
     F.WriteInteger(Section, 'Count', Count);
+    F.WriteInteger(Section, 'Doll', Doll);
     F.WriteInteger(Section, 'X', Pos.X);
     F.WriteInteger(Section, 'Y', Pos.Y);
     F.WriteInteger(Section, 'Durability', Durability.Cur);
@@ -1144,25 +1152,44 @@ begin
   Inventory.SaveToFile(FileName);
 end;
 
-procedure TPlayer.Throw;
+procedure TPlayer.Equip;
+begin
+  if (Inventory.Count <= 0) then
+    Exit;
+  Inventory.Item[Inventory.Selected + 1].Doll := 1;
+// TUtils.Box(Inventory.Selected);
+end;
+
+procedure TPlayer.UnEquip;
+begin
+  if (Inventory.Count <= 0) then
+    Exit;
+  Inventory.Item[Inventory.Selected + 1].Doll := 0;
+// TUtils.Box(Inventory.Selected);
+end;
+
+procedure TPlayer.Drop;
 var
-  Item: TItem;
   I: Integer;
 begin
-  I := Saga.Player.Inventory.Selected + 1;
-  if Saga.Player.Inventory.Item[I].Active then
+  with Saga.Player.Inventory do
   begin
-    Item := Saga.Player.Inventory.Item[I];
-    Saga.World.CurrentItems.Add(Item.Symbol, Item.Color, Item.Level, Item.Name,
-      Item.Material, Item.Category, Item.Durability.Cur, Item.Count);
-    Saga.Player.Inventory.Item[I].Active := False;
+    I := GetIndex(Selected);
+    if (I < 0) then
+      Exit;
+    if Item[I].Active then
+    begin
+      Saga.World.CurrentItems.Add(Item[I].Symbol, Item[I].Color, Item[I].Level,
+        Item[I].Name, Item[I].Material, Item[I].Category,
+        Item[I].Durability.Cur, Item[I].Count);
+      Item[I].Active := False;
+    end;
   end;
 end;
 
 procedure TPlayer.Pickup;
 var
   I, C: Integer;
-  // E: TItem;
 begin
   I := Saga.World.CurrentItems.Has(Pos.X, Pos.Y);
   if (I > -1) then
@@ -1230,7 +1257,7 @@ procedure TPlayer.TLook.Render;
       if (C > 1) then
         Result := Format(KeyFmt, [Saga.World.CurrentItems.GetEntity(I).Symbol,
           Format('Несколько (%dx) предметов (%s)',
-          [C, Saga.World.CurrentItems.GetEntity(I).Name])]);
+          [C, __(Saga.World.CurrentItems.GetEntity(I).Name)])]);
     end;
   end;
 
@@ -1332,6 +1359,24 @@ end;
 function TPlayer.TInventory.GetItem(I: TInvByte): TItem;
 begin
   Result := FItem[I];
+end;
+
+function TPlayer.TInventory.GetIndex(Index: Integer): Integer;
+var
+  I: TInvByte;
+  J: Integer;
+begin
+  J := -1;
+  for I := Low(TInvByte) to High(TInvByte) do
+    if Item[I].Active then
+    begin
+      Inc(J);
+      if (J = Index) then
+      begin
+        Result := I;
+        Break;
+      end;
+    end;
 end;
 
 procedure TPlayer.TInventory.LoadFromFile(const FileName: string);
@@ -1584,6 +1629,7 @@ var
     Entity[Index].Count := Amount;
     Entity[Index].Material := Material;
     Entity[Index].Category := Category;
+    Entity[Index].Doll := 0;
     Entity[Index].Calc;
     Entity[Index].Durability.Cur := Durability;
   end;
