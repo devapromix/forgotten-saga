@@ -34,7 +34,7 @@ Dialog=0
 NPC=1
 
 [60]
-Name=Старый Секач
+Name=Thistle Boar
 X=42
 Y=24
 Life=100/100
@@ -45,7 +45,7 @@ Dialog=0
 NPC=0
 
 [61]
-Name=Секач
+Name=Thistle Boar
 X=44
 Y=27
 Life=100/100
@@ -56,7 +56,7 @@ Dialog=0
 NPC=0
 
 [62]
-Name=Секач
+Name=Thistle Boar
 X=40
 Y=23
 Life=100/100
@@ -67,7 +67,7 @@ Dialog=0
 NPC=0
 
 [63]
-Name=Кабан
+Name=Thistle Boar
 X=40
 Y=14
 Life=100/100
@@ -78,7 +78,7 @@ Dialog=0
 NPC=0
 
 [64]
-Name=Свинья
+Name=Thistle Boar
 X=56
 Y=19
 Life=100/100
@@ -89,7 +89,7 @@ Dialog=0
 NPC=0
 
 [65]
-Name=Молодая Свинья
+Name=Thistle Boar
 X=52
 Y=23
 Life=100/100
@@ -100,7 +100,7 @@ Dialog=0
 NPC=0
 
 [66]
-Name=Свинья
+Name=Thistle Boar
 X=61
 Y=6
 Life=100/100
@@ -111,7 +111,7 @@ Dialog=0
 NPC=0
 
 [67]
-Name=Дикий Вепрь
+Name=Thistle Boar
 X=54
 Y=3
 Life=100/100
@@ -122,7 +122,7 @@ Dialog=0
 NPC=0
 
 [68]
-Name=Кабан
+Name=Thistle Boar
 X=16
 Y=14
 Life=100/100
@@ -133,7 +133,7 @@ Dialog=0
 NPC=0
 
 [69]
-Name=Молодая Свинья
+Name=Thistle Boar
 X=46
 Y=16
 Life=100/100
@@ -144,7 +144,7 @@ Dialog=0
 NPC=0
 
 [70]
-Name=Молодая Свинья
+Name=Thistle Boar
 X=17
 Y=11
 Life=100/100
@@ -155,7 +155,7 @@ Dialog=0
 NPC=0
 
 [71]
-Name=Молодая Свинья
+Name=Thistle Boar
 X=50
 Y=31
 Life=100/100
@@ -166,7 +166,7 @@ Dialog=0
 NPC=0
 
 [72]
-Name=Молодая Свинья
+Name=Thistle Boar
 X=42
 Y=36
 Life=100/100
@@ -177,7 +177,7 @@ Dialog=0
 NPC=0
 
 [73]
-Name=Старый Вепрь
+Name=Thistle Boar
 X=52
 Y=12
 Life=100/100

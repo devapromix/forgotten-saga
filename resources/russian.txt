@@ -57,9 +57,9 @@ Black Warg=Черный Варг
 Spider=Паук
 Deep Spider=Глубинный Паук
 
-Vial of water=
-Empty Vial=
-Black Ring=
-Pack=
-Elk Meat=
-Boar Pelt=
+Filled Crystal Phial=Наполненный хрустальный фиал
+Crystal Phial=Хрустальный фиал
+Black Ring=Черное кольцо
+Pack=Пакет
+Elk Meat=Мясо лося
+Boar Pelt=Кожа вепря
