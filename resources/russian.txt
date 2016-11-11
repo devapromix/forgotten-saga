@@ -55,6 +55,7 @@ Goblin Virn=Гоблин Вирн
 Goblin Telorgon=Гоблин Телоргон
 Black Warg=Черный Варг
 Spider=Паук
+Deep Spider=Глубинный Паук
 
 Vial of water=
 Empty Vial=
