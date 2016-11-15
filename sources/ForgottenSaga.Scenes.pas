@@ -51,7 +51,7 @@ type
     procedure SetDialog(ID: Byte);
     procedure SetBattle(ID: Byte);
     procedure PlayerMove(X, Y: Integer);
-    procedure RenderPlayerInfo;
+    procedure PlayerInfo;
   public
     procedure Render; override;
     procedure Update(var Key: Word); override;
@@ -501,12 +501,12 @@ begin
   Saga.Player.Render;
   Saga.Player.Look.Render;
   Saga.Engine.BackgroundColor(0);
-  RenderPlayerInfo;
+  PlayerInfo;
   Saga.Log[lgGame].Render(81, 15, 39);
   Saga.Notification.Render(0, 0);
 end;
 
-procedure TStageGame.RenderPlayerInfo;
+procedure TStageGame.PlayerInfo;
 var
   I: TCreature.TAtrEnum;
 begin

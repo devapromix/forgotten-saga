@@ -26,6 +26,13 @@ begin
       if terminal_has_input() then
         Key := terminal_read();
       Saga.Stages.Update(Key);
+{
+	  now := GetTickCount;
+if now >= NextUpdateTime then begin
+    Saga.Stages.Timer;
+    NextUpdateTime := now + 60;
+end;
+}
       if (Tick > 59) then
       begin
         Saga.Stages.Timer;

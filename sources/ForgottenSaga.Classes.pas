@@ -1724,17 +1724,20 @@ begin
       begin
         Saga.Player.Quests := Saga.Player.Quests + Q;
         Saga.Log[lgGame].Add(__('The new quest is added to the log.'));
+        Saga.Notification.Add(__('The new quest is added to the log.'));
       end;
       Exit;
     end;
     if IsTag('update', S) then
     begin
       Saga.Log[lgGame].Add(__('Новая запись в журнале.'));
+      Saga.Notification.Add(__('Новая запись в журнале.'));
       Exit;
     end;
     if IsTag(CloseTag, S) then
     begin
       Saga.Log[lgGame].Add(__('You have completed the quest.'));
+      Saga.Notification.Add(__('You have completed the quest.'));
       Saga.Quest.Add(I - 1, __('I have completed this quest.'));
       Saga.Quest.Replace(I - 1, 0, TEngine.kcBegin + __('Задание выполнено') +
         TEngine.kcEnd + ' ' + Saga.Quest.Get(I - 1, 0));
