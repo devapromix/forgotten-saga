@@ -36,12 +36,12 @@ NPC=1
 [orc_dar_gul]
 Name=Dar-Gul
 X=41
-Y=22
+Y=17
 Life=100/100
 Symbol=D
 File=orc_dar_gul.qst
 Color=122,60,111
-Dialog=0
+Dialog=2
 NPC=1
 
 [black_warg]
