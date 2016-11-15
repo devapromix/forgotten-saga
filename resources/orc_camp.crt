@@ -27,9 +27,20 @@ Name=Tashak-Suum
 X=48
 Y=19
 Life=100/100
-Symbol=D
+Symbol=T
 File=orc_tashak_suum.qst
 Color=45,98,155
+Dialog=0
+NPC=1
+
+[orc_dar_gul]
+Name=Dar-Gul
+X=41
+Y=22
+Life=100/100
+Symbol=D
+File=orc_dar_gul.qst
+Color=122,60,111
 Dialog=0
 NPC=1
 

@@ -1157,7 +1157,7 @@ begin
   if (Inventory.Count <= 0) then
     Exit;
   Inventory.Item[Inventory.Selected + 1].Doll := 1;
-// TUtils.Box(Inventory.Selected);
+  // TUtils.Box(Inventory.Selected);
 end;
 
 procedure TPlayer.UnEquip;
@@ -1165,7 +1165,7 @@ begin
   if (Inventory.Count <= 0) then
     Exit;
   Inventory.Item[Inventory.Selected + 1].Doll := 0;
-// TUtils.Box(Inventory.Selected);
+  // TUtils.Box(Inventory.Selected);
 end;
 
 procedure TPlayer.Drop;

@@ -1408,20 +1408,24 @@ var
   I: Integer;
   S: string;
 begin
-  FList.LoadFromFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
-  for I := FList.Count - 1 downto 0 do
-  begin
-    S := Trim(FList[I]);
-    if (S = '') or (S[1] = ';') then
+  try
+    FList.LoadFromFile(FileName{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
+    for I := FList.Count - 1 downto 0 do
     begin
-      FList.Delete(I);
-      Continue;
+      S := Trim(FList[I]);
+      if (S = '') or (S[1] = ';') then
+      begin
+        FList.Delete(I);
+        Continue;
+      end;
+      if (Pos(';', S) > 0) then
+        Delete(S, Pos(';', S), TEngine.GetTextLength(S));
+      FList[I] := S;
     end;
-    if (Pos(';', S) > 0) then
-      Delete(S, Pos(';', S), TEngine.GetTextLength(S));
-    FList[I] := S;
+    // ShowMessage(SL.Text);
+  except
+    TUtils.Box(Format('File not found: %s!', [FileName]));
   end;
-  // ShowMessage(SL.Text);
 end;
 
 function TScript.GetSource(const ID: string): string;
@@ -1607,23 +1611,23 @@ var
     SL := TUtils.ExplodeString(',', S);
     Item := TItem.Create;
     try
-    with Item do
-    begin
-      Name := Trim(SL[0]);
-      Level := StrToIntDef(SL[1], 1);
-      Category := TItem.GetCategory(SL[2]);
-      Material := TItem.GetMaterial(SL[3]);
-      Symbol := Trim(SL[4])[1];
-      R := StrToIntDef(SL[5], 200);
-      G := StrToIntDef(SL[6], 200);
-      B := StrToIntDef(SL[7], 200);
-      Color := R or (G shl 8) or (B shl 16);
-      Count := StrToIntDef(SL[8], 1);
-      Calc;
-      Durability.Cur := StrToIntDef(SL[9], Durability.Max);
-    end;
-    if Saga.Player.Inventory.AddItem(Item) then
-      Saga.Log[lgGame].Add(Format(__('You pick up a %s.'), [Item.Name]));
+      with Item do
+      begin
+        Name := Trim(SL[0]);
+        Level := StrToIntDef(SL[1], 1);
+        Category := TItem.GetCategory(SL[2]);
+        Material := TItem.GetMaterial(SL[3]);
+        Symbol := Trim(SL[4])[1];
+        R := StrToIntDef(SL[5], 200);
+        G := StrToIntDef(SL[6], 200);
+        B := StrToIntDef(SL[7], 200);
+        Color := R or (G shl 8) or (B shl 16);
+        Count := StrToIntDef(SL[8], 1);
+        Calc;
+        Durability.Cur := StrToIntDef(SL[9], Durability.Max);
+      end;
+      if Saga.Player.Inventory.AddItem(Item) then
+        Saga.Log[lgGame].Add(Format(__('You pick up a %s.'), [Item.Name]));
     finally
       Item.Free;
     end;
@@ -1641,9 +1645,9 @@ begin
   if IsTag('pln') then
   begin
     S := GetLastCode('pln', Code);
-{if (Vars.Has(S)) then
+    { if (Vars.Has(S)) then
       I := Vars.GetInt(S);
-    Saga.Log[lgDialog].Add(I.ToString());}
+      Saga.Log[lgDialog].Add(I.ToString()); }
     Saga.Log[lgDialog].Add(S);
   end;
 
