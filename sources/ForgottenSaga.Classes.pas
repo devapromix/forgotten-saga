@@ -272,6 +272,26 @@ type
   end;
 
 {$ENDREGION ' TQuest '}
+{$REGION ' TFlag '}
+
+type
+  TFlag = class(TObject)
+  strict private
+  var
+    FLeft, FRight: Byte;
+  public const
+    Height = 37;
+  public
+    FList: TStringList;
+    constructor Create;
+    destructor Destroy; override;
+    procedure LoadFromFile(const FileName: string);
+    procedure Render(); overload;
+    procedure Render(Value: Byte); overload;
+    procedure Render(AX, AY, ID: Integer); overload;
+  end;
+
+{$ENDREGION ' TFlag '}
 {$REGION ' TSaga '}
 
 type
@@ -338,6 +358,7 @@ type
     FLog: array [TLogEnum] of TLog;
     FRace: array [TRaceEnum] of TRace;
     FDialog: TScript;
+    FFlag: TFlag;
   strict protected
     function GetLog(I: TLogEnum): TLog;
     procedure SetLog(I: TLogEnum; const Value: TLog);
@@ -373,6 +394,7 @@ type
     property UI: TUI read FTUI write FTUI;
     property Colors: TColors read FColors write FColors;
     property Dialog: TScript read FDialog write FDialog;
+    property Flag: TFlag read FFlag;
   end;
 
 {$ENDREGION ' TSaga '}
@@ -656,6 +678,9 @@ begin
 
   FQuest := TQuest.Create;
 
+  FFlag := TFlag.Create;
+  FFlag.LoadFromFile(TUtils.GetPath('resources') + 'flags.txt');
+
   Tiles := TTiles.Create;
   Tiles.LoadFromFile(TUtils.GetPath('resources') + 'terrain.ini');
 
@@ -671,9 +696,27 @@ end;
 procedure TSaga.Init;
 var
   S: TStringList;
-  F: string;
-  I: Integer;
+  F, V, T: string;
+  I, X: Integer;
 begin
+{  // Flags
+  for I := 0 to Flag.FList.Count - 1 do
+  begin
+    T := '';
+    for X := 1 to Length(Flag.FList[I]) do
+    begin
+      V := Flag.FList[I][X];
+      case V[1] of
+        '<', '>':
+          V := Format('[color=red]%s[/color]', [V]);
+        '*', '-':
+          V := Format('[color=%d]%s[/color]',
+            [Saga.Engine.GetColor(Saga.Colors.GetColor(ceRed)), V]);
+      end;
+      T := T + V;
+    end;
+    Flag.FList[I] := T;
+  end;  }
   // Load intro
   S := TStringList.Create;
   try
@@ -709,6 +752,7 @@ begin
   FNotification.Free;
   FLg.Free;
   FTUI.Free;
+  FFlag.Free;
   FColors.Free;
   FRecs.Free;
   FList.Free;
@@ -1971,5 +2015,61 @@ begin
 end;
 
 {$ENDREGION ' TBattle '}
+{$REGION ' TFlag '}
+
+constructor TFlag.Create;
+begin
+  FList := TStringList.Create;
+  FLeft := Math.RandomRange(0, 7);
+  repeat
+    FRight := Math.RandomRange(0, 7);
+  until (FLeft <> FRight);
+end;
+
+destructor TFlag.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+procedure TFlag.LoadFromFile(const FileName: string);
+begin
+  FList.LoadFromFile(FileName);
+end;
+
+procedure TFlag.Render;
+begin
+  Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceDGray));
+  Render(1, 1, FLeft);
+  Render(Saga.Engine.Window.Width - 1 - 20, 1, FRight);
+end;
+
+procedure TFlag.Render(Value: Byte);
+begin
+  Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceDGray));
+  Render(1, 1, Value);
+  Render(Saga.Engine.Window.Width - 1 - 20, 1, Value);
+end;
+
+procedure TFlag.Render(AX, AY, ID: Integer);
+var
+  I, X, Y, C: Integer;
+begin
+  Y := ID * Height;
+  for I := Y to Y + Height do
+    for X := 1 to Length(FList[I]) do
+    begin
+      case FList[I][X] of
+        '<', '>': C := Saga.Colors.GetColor(ceLRed);
+        '*', '-': C := Saga.Colors.GetColor(ceLBlue);
+        else C := Saga.Colors.GetColor(ceLGreen);
+      end;
+      Saga.Engine.ForegroundColor(C);
+      Saga.Engine.BackgroundColor(Saga.Engine.DarkColor(C, 95));
+      Saga.Engine.Print(AX + X - 1, AY + I - Y, FList[I][X]);
+    end;
+  Saga.Engine.BackgroundColor(0);
+end;
+{$ENDREGION ' TFlag '}
 
 end.

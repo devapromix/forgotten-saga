@@ -72,6 +72,7 @@ type
     property Top: Byte read FTop write FTop;
     property MenuPos: ShortInt read FMenuPos write FMenuPos;
     procedure Timer; override;
+    procedure Render; override;
   end;
 
 {$ENDREGION ' TStageCustomMenu '}
@@ -613,11 +614,16 @@ begin
   MenuPos := 0;
 end;
 
+procedure TStageCustomMenu.Render;
+begin
+  Saga.Flag.Render();
+end;
+
 procedure TStageCustomMenu.RenderCursor(Y: Integer; Color: Integer);
 begin
   Saga.Engine.BackgroundColor(Color);
   Saga.Engine.Print(0, Y, StringOfChar(#32, Saga.Engine.Window.Width -
-    10), aCenter);
+    44), aCenter);
   Saga.Engine.BackgroundColor(TEngine.clClear);
 end;
 
@@ -659,6 +665,7 @@ procedure TStageMenu.Render;
 var
   I: ShortInt;
 begin
+ inherited Render;
   Saga.UI.DrawTitle(Top, __('Forgotten Saga'));
   for I := 0 to Count - 1 do
   begin
@@ -782,6 +789,7 @@ procedure TStageRaceMenu.Render;
 var
   R: TSaga.TRaceEnum;
 begin
+ Saga.Flag.Render(MenuPos);
   Saga.UI.DrawTitle(Top, __('Select race'));
 
   for R := Low(TSaga.TRaceEnum) to High(TSaga.TRaceEnum) do
@@ -823,6 +831,7 @@ end;
 
 procedure TStageNameMenu.Render;
 begin
+ inherited Render;
   Saga.UI.DrawTitle(Top, __('What is your name?'));
   Saga.Engine.ForegroundColor
     (Saga.Race[TSaga.TRaceEnum(Saga.Player.Race)].Color);
@@ -847,10 +856,11 @@ end;
 
 procedure TStageTextMenu.Render;
 begin
-  Saga.UI.DrawTitle(13, 'Как все начиналось...');
-  Saga.UI.DrawKey(0, 25, 'Начать игру...', 'ENTER', aCenter);
+ inherited Render;
+  Saga.UI.DrawTitle(12, 'Как все начиналось...');
+  Saga.UI.DrawKey(0, 27, 'Начать игру...', 'ENTER', aCenter);
   Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
-  Saga.Log[lgIntro].Render(15, 15, 85);
+  Saga.Log[lgIntro].Render(22, 15, 77);
 end;
 
 procedure TStageTextMenu.Update(var Key: Word);
@@ -890,6 +900,7 @@ procedure TStageStorageMenu.Render;
 var
   I: ShortInt;
 begin
+ inherited Render;
   for I := 0 to 9 do
   begin
     Saga.Engine.ForegroundColor(Saga.Colors.clTitle);
@@ -1335,6 +1346,7 @@ end;
 
 procedure TStageAboutMenu.Render;
 begin
+ inherited Render;
   Saga.UI.DrawTitle(Top, __('Forgotten Saga'));
   Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceLGray));
   Saga.Engine.Print(0, Top + 2, 'github.com/devapromix/forgotten-saga',
