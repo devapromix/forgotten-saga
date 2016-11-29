@@ -1803,10 +1803,10 @@ begin
     if IsTag('begin', S) then
     begin
       Q := Format(TWorld.FMFmt, [I]);
-      if (Pos(S, Saga.Player.Maps) <= 0) and (I > 0) then
+      if (Pos(S, Saga.Player.Quests) <= 0) and (I > 0) then
       begin
         Saga.Player.Quests := Saga.Player.Quests + Q;
-        Saga.Log[lgGame].Add(Format('%s: %s.', [__('New quest'), Saga.Quest.Get(I, 0)]));
+        Saga.Log[lgGame].Add(__('The new quest is added to the log.'));
         Saga.Notification.Add(__('The new quest is added to the log.'));
         SetUpSymbol('?');
       end;

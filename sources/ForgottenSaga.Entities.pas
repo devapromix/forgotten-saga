@@ -1592,13 +1592,13 @@ procedure TCreatures.Render(F: Boolean);
 var
   I: Integer;
 begin
-  if (F) then
+  if F then
     for I := 0 to Count - 1 do
-      with Entity[I] do
+      with Saga, Entity[I] do
         if Active and (UpSymbol <> #32) then
         begin
-          if Saga.World.CurrentMap.HasCellVisible(Pos.X, Pos.Y) then
-            Saga.UI.DrawChar(Pos.X, Pos.Y - 1, UpSymbol, Saga.Colors.clGoldText);
+          if World.CurrentMap.HasCellVisible(Pos.X, Pos.Y) then
+            UI.DrawChar(Pos.X, Pos.Y - 1, UpSymbol, Colors.clGoldText);
         end;
   Self.Render;
 end;

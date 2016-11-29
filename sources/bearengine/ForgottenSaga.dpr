@@ -33,7 +33,7 @@ if now >= NextUpdateTime then begin
     NextUpdateTime := now + 60;
 end;
 }
-      if (Tick > 59) then
+      if (Tick > 29) then
       begin
         Saga.Stages.Timer;
         Tick := 0;
