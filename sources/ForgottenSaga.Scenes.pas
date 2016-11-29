@@ -47,6 +47,7 @@ type
 type
   TStageGame = class(TStage)
   strict private
+    FFlag: Boolean;
     procedure SetNPC(ID: Byte);
     procedure SetDialog(ID: Byte);
     procedure SetBattle(ID: Byte);
@@ -498,7 +499,7 @@ procedure TStageGame.Render;
 begin
   Saga.World.CurrentMap.Render;
   Saga.World.CurrentItems.Render;
-  Saga.World.CurrentCreatures.Render;
+  Saga.World.CurrentCreatures.Render(FFlag);
   Saga.Player.Render;
   Saga.Player.Look.Render;
   Saga.Engine.BackgroundColor(0);
@@ -523,6 +524,7 @@ end;
 
 procedure TStageGame.Timer;
 begin
+  FFlag := not FFlag;
   Saga.Notification.Dec();
   Saga.Stages.Render;
 end;

@@ -105,6 +105,7 @@ type
     FForce: TForce;
     FScriptFileName: string;
     FDialog: Integer;
+    FUpSymbol: Char;
     FAtr: array [TAtrEnum] of TEntity.TBar;
     FSkillPoints: Byte;
     FStatPoints: Byte;
@@ -118,6 +119,7 @@ type
     destructor Destroy; override;
     property Force: TForce read FForce write FForce;
     property Dialog: Integer read FDialog write FDialog;
+    property UpSymbol: Char read FUpSymbol write FUpSymbol;
     property ScriptFileName: string read FScriptFileName write FScriptFileName;
     function BackColor: Integer; override;
     procedure Move(const AX, AY: ShortInt);
@@ -339,6 +341,7 @@ type
     destructor Destroy; override;
     procedure LoadFromFile(const FileName: string); override;
     procedure SaveToFile(const FileName: string); override;
+    procedure Render(F: Boolean); overload;
   end;
 
 {$ENDREGION ' TCreatures '}
@@ -686,6 +689,7 @@ begin
   end;
   Color := $00FFFF00;
   Symbol := '?';
+  UpSymbol := #32;
   Force := fcEnemy;
   Dialog := 0;
   ScriptFileName := '';
@@ -900,7 +904,7 @@ begin
     Level := F.ReadInteger(Section, 'Level', 1);
     Category := F.ReadCategory(Section, 'Category', ctNone);
     Material := F.ReadMaterial(Section, 'Material', mtNone);
-    Symbol := F.ReadString(Section, 'Symbol', '/')[1];
+    Symbol := F.ReadChar(Section, 'Symbol', '/');
     Color := F.ReadColor(Section, 'Color', '200,200,200');
     Count := F.ReadInteger(Section, 'Count', 1);
     Doll := F.ReadInteger(Section, 'Doll', 0);
@@ -929,7 +933,7 @@ begin
     F.WriteInteger(Section, 'Level', Level);
     F.WriteCategory(Section, 'Category', Category);
     F.WriteMaterial(Section, 'Material', Material);
-    F.WriteString(Section, 'Symbol', Symbol);
+    F.WriteChar(Section, 'Symbol', Symbol);
     F.WriteColor(Section, 'Color', Color);
     F.WriteInteger(Section, 'Count', Count);
     F.WriteInteger(Section, 'Doll', Doll);
@@ -1569,7 +1573,8 @@ begin
           F.ReadInteger(Sections[I], 'Y', 0)));
         Entity[L].Atr[atLife].Add(F.ReadString(Sections[I], 'Life',
           Format(TEntity.BarFmt, [100, 100])));
-        Entity[L].Symbol := F.ReadString(Sections[I], 'Symbol', '?')[1];
+        Entity[L].Symbol := F.ReadChar(Sections[I], 'Symbol', '?');
+        Entity[L].UpSymbol := F.ReadChar(Sections[I], 'UpSymbol', #32);
         Entity[L].Color := F.ReadColor(Sections[I], 'Color', '255,255,255');
         Entity[L].Dialog := F.ReadInteger(Sections[I], 'Dialog', 0);
         Entity[L].Level := F.ReadInteger(Sections[I], 'Level', 1);
@@ -1581,6 +1586,21 @@ begin
   finally
     F.Free;
   end;
+end;
+
+procedure TCreatures.Render(F: Boolean);
+var
+  I: Integer;
+begin
+  if (F) then
+    for I := 0 to Count - 1 do
+      with Entity[I] do
+        if Active and (UpSymbol <> #32) then
+        begin
+          if Saga.World.CurrentMap.HasCellVisible(Pos.X, Pos.Y) then
+            Saga.UI.DrawChar(Pos.X, Pos.Y - 1, UpSymbol, Saga.Colors.clGoldText);
+        end;
+  Self.Render;
 end;
 
 procedure TCreatures.SaveToFile(const FileName: string);
@@ -1599,7 +1619,8 @@ begin
         F.WriteString(Sections[I], 'Life', Format(TEntity.BarFmt,
           [Entity[I].Atr[atLife].Cur, Entity[I].Atr[atLife].Max]));
         F.WriteInteger(Sections[I], 'Level', Entity[I].Level);
-        F.WriteString(Sections[I], 'Symbol', Entity[I].Symbol);
+        F.WriteChar(Sections[I], 'Symbol', Entity[I].Symbol);
+        F.WriteChar(Sections[I], 'UpSymbol', Entity[I].UpSymbol);
         F.WriteString(Sections[I], 'File', Entity[I].ScriptFileName);
         F.WriteColor(Sections[I], 'Color', Entity[I].Color);
         F.WriteInteger(Sections[I], 'Dialog', Entity[I].Dialog);
@@ -1753,7 +1774,7 @@ begin
       if F.SectionExists(S) then
       begin
         FTiles[I].Name := F.ReadString(S, 'Name', '');
-        FTiles[I].Symbol := F.ReadString(S, 'Symbol', '?')[1];
+        FTiles[I].Symbol := F.ReadChar(S, 'Symbol', '?');
         FTiles[I].Passable := F.ReadBool(S, 'Passable', False);
         FTiles[I].Color := F.ReadColor(S, 'Color', '100,100,100');
         FTiles[I].Layer := TLayerTypeEnum(F.ReadInteger(S, 'Layer', 0));
@@ -1839,7 +1860,6 @@ procedure TMap.Render;
 var
   Z: TLayerEnum;
   X, Y: Integer;
-  Color: Integer;
   HasObj: Boolean;
   Tile: record Ter: TTiles.TTileProp;
   Obj: TTiles.TTileProp;

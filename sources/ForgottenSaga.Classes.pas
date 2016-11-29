@@ -34,7 +34,9 @@ type
     constructor Create(AEngine: TEngine);
     procedure DrawTitle(Y: Word; Text: string);
     procedure DrawChar(X, Y: Integer; Symbol: System.Char;
-      ForegroundColor, BackgroundColor: Integer);
+      ForegroundColor: Integer); overload;
+    procedure DrawChar(X, Y: Integer; Symbol: System.Char;
+      ForegroundColor, BackgroundColor: Integer); overload;
     procedure DrawKey(X, Y: Integer; Caption: string; Key: string;
       Active: Boolean = True); overload;
     procedure DrawKey(X, Y: Integer; Caption: string; Key: string;
@@ -57,6 +59,8 @@ type
     function ReadMaterial(Section, Ident: string; DefaultValue: TItem.TMaterial)
       : TItem.TMaterial;
     procedure WriteMaterial(Section, Ident: string; Value: TItem.TMaterial);
+    function ReadChar(Section, Ident: string; DefaultValue: Char): Char;
+    procedure WriteChar(Section, Ident: string; Value: Char);
   end;
 
 {$ENDREGION ' TIniFile '}
@@ -699,24 +703,24 @@ var
   F, V, T: string;
   I, X: Integer;
 begin
-{  // Flags
-  for I := 0 to Flag.FList.Count - 1 do
-  begin
+  { // Flags
+    for I := 0 to Flag.FList.Count - 1 do
+    begin
     T := '';
     for X := 1 to Length(Flag.FList[I]) do
     begin
-      V := Flag.FList[I][X];
-      case V[1] of
-        '<', '>':
-          V := Format('[color=red]%s[/color]', [V]);
-        '*', '-':
-          V := Format('[color=%d]%s[/color]',
-            [Saga.Engine.GetColor(Saga.Colors.GetColor(ceRed)), V]);
-      end;
-      T := T + V;
+    V := Flag.FList[I][X];
+    case V[1] of
+    '<', '>':
+    V := Format('[color=red]%s[/color]', [V]);
+    '*', '-':
+    V := Format('[color=%d]%s[/color]',
+    [Saga.Engine.GetColor(Saga.Colors.GetColor(ceRed)), V]);
+    end;
+    T := T + V;
     end;
     Flag.FList[I] := T;
-  end;  }
+    end; }
   // Load intro
   S := TStringList.Create;
   try
@@ -1274,6 +1278,13 @@ end;
 {$REGION ' TUI '}
 
 procedure TUI.DrawChar(X, Y: Integer; Symbol: System.Char;
+  ForegroundColor: Integer);
+begin
+  FEngine.ForegroundColor(ForegroundColor);
+  FEngine.Print(X, Y, Symbol);
+end;
+
+procedure TUI.DrawChar(X, Y: Integer; Symbol: System.Char;
   ForegroundColor, BackgroundColor: Integer);
 begin
   FEngine.BackgroundColor(BackgroundColor);
@@ -1352,6 +1363,17 @@ var
   Color: record R, G, B: Byte;
 end;
 
+function TIniFile.ReadChar(Section, Ident: string; DefaultValue: Char): Char;
+var
+  S: string;
+begin
+  S := Self.ReadString(Section, Ident, '');
+  if (S <> '') then
+    Result := S[1]
+  else
+    Result := DefaultValue;
+end;
+
 function TIniFile.ReadColor(Section, Ident, DefaultValue: string): Integer;
 var
   S: string;
@@ -1407,6 +1429,11 @@ begin
   if (Value = ctNone) then
     Exit;
   WriteString(Section, Ident, TItem.CatStr[Value]);
+end;
+
+procedure TIniFile.WriteChar(Section, Ident: string; Value: Char);
+begin
+  Self.WriteString(Section, Ident, Value);
 end;
 
 procedure TIniFile.WriteColor(Section, Ident: string; Value: Integer);
@@ -1677,6 +1704,14 @@ var
     end;
   end;
 
+  procedure SetUpSymbol(UpSymbol: Char);
+  var
+    D: TStageDialog;
+  begin
+    D := TStageDialog(Saga.Stages.GetStage(stDialog));
+    Saga.World.CurrentCreatures.Entity[D.ID].UpSymbol := '?';
+  end;
+
 begin
   InitVars();
 
@@ -1771,8 +1806,9 @@ begin
       if (Pos(S, Saga.Player.Maps) <= 0) and (I > 0) then
       begin
         Saga.Player.Quests := Saga.Player.Quests + Q;
-        Saga.Log[lgGame].Add(__('The new quest is added to the log.'));
+        Saga.Log[lgGame].Add(Format('%s: %s.', [__('New quest'), Saga.Quest.Get(I, 0)]));
         Saga.Notification.Add(__('The new quest is added to the log.'));
+        SetUpSymbol('?');
       end;
       Exit;
     end;
@@ -1789,6 +1825,7 @@ begin
       Saga.Quest.Add(I - 1, __('I have completed this quest.'));
       Saga.Quest.Replace(I - 1, 0, TEngine.kcBegin + __('Задание выполнено') +
         TEngine.kcEnd + ' ' + Saga.Quest.Get(I - 1, 0));
+      SetUpSymbol(#32);
       Exit;
     end;
     Saga.Quest.Add(I - 1, S);
@@ -2060,9 +2097,12 @@ begin
     for X := 1 to Length(FList[I]) do
     begin
       case FList[I][X] of
-        '<', '>': C := Saga.Colors.GetColor(ceLRed);
-        '*', '-': C := Saga.Colors.GetColor(ceLBlue);
-        else C := Saga.Colors.GetColor(ceLGreen);
+        '<', '>':
+          C := Saga.Colors.GetColor(ceLRed);
+        '*', '-':
+          C := Saga.Colors.GetColor(ceLBlue);
+      else
+        C := Saga.Colors.GetColor(ceLGreen);
       end;
       Saga.Engine.ForegroundColor(C);
       Saga.Engine.BackgroundColor(Saga.Engine.DarkColor(C, 95));
