@@ -34,6 +34,7 @@ type
     ObjListBox: TListBox;
     ItmListBox: TListBox;
     CrtListBox: TListBox;
+    bfBlock: TToolButton;
     procedure FormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -52,6 +53,7 @@ type
     procedure brCreaturesClick(Sender: TObject);
     procedure CrtListBoxClick(Sender: TObject);
     procedure ItmListBoxClick(Sender: TObject);
+    procedure bfBlockClick(Sender: TObject);
   private
     procedure LoadResources;
     {Private declarations}
@@ -226,6 +228,11 @@ begin
   Editor.KeyDown(Key);
   FormPaint(Sender);
   UpdateCaption;
+end;
+
+procedure TfMain.bfBlockClick(Sender: TObject);
+begin
+  //
 end;
 
 procedure TfMain.brCreaturesClick(Sender: TObject);

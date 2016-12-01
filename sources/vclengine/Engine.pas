@@ -67,6 +67,7 @@ const
   TK_ENTER = 13;
   TK_ESCAPE = 27;
   TK_SPACE = 32;
+  TK_TAB = 9;
 
   TK_KP_0 = 96;
   TK_KP_1 = 97;
