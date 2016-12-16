@@ -894,7 +894,7 @@ begin
       H := 2
     else
       H := 1;
-    Saga.Engine.Print(H + 20, I + Top + 2, IntToStr(I + 1) + '.', aLeft);
+    Saga.Engine.Print(H + 21, I + Top + 2, IntToStr(I + 1) + '.', aLeft);
   end;
 end;
 
