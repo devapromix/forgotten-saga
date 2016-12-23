@@ -703,7 +703,7 @@ var
   F, V, T: string;
   I, X: Integer;
 begin
-  { // Flags
+  {// Flags
     for I := 0 to Flag.FList.Count - 1 do
     begin
     T := '';
@@ -720,7 +720,7 @@ begin
     T := T + V;
     end;
     Flag.FList[I] := T;
-    end; }
+    end;}
   // Load intro
   S := TStringList.Create;
   try
@@ -872,9 +872,12 @@ begin
 end;
 
 procedure TSaga.ClearLogs;
+var
+  L: TLogEnum;
 begin
   Saga.Quest.Clear;
-  Saga.Log[lgGame].Clear;
+  for L := Low(TLogEnum) to High(TLogEnum) do
+    Saga.Log[L].Clear;
 end;
 
 {$REGION ' TSaga.TLog '}
@@ -1724,9 +1727,9 @@ begin
   if IsTag('pln') then
   begin
     S := GetLastCode('pln', Code);
-    { if (Vars.Has(S)) then
+    {if (Vars.Has(S)) then
       I := Vars.GetInt(S);
-      Saga.Log[lgDialog].Add(I.ToString()); }
+      Saga.Log[lgDialog].Add(I.ToString());}
     Saga.Log[lgDialog].Add(S);
   end;
 
