@@ -47,11 +47,11 @@ type
 type
   TStageWithNotification = class(TStage)
   private
-    FUseNotification: Boolean;
+    FUseNotifications: Boolean;
   public
     procedure Render; override;
     procedure Timer; override;
-    property UseNotification: Boolean read FUseNotification write FUseNotification;
+    property UseNotifications: Boolean read FUseNotifications write FUseNotifications;
   end;
 
 {$ENDREGION ' TStageWithNotification '}
@@ -80,11 +80,13 @@ type
   strict private
     FTop: Byte;
     FMenuPos: ShortInt;
+    FUseFlags: Boolean;
   public
     constructor Create;
     procedure RenderCursor(Y: Integer; Color: Integer);
     property Top: Byte read FTop write FTop;
     property MenuPos: ShortInt read FMenuPos write FMenuPos;
+    property UseFlags: Boolean read FUseFlags write FUseFlags;
     procedure Timer; override;
     procedure Render; override;
   end;
@@ -259,7 +261,7 @@ type
   end;
 
 type
-  TStageItems = class(TStage)
+  TStageItems = class(TStageWithNotification)
   private
 
   public
@@ -625,13 +627,14 @@ constructor TStageCustomMenu.Create;
 begin
   Top := 16;
   MenuPos := 0;
-  UseNotification := False;
+  UseNotifications := False;
+  UseFlags := True;
 end;
 
 procedure TStageCustomMenu.Render;
 begin
-  Saga.Flag.Render();
-  if UseNotification then inherited;
+  if UseFlags then Saga.Flags.Render;
+  if UseNotifications then inherited;
 end;
 
 procedure TStageCustomMenu.RenderCursor(Y: Integer; Color: Integer);
@@ -644,7 +647,7 @@ end;
 
 procedure TStageCustomMenu.Timer;
 begin
-  if UseNotification then inherited;
+  if UseNotifications then inherited;
 end;
 
 {$ENDREGION ' TStageCustomMenu '}
@@ -804,7 +807,7 @@ procedure TStageRaceMenu.Render;
 var
   R: TSaga.TRaceEnum;
 begin
- Saga.Flag.Render(MenuPos);
+  Saga.Flags.Render(MenuPos);
   Saga.UI.DrawTitle(Top, __('Select race'));
 
   for R := Low(TSaga.TRaceEnum) to High(TSaga.TRaceEnum) do
@@ -1097,7 +1100,7 @@ begin
   inherited;
   Top := 23;
   FLinkList := TLinks.Create;
-  UseNotification := True;
+  UseNotifications := True;
 end;
 
 destructor TStageDialog.Destroy;
@@ -1425,7 +1428,8 @@ end;
 constructor TStageInv.Create;
 begin
   inherited;
-  UseNotification := True;
+  UseNotifications := True;
+  UseFlags := False;
 end;
 
 procedure TStageInv.Render;
@@ -1456,12 +1460,12 @@ begin
     Saga.Player.QuestItems.Count]), 'SPACE',
     (Saga.Player.QuestItems.Count > 0));
   Saga.UI.DrawKey(90, D, __('Equip'), 'ENTER');
-  if UseNotification then inherited;
+  if UseNotifications then inherited;
 end;
 
 procedure TStageInv.Timer;
 begin
-  if UseNotification then inherited;
+  if UseNotifications then inherited;
 end;
 
 procedure TStageInv.Update(var Key: Word);
@@ -1529,11 +1533,12 @@ begin
   Saga.UI.DrawKey(57, Saga.Engine.Window.Height - 6, __('Pickup all items'),
     'SPACE', (Saga.World.CurrentItems.Count(Saga.Player.Pos.X,
     Saga.Player.Pos.Y) > 0));
+  inherited;
 end;
 
 procedure TStageItems.Timer;
 begin
-
+  inherited;
 end;
 
 procedure TStageItems.Update(var Key: Word);

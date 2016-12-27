@@ -279,10 +279,10 @@ type
   end;
 
 {$ENDREGION ' TQuest '}
-{$REGION ' TFlag '}
+{$REGION ' TFlags '}
 
 type
-  TFlag = class(TObject)
+  TFlags = class(TObject)
   strict private
   var
     FLeft, FRight: Byte;
@@ -365,7 +365,7 @@ type
     FLog: array [TLogEnum] of TLog;
     FRace: array [TRaceEnum] of TRace;
     FDialog: TScript;
-    FFlag: TFlag;
+    FFlags: TFlags;
   strict protected
     function GetLog(I: TLogEnum): TLog;
     procedure SetLog(I: TLogEnum; const Value: TLog);
@@ -401,7 +401,7 @@ type
     property UI: TUI read FTUI write FTUI;
     property Colors: TColors read FColors write FColors;
     property Dialog: TScript read FDialog write FDialog;
-    property Flag: TFlag read FFlag;
+    property Flags: TFlags read FFlags;
   end;
 
 {$ENDREGION ' TSaga '}
@@ -685,8 +685,8 @@ begin
 
   FQuest := TQuest.Create;
 
-  FFlag := TFlag.Create;
-  FFlag.LoadFromFile(TUtils.GetPath('resources') + 'flags.txt');
+  FFlags := TFlags.Create;
+  FFlags.LoadFromFile(TUtils.GetPath('resources') + 'flags.txt');
 
   Tiles := TTiles.Create;
   Tiles.LoadFromFile(TUtils.GetPath('resources') + 'terrain.ini');
@@ -759,7 +759,7 @@ begin
   FNotification.Free;
   FLg.Free;
   FTUI.Free;
-  FFlag.Free;
+  FFlags.Free;
   FColors.Free;
   FRecs.Free;
   FList.Free;
@@ -2078,9 +2078,9 @@ begin
 end;
 
 {$ENDREGION ' TBattle '}
-{$REGION ' TFlag '}
+{$REGION ' TFlags '}
 
-constructor TFlag.Create;
+constructor TFlags.Create;
 begin
   FList := TStringList.Create;
   FLeft := Math.RandomRange(0, 7);
@@ -2089,32 +2089,32 @@ begin
   until (FLeft <> FRight);
 end;
 
-destructor TFlag.Destroy;
+destructor TFlags.Destroy;
 begin
   FList.Free;
   inherited;
 end;
 
-procedure TFlag.LoadFromFile(const FileName: string);
+procedure TFlags.LoadFromFile(const FileName: string);
 begin
   FList.LoadFromFile(FileName);
 end;
 
-procedure TFlag.Render;
+procedure TFlags.Render;
 begin
   Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceDGray));
   Render(1, 1, FLeft);
   Render(Saga.Engine.Window.Width - 1 - 20, 1, FRight);
 end;
 
-procedure TFlag.Render(Value: Byte);
+procedure TFlags.Render(Value: Byte);
 begin
   Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceDGray));
   Render(1, 1, Value);
   Render(Saga.Engine.Window.Width - 1 - 20, 1, Value);
 end;
 
-procedure TFlag.Render(AX, AY, ID: Integer);
+procedure TFlags.Render(AX, AY, ID: Integer);
 var
   I, X, Y, C: Integer;
 begin
@@ -2136,6 +2136,7 @@ begin
     end;
   Saga.Engine.BackgroundColor(0);
 end;
+
 {$ENDREGION ' TFlag '}
 
 end.
