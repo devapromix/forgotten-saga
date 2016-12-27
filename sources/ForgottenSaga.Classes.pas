@@ -4,7 +4,7 @@ interface
 
 {$I Include.inc}
 
-uses Classes, Types, IniFiles, Engine, ForgottenSaga.Scenes,
+uses Classes, Types, Graphics, IniFiles, Engine, ForgottenSaga.Scenes,
   ForgottenSaga.Entities;
 
 {$REGION ' TUtils '}
@@ -299,6 +299,24 @@ type
   end;
 
 {$ENDREGION ' TFlag '}
+{$REGION ' TGUIBorder '}
+
+type
+  TGUIBorder = class(TObject)
+  public type
+    TBordElem = (eeTL, eeTR, eeDL, eeDR, eeHL, eeVL);
+  public const
+    BordElemStr: array [TBordElem] of string = ('ctl', 'ctr', 'cdl', 'cdr',
+      'hl', 'vl');
+  private
+    FBordElem: array [TBordElem] of TBitmap;
+  public
+    procedure Render(var Surface: TBitmap);
+    constructor Create;
+    destructor Destroy; override;
+  end;
+
+{$ENDREGION ' TGUIBorder '}
 {$REGION ' TSaga '}
 
 type
@@ -372,6 +390,7 @@ type
     function GetRace(I: TRaceEnum): TRace;
     procedure SetRace(I: TRaceEnum; const Value: TRace);
   public
+    GUIBorder: TGUIBorder;
     constructor Create(AWidth, AHeight: Integer);
     destructor Destroy; override;
     procedure New();
@@ -667,6 +686,8 @@ begin
   for L := Low(TLogEnum) to High(TLogEnum) do
     Self.Log[L] := TLog.Create(LogLen[L]);
 
+  GUIBorder := TGUIBorder.Create;
+
   Lg := TLanguage.Create;
   Lg.SetLanguage('russian');
 
@@ -766,6 +787,7 @@ begin
   FPlayer.Free;
   FStages.Free;
   FWorld.Free;
+  GUIBorder.Free;
   FBattle.Free;
   FEngine.Free;
   FDialog.Free;
@@ -2138,5 +2160,44 @@ begin
 end;
 
 {$ENDREGION ' TFlag '}
+{TGUIBorder}
+
+constructor TGUIBorder.Create;
+var
+  I: TBordElem;
+begin
+  for I := Low(TBordElem) to High(TBordElem) do
+  begin
+    FBordElem[I] := TBitmap.Create;
+    FBordElem[I].Transparent := True;
+    FBordElem[I].TransparentColor := clBlack;
+    FBordElem[I].LoadFromFile(TUtils.GetPath('resources') + BordElemStr[I]
+      + '.bmp');;
+  end;
+end;
+
+destructor TGUIBorder.Destroy;
+var
+  I: TBordElem;
+begin
+  for I := Low(TBordElem) to High(TBordElem) do
+    FBordElem[I].Free;
+  inherited;
+end;
+
+procedure TGUIBorder.Render(var Surface: TBitmap);
+begin
+  Surface.Canvas.Draw(0, 0, FBordElem[eeHL]);
+  Surface.Canvas.Draw(0, 0, FBordElem[eeVL]);
+  Surface.Canvas.Draw(0, Surface.Height - 1, FBordElem[eeHL]);
+  Surface.Canvas.Draw(Surface.Width - 1, 0, FBordElem[eeVL]);
+  Surface.Canvas.Draw(0, 0, FBordElem[eeTL]);
+  Surface.Canvas.Draw(0, Surface.Height - FBordElem[eeDL].Height,
+    FBordElem[eeDL]);
+  Surface.Canvas.Draw(Surface.Width - FBordElem[eeDL].Width, 0,
+    FBordElem[eeTR]);
+  Surface.Canvas.Draw(Surface.Width - FBordElem[eeDL].Width,
+    Surface.Height - FBordElem[eeDL].Height, FBordElem[eeDR]);
+end;
 
 end.

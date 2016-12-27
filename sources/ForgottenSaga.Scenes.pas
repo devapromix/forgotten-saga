@@ -107,7 +107,7 @@ type
   strict private
     FItems: string;
     FCount: Byte;
-    Logo: TBitmap;
+    Logo, MenuBG: TBitmap;
   public
     constructor Create;
     procedure Render; override;
@@ -680,21 +680,27 @@ begin
   Count := 0;
   Logo := TBitmap.Create;
   Logo.LoadFromFile(TUtils.GetPath('resources') + 'logo.bmp');
+  MenuBG := TBitmap.Create;
+  MenuBG.LoadFromFile(TUtils.GetPath('resources') + 'menubg.bmp');
 end;
 
 procedure TStageMenu.Render;
 var
   I: ShortInt;
   LX, LY: Byte;
+const
+  SX = 50;
+  SY = 22;
 begin
- for LY := 0 to 39 do
-   for LX := 0 to 119 do
-   begin
-     Saga.Engine.BackgroundColor(Logo.Canvas.Pixels[LX, LY]);
-     Saga.Engine.Print(LX, LY, ' ');
-   end;
+  Saga.GUIBorder.Render(Logo);
+  for LY := 0 to TMap.Size.Height - 1 do
+    for LX := 0 to TMap.Size.Width + TUI.PanelWidth - 1 do
+    begin
+      Saga.Engine.BackgroundColor(Logo.Canvas.Pixels[LX, LY]);
+      Saga.Engine.Print(LX, LY, ' ');
+    end;
+  Saga.Engine.BackgroundColor(MenuBG.Canvas.Pixels[LX, LY]);
 
- inherited Render;
   Saga.UI.DrawTitle(Top, __('Forgotten Saga'));
   for I := 0 to Count - 1 do
   begin
