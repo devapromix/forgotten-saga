@@ -11,6 +11,7 @@ uses
 var
   Key: Word = 0;
   Tick: Integer = 0;
+  IsRender: Boolean = True;
 
 begin
   terminal_open();
@@ -21,27 +22,26 @@ begin
     Saga.Stages.Render;
     terminal_refresh();
     repeat
-      Saga.Stages.Render;
+      if IsRender then Saga.Stages.Render;
       Key := 0;
       if terminal_has_input() then
+      begin
         Key := terminal_read();
-      Saga.Stages.Update(Key);
-{
-	  now := GetTickCount;
-if now >= NextUpdateTime then begin
-    Saga.Stages.Timer;
-    NextUpdateTime := now + 60;
-end;
-}
-      if (Tick > 29) then
+        Saga.Stages.Update(Key);
+        IsRender := True;
+        Continue;
+      end;
+      if (Tick > 99) then
       begin
         Saga.Stages.Timer;
         Tick := 0;
+        IsRender := True;
+        Continue;
       end;
-      // if (Key <> 0) then
-      terminal_refresh();
+      if IsRender then terminal_refresh();
       Inc(Tick);
-      terminal_delay(1);
+      terminal_delay(10);
+      IsRender := False;
     until (Key = TK_CLOSE);
     terminal_close();
   finally
