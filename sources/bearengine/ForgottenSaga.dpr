@@ -10,7 +10,6 @@ uses
 
 var
   Key: Word = 0;
-  Tick: Integer = 0;
   IsRender: Boolean = True;
 
 begin
@@ -31,15 +30,15 @@ begin
         IsRender := True;
         Continue;
       end;
-      if (Tick > 99) then
+      if (Saga.Notification.Tick > 99) then
       begin
         Saga.Stages.Timer;
-        Tick := 0;
+        Saga.Notification.Tick := 0;
         IsRender := True;
         Continue;
       end;
       if IsRender then terminal_refresh();
-      Inc(Tick);
+      Saga.Notification.Tick := Saga.Notification.Tick + 1;
       terminal_delay(10);
       IsRender := False;
     until (Key = TK_CLOSE);

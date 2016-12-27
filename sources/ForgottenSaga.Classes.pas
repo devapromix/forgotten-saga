@@ -180,15 +180,18 @@ type
 type
   TNotification = class(TObject)
   strict private
-    FMessage: string;
+    FMessages: TStringList;
     FDuration: Byte;
     FCounter: Byte;
+    FTick: Integer;
   public
-    constructor Create(Duration: Byte = 5);
+    constructor Create(Duration: Byte = 6);
+    destructor Destroy; override;
     procedure Add(S: string);
-    procedure Render(Left, Top: Word);
+    procedure Render;
     property Duration: Byte read FDuration write FDuration;
     property Counter: Byte read FCounter write FCounter;
+    property Tick: Integer read FTick write FTick;
     procedure Dec;
   end;
 
@@ -338,7 +341,7 @@ type
 {$ENDREGION ' TSaga.TLog '}
   public type
     TRaceEnum = (rcGoblin, rcOrc, rcTroll);
-    TLogEnum = (lgGame, lgIntro, lgDialog, lgBattle, lgQuest);
+    TLogEnum = (lgIntro, lgDialog, lgBattle, lgQuest);
   public const
     RaceName: array [TRaceEnum] of string =
       ('Avgu,Leo,Tan,Sho,Penr,Lok,Gron,Lar,Midr|sin,neg,zar,kar,tun,rel,bal,rin,kon|or,fin,shog,tal,rod,pin,ol,kan,on',
@@ -621,8 +624,8 @@ begin
           Saga.Player.Maps := Saga.Player.Maps + S;
           Saga.Player.AddExp(Saga.World.GetMap(I).Level +
             Round(Saga.Player.Level * 0.20));
-          Saga.Log[lgGame]
-            .Add(Format(__('You have opened a new territory: %s.'), [N]));
+          Saga.Notification.Add
+            (Format(__('You have opened a new territory: %s.'), [N]));
           F := True;
         end;
       end;
@@ -630,7 +633,7 @@ begin
       Result := True;
       if F then
         Exit;
-      Saga.Log[lgGame].Add(Format(__('You walked in <RED>%s.</>'), [N]));
+      Saga.Notification.Add(Format(__('You walked in location: %s.'), [N]));
     end;
   end;
 end;
@@ -646,7 +649,7 @@ end;
 
 constructor TSaga.Create(AWidth, AHeight: Integer);
 const
-  LogLen: array [TLogEnum] of Integer = (500, 1000, 1000, 1400, 1600);
+  LogLen: array [TLogEnum] of Integer = (1000, 1000, 1400, 1600);
 var
   I: Byte;
   L: TLogEnum;
@@ -817,7 +820,7 @@ begin
   if not FileExists(GetSlotPath(Slot) + 'game.log') then
     Exit;
   Player.LoadFromFile(GetSlotPath(Slot) + 'player.crt');
-  Log[lgGame].LoadFromFile(GetSlotPath(Slot) + 'game.log');
+// Log[lgGame].LoadFromFile(GetSlotPath(Slot) + 'game.log');
   Quest.LoadFromFile(GetSlotPath(Slot) + 'quest.log');
   World.LoadFromDir(GetSlotPath(Slot));
   Dialog.Vars.LoadFromFile(GetSlotPath(Slot) + 'vars.txt');
@@ -829,7 +832,7 @@ end;
 procedure TSaga.SaveToSlot(Slot: Byte);
 begin
   Player.SaveToFile(GetSlotPath(Slot) + 'player.crt');
-  Log[lgGame].SaveToFile(GetSlotPath(Slot) + 'game.log');
+  // Log[lgGame].SaveToFile(GetSlotPath(Slot) + 'game.log');
   Self.Quest.SaveToFile(GetSlotPath(Slot) + 'quest.log');
   World.SaveToDir(GetSlotPath(Slot));
   Dialog.Vars.SaveToFile(GetSlotPath(Slot) + 'vars.txt');
@@ -1041,29 +1044,57 @@ end;
 {$REGION ' TNotification '}
 
 procedure TNotification.Add(S: string);
+var
+  I: Byte;
 begin
-  FMessage := Trim(S);
+  FTick := 0;
   FCounter := FDuration;
+  for I := 1 to FMessages.Count - 1 do
+    FMessages[I - 1] := FMessages[I];
+  FMessages[FMessages.Count - 1] := Trim(S);
 end;
 
 constructor TNotification.Create(Duration: Byte);
+var
+  I: Byte;
 begin
-  FMessage := '';
+  FTick := 0;
   FCounter := 0;
   FDuration := Duration;
+  FMessages := TStringList.Create;
+  for I := 0 to FDuration - 1 do
+    FMessages.Add('');
 end;
 
 procedure TNotification.Dec;
+var
+  I: Byte;
 begin
+  for I := 1 to FMessages.Count - 1 do
+    FMessages[I - 1] := FMessages[I];
+  FMessages[FMessages.Count - 1] := '';
   if (FCounter > 0) then
     FCounter := FCounter - 1;
 end;
 
-procedure TNotification.Render(Left, Top: Word);
+destructor TNotification.Destroy;
 begin
-  Saga.Engine.ForegroundColor(Saga.Colors.clNotification);
+  FMessages.Free;
+  inherited;
+end;
+
+procedure TNotification.Render;
+var
+  I: Byte;
+begin
   if (FCounter > 1) then
-    Saga.Engine.Print(Left, Top, FMessage);
+    for I := 0 to FMessages.Count - 1 do
+      if (FMessages[I] <> '') then
+      begin
+        Saga.Engine.ForegroundColor
+          (Saga.Engine.DarkColor(Saga.Colors.clNotification, 100 - (I * 20)));
+        Saga.Engine.Print(0, I - 1, FMessages[I], aCenter);
+      end;
 end;
 
 {$ENDREGION ' TNotification '}
@@ -1145,11 +1176,6 @@ begin
     Result := S
   else
     Result := FValue[I];
-
-  Result := StringReplace(Result, '<RED>', '[color=red]', [rfReplaceAll]);
-  Result := StringReplace(Result, '<GREEN>', '[color=green]', [rfReplaceAll]);
-  Result := StringReplace(Result, '<BLUE>', '[color=blue]', [rfReplaceAll]);
-  Result := StringReplace(Result, '</>', '[/color]', [rfReplaceAll]);
 end;
 
 constructor TLanguage.Create;
@@ -1701,7 +1727,7 @@ var
         Durability.Cur := StrToIntDef(SL[9], Durability.Max);
       end;
       if Saga.Player.Inventory.AddItem(Item) then
-        Saga.Log[lgGame].Add(Format(__('You pick up a %s.'), [Item.Name]));
+        Saga.Notification.Add(Format(__('You pick up a %s.'), [Item.Name]));
     finally
       Item.Free;
     end;
@@ -1777,7 +1803,7 @@ begin
   end;
 
   if IsTag('log') then
-    Saga.Log[lgGame].Add(GetLastCode('log', Code));
+    Saga.Notification.Add(GetLastCode('log', Code));
 
   if IsTag('box') then
   begin
@@ -1809,7 +1835,6 @@ begin
       if (Pos(S, Saga.Player.Quests) <= 0) and (I > 0) then
       begin
         Saga.Player.Quests := Saga.Player.Quests + Q;
-        Saga.Log[lgGame].Add(__('The new quest is added to the log.'));
         Saga.Notification.Add(__('The new quest is added to the log.'));
         SetUpSymbol('?');
       end;
@@ -1817,13 +1842,11 @@ begin
     end;
     if IsTag('update', S) then
     begin
-      Saga.Log[lgGame].Add(__('Новая запись в журнале.'));
       Saga.Notification.Add(__('Новая запись в журнале.'));
       Exit;
     end;
     if IsTag(CloseTag, S) then
     begin
-      Saga.Log[lgGame].Add(__('You have completed the quest.'));
       Saga.Notification.Add(__('You have completed the quest.'));
       Saga.Quest.Add(I - 1, __('I have completed this quest.'));
       Saga.Quest.Replace(I - 1, 0, TEngine.kcBegin + __('Задание выполнено') +
@@ -2029,7 +2052,7 @@ end;
 procedure TBattle.Finish;
 begin
   Saga.Stages.SetStage(stGame);
-  Saga.Log[lgGame].Add('Ты вышел из боя.');
+  Saga.Notification.Add('Ты вышел из боя.');
 end;
 
 procedure TBattle.PlayerMove;

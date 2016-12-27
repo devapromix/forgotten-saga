@@ -42,10 +42,23 @@ type
   end;
 
 {$ENDREGION ' TStages '}
+{$REGION ' TStageWithNotification '}
+
+type
+  TStageWithNotification = class(TStage)
+  private
+    FUseNotification: Boolean;
+  public
+    procedure Render; override;
+    procedure Timer; override;
+    property UseNotification: Boolean read FUseNotification write FUseNotification;
+  end;
+
+{$ENDREGION ' TStageWithNotification '}
 {$REGION ' TStageGame '}
 
 type
-  TStageGame = class(TStage)
+  TStageGame = class(TStageWithNotification)
   strict private
     FFlag: Boolean;
     procedure SetNPC(ID: Byte);
@@ -63,7 +76,7 @@ type
 {$REGION ' TStageCustomMenu '}
 
 type
-  TStageCustomMenu = class(TStage)
+  TStageCustomMenu = class(TStageWithNotification)
   strict private
     FTop: Byte;
     FMenuPos: ShortInt;
@@ -204,7 +217,7 @@ type
 {$REGION ' TStageBattle '}
 
 type
-  TStageBattle = class(TStage)
+  TStageBattle = class(TStageWithNotification)
   public
     procedure Render; override;
     procedure Update(var Key: Word); override;
@@ -504,8 +517,7 @@ begin
   Saga.Player.Look.Render;
   Saga.Engine.BackgroundColor(0);
   PlayerInfo;
-  Saga.Log[lgGame].Render(81, 15, 39);
-  Saga.Notification.Render(0, 0);
+  inherited;
 end;
 
 procedure TStageGame.PlayerInfo;
@@ -525,8 +537,7 @@ end;
 procedure TStageGame.Timer;
 begin
   FFlag := not FFlag;
-  Saga.Notification.Dec();
-  Saga.Stages.Render;
+  inherited;
 end;
 
 procedure TStageGame.Update(var Key: Word);
@@ -614,11 +625,13 @@ constructor TStageCustomMenu.Create;
 begin
   Top := 16;
   MenuPos := 0;
+  UseNotification := False;
 end;
 
 procedure TStageCustomMenu.Render;
 begin
   Saga.Flag.Render();
+  if UseNotification then inherited;
 end;
 
 procedure TStageCustomMenu.RenderCursor(Y: Integer; Color: Integer);
@@ -631,7 +644,7 @@ end;
 
 procedure TStageCustomMenu.Timer;
 begin
-
+  if UseNotification then inherited;
 end;
 
 {$ENDREGION ' TStageCustomMenu '}
@@ -993,9 +1006,9 @@ procedure TStageBattle.Render;
 var
   Creature: TCreature;
 begin
-  Saga.UI.DrawTitle(5, 'Поединок');
-  Saga.UI.DrawKey(15, 6, 'Атаковать', '1');
-  Saga.UI.DrawKey(15, 7, 'Отступить', '2');
+  Saga.UI.DrawTitle(7, 'Поединок');
+  Saga.UI.DrawKey(15, 8, 'Атаковать', '1');
+  Saga.UI.DrawKey(15, 9, 'Отступить', '2');
 
   Saga.Engine.ForegroundColor(Saga.Player.Color);
   Saga.Engine.Print(90, 6, Saga.Player.Name + ' (' + Saga.Player.Atr[atLife]
@@ -1005,12 +1018,13 @@ begin
   Saga.Engine.Print(90, 7, Creature.Name + ' (' + Creature.Atr[atLife]
     .ToText + ')');
   Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
-  Saga.Log[lgBattle].Render(35, 6, 55);
+  Saga.Log[lgBattle].Render(35, 8, 55);
+  inherited;
 end;
 
 procedure TStageBattle.Timer;
 begin
-
+  inherited;
 end;
 
 procedure TStageBattle.Update(var Key: Word);
@@ -1083,6 +1097,7 @@ begin
   inherited;
   Top := 23;
   FLinkList := TLinks.Create;
+  UseNotification := True;
 end;
 
 destructor TStageDialog.Destroy;
@@ -1096,6 +1111,7 @@ var
   I: Integer;
   S, N, Close: string;
 begin
+  inherited;
   Self.Count := LinkList.Count;
   for I := 0 to Count - 1 do
   begin
@@ -1166,7 +1182,7 @@ end;
 
 procedure TStageDialog.Timer;
 begin
-
+  inherited;
 end;
 
 {$ENDREGION ' TStageDialog '}
@@ -1409,6 +1425,7 @@ end;
 constructor TStageInv.Create;
 begin
   inherited;
+  UseNotification := True;
 end;
 
 procedure TStageInv.Render;
@@ -1439,11 +1456,12 @@ begin
     Saga.Player.QuestItems.Count]), 'SPACE',
     (Saga.Player.QuestItems.Count > 0));
   Saga.UI.DrawKey(90, D, __('Equip'), 'ENTER');
+  if UseNotification then inherited;
 end;
 
 procedure TStageInv.Timer;
 begin
-
+  if UseNotification then inherited;
 end;
 
 procedure TStageInv.Update(var Key: Word);
@@ -1604,5 +1622,19 @@ begin
 end;
 
 {$ENDREGION ' TStageItem '}
+{$REGION ' TStageWithNotification '}
+
+procedure TStageWithNotification.Render;
+begin
+  Saga.Notification.Render;
+end;
+
+procedure TStageWithNotification.Timer;
+begin
+  Saga.Notification.Dec();
+  Saga.Stages.Render;
+end;
+
+{$ENDREGION ' TStageWithNotification '}
 
 end.

@@ -724,19 +724,19 @@ begin
   if Tile.Obj = tClosedDoor then
   begin
     Saga.World.CurrentMap.SetTile(X, Y, lrObjects, tOpenedDoor);
-    Saga.Log[lgGame].Add(__('You open the door.'));
+    Saga.Notification.Add(__('You open the door.'));
     Result := True;
   end;
   if Tile.Obj = tClosedLiuk then
   begin
     Saga.World.CurrentMap.SetTile(X, Y, lrObjects, tNone);
-    Saga.Log[lgGame].Add(__('You open the liuk.'));
+    Saga.Notification.Add(__('You open the liuk.'));
     Result := True;
   end;
   if Tile.Obj = tClosedGate then
   begin
     Saga.World.CurrentMap.SetTile(X, Y, lrObjects, tOpenedGate);
-    Saga.Log[lgGame].Add(__('You open the gate.'));
+    Saga.Notification.Add(__('You open the gate.'));
     Result := True;
   end;
 end;
@@ -950,7 +950,7 @@ end;
 
 procedure TPlayer.AddExp(A: Word);
 begin
-  Saga.Log[lgGame].Add(Format('%s: +%d.', [__('Exp'), A]));
+  Saga.Notification.Add(Format('%s: +%d.', [__('Exp'), A]));
   if (Atr[atExp].Cur + A >= Atr[atExp].Max) then
   begin
     Atr[atExp].Cur := (Atr[atExp].Cur + A - Atr[atExp].Max);
@@ -1747,7 +1747,7 @@ begin
   Item := Saga.World.CurrentItems.Entity[I];
   if Saga.Player.Inventory.AddItem(Item) then
   begin
-    Saga.Log[lgGame].Add(Format(__('You pick up a %s.'), [Item.Name]));
+    Saga.Notification.Add(Format(__('You pick up a %s.'), [Item.Name]));
     Saga.World.CurrentItems.Delete(I);
   end;
 end;

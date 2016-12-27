@@ -127,7 +127,7 @@ type
     procedure Clear;
     constructor Create(AWidth, AHeight: Integer);
     destructor Destroy; override;
-    procedure Print(X, Y: Integer; S: string; Align: TAlign = aLeft); overload;
+    procedure Print(X, Y: Integer; S: string; Align: TAlign = aLeft; AdvWidth: Byte = 0); overload;
     function Print(S: string; R: TRect): Integer; overload;
     procedure ForegroundColor(Color: Integer);
     procedure BackgroundColor(Color: Integer);
@@ -196,13 +196,18 @@ begin
   terminal_close();
 end;
 
-procedure TEngine.Print(X, Y: Integer; S: string; Align: TAlign = aLeft);
+procedure TEngine.Print(X, Y: Integer; S: string; Align: TAlign = aLeft; AdvWidth: Byte = 0);
+var
+  W: Integer;
 begin
   case Align of
     aLeft:
       terminal_print(X, Y, S);
     aCenter:
-      terminal_print((Window.Width div 2) - (GetTextLength(S) div 2), Y, S);
+    begin
+      if (AdvWidth > 0) then W := AdvWidth else W := Window.Width;
+      terminal_print((W div 2) - (GetTextLength(S) div 2), Y, S);
+    end;
     aRight:
       terminal_print(Window.Width - GetTextLength(S), Y, S);
   end;
