@@ -4,7 +4,7 @@ interface
 
 {$I Include.inc}
 
-uses Classes;
+uses Classes, Graphics;
 
 {$REGION ' TStages '}
 
@@ -107,6 +107,7 @@ type
   strict private
     FItems: string;
     FCount: Byte;
+    Logo: TBitmap;
   public
     constructor Create;
     procedure Render; override;
@@ -677,12 +678,22 @@ begin
   inherited;
   Items := '';
   Count := 0;
+  Logo := TBitmap.Create;
+  Logo.LoadFromFile(TUtils.GetPath('resources') + 'logo.bmp');
 end;
 
 procedure TStageMenu.Render;
 var
   I: ShortInt;
+  LX, LY: Byte;
 begin
+ for LY := 0 to 39 do
+   for LX := 0 to 119 do
+   begin
+     Saga.Engine.BackgroundColor(Logo.Canvas.Pixels[LX, LY]);
+     Saga.Engine.Print(LX, LY, ' ');
+   end;
+
  inherited Render;
   Saga.UI.DrawTitle(Top, __('Forgotten Saga'));
   for I := 0 to Count - 1 do
