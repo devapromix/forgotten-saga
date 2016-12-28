@@ -51,7 +51,8 @@ type
   public
     procedure Render; override;
     procedure Timer; override;
-    property UseNotifications: Boolean read FUseNotifications write FUseNotifications;
+    property UseNotifications: Boolean read FUseNotifications
+      write FUseNotifications;
   end;
 
 {$ENDREGION ' TStageWithNotification '}
@@ -362,6 +363,11 @@ implementation
 uses SysUtils, Dialogs, Math, Engine, ForgottenSaga.Classes,
   ForgottenSaga.Entities;
 
+const
+  StageBG: array [TStageEnum] of TStageBackgroundEnum = (sbNone, sbDragon,
+    sbDragon, sbNone, sbNone, sbNone, sbNone, sbNone, sbNone, sbNone, sbNone,
+    sbNone, sbNone, sbNone, sbNone, sbNone, sbNone, sbNone, sbNone);
+
 {$REGION ' TStages '}
 
 procedure TStages.Update(var Key: Word);
@@ -634,8 +640,10 @@ end;
 
 procedure TStageCustomMenu.Render;
 begin
-  if UseFlags then Saga.Flags.Render;
-  if UseNotifications then inherited;
+  if UseFlags then
+    Saga.Flags.Render;
+  if UseNotifications then
+    inherited;
 end;
 
 procedure TStageCustomMenu.RenderCursor(Y: Integer; Color: Integer);
@@ -648,7 +656,8 @@ end;
 
 procedure TStageCustomMenu.Timer;
 begin
-  if UseNotifications then inherited;
+  if UseNotifications then
+    inherited;
 end;
 
 {$ENDREGION ' TStageCustomMenu '}
@@ -866,7 +875,7 @@ end;
 
 procedure TStageNameMenu.Render;
 begin
- inherited Render;
+  inherited Render;
   Saga.UI.DrawTitle(Top, __('What is your name?'));
   Saga.Engine.ForegroundColor
     (Saga.Race[TSaga.TRaceEnum(Saga.Player.Race)].Color);
@@ -891,7 +900,7 @@ end;
 
 procedure TStageTextMenu.Render;
 begin
- inherited Render;
+  inherited Render;
   Saga.UI.DrawTitle(12, 'Как все начиналось...');
   Saga.UI.DrawKey(0, 27, 'Начать игру...', 'ENTER', aCenter);
   Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
@@ -935,7 +944,7 @@ procedure TStageStorageMenu.Render;
 var
   I: ShortInt;
 begin
- inherited Render;
+  inherited Render;
   for I := 0 to 9 do
   begin
     Saga.Engine.ForegroundColor(Saga.Colors.clTitle);
@@ -1384,7 +1393,7 @@ end;
 
 procedure TStageAboutMenu.Render;
 begin
- inherited Render;
+  inherited Render;
   Saga.UI.DrawTitle(Top, __('Forgotten Saga'));
   Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceLGray));
   Saga.Engine.Print(0, Top + 2, 'github.com/devapromix/forgotten-saga',
@@ -1464,7 +1473,8 @@ begin
       if (P = Saga.Player.Inventory.Selected) then
         Self.RenderCursor(P + 7, Saga.Colors.clCursor);
       F := TItems.ToText(Saga.Player.Inventory.Item[I]);
-      if (Saga.Player.Inventory.Item[I].Doll > 0) then F := F + ' (+)';
+      if (Saga.Player.Inventory.Item[I].Doll > 0) then
+        F := F + ' (+)';
       Saga.UI.DrawKey(15, P + 7, F, chr(P + 65));
       Inc(P);
     end;
@@ -1477,12 +1487,14 @@ begin
     Saga.Player.QuestItems.Count]), 'SPACE',
     (Saga.Player.QuestItems.Count > 0));
   Saga.UI.DrawKey(90, D, __('Equip'), 'ENTER');
-  if UseNotifications then inherited;
+  if UseNotifications then
+    inherited;
 end;
 
 procedure TStageInv.Timer;
 begin
-  if UseNotifications then inherited;
+  if UseNotifications then
+    inherited;
 end;
 
 procedure TStageInv.Update(var Key: Word);

@@ -320,6 +320,13 @@ type
 {$REGION ' TSaga '}
 
 type
+  TStageBackgroundEnum = (sbNone, sbDragon);
+
+const
+  StageBackgroundFileName: array [TStageBackgroundEnum] of string = ('',
+    'dragon');
+
+type
   TSaga = class(TObject)
 {$REGION ' TSaga.TRace '}
   public type
@@ -673,6 +680,7 @@ var
   I: Byte;
   L: TLogEnum;
   R: TRaceEnum;
+  F: TStageBackgroundEnum;
 begin
   FEngine := TEngine.Create(AWidth, AHeight);
   FTUI := TUI.Create(FEngine);
@@ -687,6 +695,10 @@ begin
     Self.Log[L] := TLog.Create(LogLen[L]);
 
   GUIBorder := TGUIBorder.Create;
+  for F := Low(TStageBackgroundEnum) to High(TStageBackgroundEnum) do
+  begin
+
+  end;
 
   Lg := TLanguage.Create;
   Lg.SetLanguage('russian');
