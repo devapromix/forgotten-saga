@@ -320,14 +320,15 @@ type
 {$REGION ' TSaga '}
 
 type
-  TStageBackgroundEnum = (sbNone, sbDragon, sbGoblins);
+  TStageBackgroundEnum = (sbNone, sbPaper, sbDragon, sbGoblins,
+    sbMinotaur, sbWitch);
 
 var
   StageBackground: array [TStageBackgroundEnum] of TBitmap;
 
 const
   StageBackgroundFileName: array [TStageBackgroundEnum] of string = ('',
-    'dragon', 'goblins');
+    'paper', 'dragon', 'goblins', 'minotaur', 'witch');
 
 type
   TSaga = class(TObject)
@@ -684,6 +685,7 @@ var
   R: TRaceEnum;
   F: TStageBackgroundEnum;
   GUIBorder: TGUIBorder;
+  TempBitmap: TBitmap;
 begin
   FEngine := TEngine.Create(AWidth, AHeight);
   FTUI := TUI.Create(FEngine);
@@ -698,6 +700,7 @@ begin
     Self.Log[L] := TLog.Create(LogLen[L]);
 
   GUIBorder := TGUIBorder.Create;
+  TempBitmap := TBitmap.Create;
   try
     for F := Low(TStageBackgroundEnum) to High(TStageBackgroundEnum) do
     begin
@@ -706,10 +709,19 @@ begin
       begin
         StageBackground[F].LoadFromFile(TUtils.GetPath('resources') +
           StageBackgroundFileName[F] + '.bmp');
+          if (F > sbPaper) then
+          begin
+            StageBackground[F].Transparent := True;
+            StageBackground[F].TransparentColor := clFuchsia;
+            TempBitmap.Assign(StageBackground[sbPaper]);
+            TempBitmap.Canvas.Draw(0, 0, StageBackground[F]);
+            StageBackground[F].Assign(TempBitmap);
+          end;
         GUIBorder.Render(StageBackground[F]);
       end;
     end;
   finally
+    TempBitmap.Free;
     GUIBorder.Free;
   end;
 

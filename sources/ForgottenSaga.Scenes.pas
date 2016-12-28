@@ -287,7 +287,7 @@ type
 {$REGION ' TStageQuestInfo '}
 
 type
-  TStageQuestInfo = class(TStage)
+  TStageQuestInfo = class(TStageWithNotification)
   strict private
     FID: Integer;
   public
@@ -364,8 +364,9 @@ uses SysUtils, Dialogs, Math, Engine, ForgottenSaga.Classes,
 
 const
   StageBG: array [TStageEnum] of TStageBackgroundEnum = (sbNone, sbDragon,
-    sbDragon, sbGoblins, sbNone, sbNone, sbNone, sbNone, sbNone, sbNone, sbNone,
-    sbNone, sbNone, sbNone, sbNone, sbNone, sbNone, sbNone, sbNone);
+    sbDragon, sbGoblins, sbMinotaur, sbPaper, sbPaper, sbPaper, sbNone, sbNone,
+    sbNone, sbPaper, sbPaper, sbPaper, sbWitch, sbPaper, sbNone,
+    sbNone, sbNone);
 
 {$REGION ' TStages '}
 
@@ -525,7 +526,7 @@ begin
   Saga.Player.Look.Render;
   Saga.Engine.BackgroundColor(0);
   PlayerInfo;
-  inherited;
+  inherited Render;
 end;
 
 procedure TStageGame.PlayerInfo;
@@ -698,7 +699,8 @@ const
   SY = 22;
 begin
   inherited Render;
-  Saga.UI.DrawTitle(Top, __('Forgotten Saga'));
+  if (Saga.Stages.Stage = stMainMenu) or (Saga.Stages.Stage = stGameMenu) then
+    Saga.UI.DrawTitle(Top, __('Forgotten Saga'));
   for I := 0 to Count - 1 do
   begin
     Saga.Engine.ForegroundColor(Saga.Colors.clTitle);
@@ -821,7 +823,8 @@ procedure TStageRaceMenu.Render;
 var
   R: TSaga.TRaceEnum;
 begin
-  Saga.Flags.Render(MenuPos);
+  inherited;
+// Saga.Flags.Render(MenuPos);
   Saga.UI.DrawTitle(Top, __('Select race'));
 
   for R := Low(TSaga.TRaceEnum) to High(TSaga.TRaceEnum) do
@@ -1304,6 +1307,7 @@ var
   end;
 
 begin
+  inherited;
   Saga.UI.DrawTitle(Top, __('Quest log'));
   SL := TUtils.ExplodeString(',', Saga.Player.Quests);
   Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
@@ -1356,6 +1360,7 @@ procedure TStageQuestInfo.Render;
 var
   S: string;
 begin
+  inherited;
   S := Saga.Quest.Get(ID, 0);
   Saga.UI.DrawTitle(8, Trim(Copy(S, Pos(TEngine.kcEnd, S) + 1, Length(S))));
   Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
@@ -1651,13 +1656,17 @@ var
   LX, LY: Byte;
 begin
   Saga.Notification.Render;
+  if (Saga.Stages.Stage = stGame) then
+    Exit;
   for LY := 0 to TMap.Size.Height - 1 do
     for LX := 0 to TMap.Size.Width + TUI.PanelWidth - 1 do
     begin
-      Saga.Engine.BackgroundColor(StageBackground[StageBG[Saga.Stages.Stage]].Canvas.Pixels[LX, LY]);
+      Saga.Engine.BackgroundColor(StageBackground[StageBG[Saga.Stages.Stage]]
+        .Canvas.Pixels[LX, LY]);
       Saga.Engine.Print(LX, LY, ' ');
     end;
-  Saga.Engine.BackgroundColor(StageBackground[StageBG[Saga.Stages.Stage]].Canvas.Pixels[LX, LY]);
+  Saga.Engine.BackgroundColor(StageBackground[StageBG[Saga.Stages.Stage]]
+    .Canvas.Pixels[LX, LY]);
 end;
 
 procedure TStageWithNotification.Timer;
