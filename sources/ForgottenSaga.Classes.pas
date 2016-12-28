@@ -322,6 +322,9 @@ type
 type
   TStageBackgroundEnum = (sbNone, sbDragon);
 
+var
+  StageBackground: array [TStageBackgroundEnum] of TBitmap;
+
 const
   StageBackgroundFileName: array [TStageBackgroundEnum] of string = ('',
     'dragon');
@@ -397,7 +400,6 @@ type
     function GetRace(I: TRaceEnum): TRace;
     procedure SetRace(I: TRaceEnum; const Value: TRace);
   public
-    GUIBorder: TGUIBorder;
     constructor Create(AWidth, AHeight: Integer);
     destructor Destroy; override;
     procedure New();
@@ -681,6 +683,7 @@ var
   L: TLogEnum;
   R: TRaceEnum;
   F: TStageBackgroundEnum;
+  GUIBorder: TGUIBorder;
 begin
   FEngine := TEngine.Create(AWidth, AHeight);
   FTUI := TUI.Create(FEngine);
@@ -695,9 +698,19 @@ begin
     Self.Log[L] := TLog.Create(LogLen[L]);
 
   GUIBorder := TGUIBorder.Create;
-  for F := Low(TStageBackgroundEnum) to High(TStageBackgroundEnum) do
-  begin
-
+  try
+    for F := Low(TStageBackgroundEnum) to High(TStageBackgroundEnum) do
+    begin
+      StageBackground[F] := TBitmap.Create;
+      if (StageBackgroundFileName[F] <> '') then
+      begin
+        StageBackground[F].LoadFromFile(TUtils.GetPath('resources') +
+          StageBackgroundFileName[F] + '.bmp');
+        GUIBorder.Render(StageBackground[F]);
+      end;
+    end;
+  finally
+    GUIBorder.Free;
   end;
 
   Lg := TLanguage.Create;
@@ -784,11 +797,14 @@ destructor TSaga.Destroy;
 var
   R: TRaceEnum;
   L: TLogEnum;
+  F: TStageBackgroundEnum;
 begin
   for R := Low(TRaceEnum) to High(TRaceEnum) do
     Race[R].Free;
   for L := Low(TLogEnum) to High(TLogEnum) do
     Self.Log[L].Free;
+  for F := Low(TStageBackgroundEnum) to High(TStageBackgroundEnum) do
+    StageBackground[F].Free;
   FNotification.Free;
   FLg.Free;
   FTUI.Free;
@@ -799,7 +815,6 @@ begin
   FPlayer.Free;
   FStages.Free;
   FWorld.Free;
-  GUIBorder.Free;
   FBattle.Free;
   FEngine.Free;
   FDialog.Free;

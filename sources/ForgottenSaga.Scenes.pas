@@ -108,7 +108,6 @@ type
   strict private
     FItems: string;
     FCount: Byte;
-    Logo, MenuBG: TBitmap;
   public
     constructor Create;
     procedure Render; override;
@@ -632,6 +631,7 @@ end;
 
 constructor TStageCustomMenu.Create;
 begin
+  inherited;
   Top := 16;
   MenuPos := 0;
   UseNotifications := False;
@@ -643,7 +643,8 @@ begin
   if UseFlags then
     Saga.Flags.Render;
   if UseNotifications then
-    inherited;
+    Saga.Notification.Render;
+  inherited Render;
 end;
 
 procedure TStageCustomMenu.RenderCursor(Y: Integer; Color: Integer);
@@ -687,29 +688,16 @@ begin
   inherited;
   Items := '';
   Count := 0;
-  Logo := TBitmap.Create;
-  Logo.LoadFromFile(TUtils.GetPath('resources') + 'logo.bmp');
-  MenuBG := TBitmap.Create;
-  MenuBG.LoadFromFile(TUtils.GetPath('resources') + 'menubg.bmp');
 end;
 
 procedure TStageMenu.Render;
 var
   I: ShortInt;
-  LX, LY: Byte;
 const
   SX = 50;
   SY = 22;
 begin
-  Saga.GUIBorder.Render(Logo);
-  for LY := 0 to TMap.Size.Height - 1 do
-    for LX := 0 to TMap.Size.Width + TUI.PanelWidth - 1 do
-    begin
-      Saga.Engine.BackgroundColor(Logo.Canvas.Pixels[LX, LY]);
-      Saga.Engine.Print(LX, LY, ' ');
-    end;
-  Saga.Engine.BackgroundColor(MenuBG.Canvas.Pixels[LX, LY]);
-
+  inherited Render;
   Saga.UI.DrawTitle(Top, __('Forgotten Saga'));
   for I := 0 to Count - 1 do
   begin
@@ -1659,8 +1647,17 @@ end;
 {$REGION ' TStageWithNotification '}
 
 procedure TStageWithNotification.Render;
+var
+  LX, LY: Byte;
 begin
   Saga.Notification.Render;
+  for LY := 0 to TMap.Size.Height - 1 do
+    for LX := 0 to TMap.Size.Width + TUI.PanelWidth - 1 do
+    begin
+      Saga.Engine.BackgroundColor(StageBackground[StageBG[Saga.Stages.Stage]].Canvas.Pixels[LX, LY]);
+      Saga.Engine.Print(LX, LY, ' ');
+    end;
+  Saga.Engine.BackgroundColor(StageBackground[StageBG[Saga.Stages.Stage]].Canvas.Pixels[LX, LY]);
 end;
 
 procedure TStageWithNotification.Timer;
