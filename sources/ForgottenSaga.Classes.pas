@@ -320,14 +320,14 @@ type
 {$REGION ' TSaga '}
 
 type
-  TStageBackgroundEnum = (sbNone, sbDragon);
+  TStageBackgroundEnum = (sbNone, sbDragon, sbGoblins);
 
 var
   StageBackground: array [TStageBackgroundEnum] of TBitmap;
 
 const
   StageBackgroundFileName: array [TStageBackgroundEnum] of string = ('',
-    'dragon');
+    'dragon', 'goblins');
 
 type
   TSaga = class(TObject)

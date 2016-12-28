@@ -364,7 +364,7 @@ uses SysUtils, Dialogs, Math, Engine, ForgottenSaga.Classes,
 
 const
   StageBG: array [TStageEnum] of TStageBackgroundEnum = (sbNone, sbDragon,
-    sbDragon, sbNone, sbNone, sbNone, sbNone, sbNone, sbNone, sbNone, sbNone,
+    sbDragon, sbGoblins, sbNone, sbNone, sbNone, sbNone, sbNone, sbNone, sbNone,
     sbNone, sbNone, sbNone, sbNone, sbNone, sbNone, sbNone, sbNone);
 
 {$REGION ' TStages '}
