@@ -364,8 +364,8 @@ uses SysUtils, Dialogs, Math, Engine, ForgottenSaga.Classes,
 
 const
   StageBG: array [TStageEnum] of TStageBackgroundEnum = (sbNone, sbDragon,
-    sbDragon, sbGoblins, sbMinotaur, sbPaper, sbPaper, sbPaper, sbNone, sbNone,
-    sbNone, sbPaper, sbPaper, sbPaper, sbWitch, sbPaper, sbNone,
+    sbDragon, sbGoblins, sbMinotaur, sbPaper, sbPaper, sbPaper, sbPaper, sbPaper,
+    sbPaper, sbPaper, sbPaper, sbPaper, sbWitch, sbPaper, sbNone,
     sbNone, sbNone);
 
 {$REGION ' TStages '}
@@ -1026,6 +1026,7 @@ procedure TStageBattle.Render;
 var
   Creature: TCreature;
 begin
+  inherited;
   Saga.UI.DrawTitle(7, 'Поединок');
   Saga.UI.DrawKey(15, 8, 'Атаковать', '1');
   Saga.UI.DrawKey(15, 9, 'Отступить', '2');
@@ -1039,7 +1040,6 @@ begin
     .ToText + ')');
   Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
   Saga.Log[lgBattle].Render(35, 8, 55);
-  inherited;
 end;
 
 procedure TStageBattle.Timer;
@@ -1210,6 +1210,7 @@ end;
 
 procedure TStageVictory.Render;
 begin
+  inherited;
   Saga.UI.DrawTitle(Top, __('Victory!'));
   Saga.Engine.ForegroundColor(Saga.Colors.clGoldText);
   Saga.Engine.Print(0, Top + 2, Format('%s поверг всех врагов',
@@ -1235,6 +1236,7 @@ end;
 
 procedure TStageDefeat.Render;
 begin
+  inherited Render;
   Saga.UI.DrawTitle(Top, __('Defeat!'));
   Saga.Engine.ForegroundColor(Saga.Colors.clAlertText);
   Saga.Engine.Print(0, Top + 2, Format('%s повержен!', [Saga.Player.GetFullName]
