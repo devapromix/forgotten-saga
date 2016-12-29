@@ -118,7 +118,7 @@ type
 
 type
   TStageMainMenu = class(TStageMenu)
-  strict private
+  public
   const
     FSVersion = '0.0.4';
   public const
@@ -1388,14 +1388,26 @@ end;
 {$REGION ' TStageAboutMenu '}
 
 procedure TStageAboutMenu.Render;
+var
+  C: Integer;
+
+procedure Add(S, V1: string);
 begin
+  Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceBrown));
+  Saga.Engine.Print(0, Top + C, S, aCenter, 160);
+  Inc(C);
+  Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceWhite));
+  Saga.Engine.Print(0, Top + C, V1, aCenter, 160);
+  Inc(C);
+  Inc(C);
+end;
+
+begin
+  C := 0;
   inherited Render;
-  Saga.UI.DrawTitle(Top, __('Forgotten Saga'));
-  Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceLGray));
-  Saga.Engine.Print(0, Top + 2, 'github.com/devapromix/forgotten-saga',
-    aCenter);
-  Saga.Engine.Print(0, Top + 3, TStageMainMenu.Copyright, aCenter);
-  Saga.UI.DrawKey(0, Top + 5, __('Back to main menu'), 'ESC', aCenter);
+  Add(__('Game Design'), 'Sergiy Tkach (Apromix)');
+  Add(__('Lead Programmer'), 'Sergiy Tkach (Apromix)');
+  Add(__('Programmers'), 'Vlad Phomin (Phomm)');
 end;
 
 procedure TStageAboutMenu.Update(var Key: Word);
