@@ -192,6 +192,7 @@ type
     property Duration: Byte read FDuration write FDuration;
     property Counter: Byte read FCounter write FCounter;
     property Tick: Integer read FTick write FTick;
+    procedure Clear;
     procedure Dec;
   end;
 
@@ -403,10 +404,10 @@ type
   public
     constructor Create(AWidth, AHeight: Integer);
     destructor Destroy; override;
+    procedure Clear;
     procedure New();
-    procedure Init;
+    procedure Refresh;
     procedure InitSlots;
-    procedure ClearLogs;
     procedure ClearSlots;
     procedure AddRace(ID: TRaceEnum; Name: string; Life, Mana: Word;
       Pos: TPoint; Map: Byte; Color: Integer);
@@ -758,42 +759,25 @@ begin
   Stages.SetStage(stMainMenu);
 end;
 
-procedure TSaga.Init;
+procedure TSaga.Refresh;
 var
-  S: TStringList;
+  SL: TStringList;
   F, V, T: string;
   I, X: Integer;
 begin
-  {// Flags
-    for I := 0 to Flag.FList.Count - 1 do
-    begin
-    T := '';
-    for X := 1 to Length(Flag.FList[I]) do
-    begin
-    V := Flag.FList[I][X];
-    case V[1] of
-    '<', '>':
-    V := Format('[color=red]%s[/color]', [V]);
-    '*', '-':
-    V := Format('[color=%d]%s[/color]',
-    [Saga.Engine.GetColor(Saga.Colors.GetColor(ceRed)), V]);
-    end;
-    T := T + V;
-    end;
-    Flag.FList[I] := T;
-    end;}
   // Load intro
-  S := TStringList.Create;
+  SL := TStringList.Create;
   try
     F := TUtils.GetPath('resources') + Lg.Current + '.intro.txt';
     if (FileExists(F)) then
     begin
-      S.LoadFromFile(F{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
-      for I := 0 to S.Count - 1 do
-        Log[lgIntro].Add(__(S[I]), False);
+      SL.LoadFromFile(F{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
+      Log[lgIntro].Clear;
+      for I := 0 to SL.Count - 1 do
+        Log[lgIntro].Add(__(SL[I]), False);
     end;
   finally
-    S.Free;
+    SL.Free;
   end;
 
   // Colors
@@ -865,10 +849,20 @@ begin
   Result := FList[Slot];
 end;
 
+procedure TSaga.Clear;
+var
+  L: TLogEnum;
+begin
+  Saga.Quest.Clear;
+  for L := Low(TLogEnum) to High(TLogEnum) do
+    Saga.Log[L].Clear;
+  Self.Notification.Clear;
+end;
+
 procedure TSaga.New;
 begin
+  Saga.Clear;
   Player.Clear;
-  ClearLogs;
   World.LoadFromDir(TUtils.GetPath('resources'));
   // World.Gen(0); // Пока вместо редактора
   Stages.SetStage(stGame);
@@ -933,15 +927,6 @@ begin
   F := TUtils.GetPath('save') + 'list.txt';
   if FileExists(F) then
     FList.LoadFromFile(F{$IFNDEF FPC}, TEncoding.UTF8{$ENDIF});
-end;
-
-procedure TSaga.ClearLogs;
-var
-  L: TLogEnum;
-begin
-  Saga.Quest.Clear;
-  for L := Low(TLogEnum) to High(TLogEnum) do
-    Saga.Log[L].Clear;
 end;
 
 {$REGION ' TSaga.TLog '}
@@ -1113,6 +1098,14 @@ begin
   for I := 1 to FMessages.Count - 1 do
     FMessages[I - 1] := FMessages[I];
   FMessages[FMessages.Count - 1] := Trim(S);
+end;
+
+procedure TNotification.Clear;
+var
+  I: Byte;
+begin
+  for I := 0 to FDuration - 1 do
+    FMessages[I] := '';
 end;
 
 constructor TNotification.Create(Duration: Byte);

@@ -120,7 +120,7 @@ type
   TStageMainMenu = class(TStageMenu)
   strict private
   const
-    FSVersion = '0.0.3';
+    FSVersion = '0.0.4';
   public const
     Copyright = 'Copyright (C) 2016 by Sergiy Tkach (DevApromix)';
   public
@@ -739,7 +739,7 @@ end;
 procedure TStageMainMenu.Render;
 begin
   inherited Render;
-  Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceLGray));
+  Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceLCyan));
   Saga.Engine.Print(0, Saga.Engine.Window.Height - 1, Copyright, aCenter);
   Saga.Engine.Print(0, Saga.Engine.Window.Height - 1, 'v.' + FSVersion, aRight);
 end;
@@ -754,6 +754,7 @@ begin
         0:
           begin
             // Box;
+            Saga.Refresh;
             Saga.Stages.SetStage(stRaceMenu);
           end;
         1:
