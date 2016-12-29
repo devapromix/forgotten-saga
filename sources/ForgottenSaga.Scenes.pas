@@ -118,8 +118,7 @@ type
 
 type
   TStageMainMenu = class(TStageMenu)
-  public
-  const
+  public const
     FSVersion = '0.0.4';
   public const
     Copyright = 'Copyright (C) 2016 by Sergiy Tkach (DevApromix)';
@@ -364,8 +363,8 @@ uses SysUtils, Dialogs, Math, Engine, ForgottenSaga.Classes,
 
 const
   StageBG: array [TStageEnum] of TStageBackgroundEnum = (sbNone, sbDragon,
-    sbDragon, sbGoblins, sbMinotaur, sbPaper, sbPaper, sbPaper, sbPaper, sbPaper,
-    sbPaper, sbPaper, sbPaper, sbPaper, sbWitch, sbPaper, sbNone,
+    sbDragon, sbGoblins, sbMinotaur, sbPaper, sbPaper, sbPaper, sbPaper,
+    sbPaper, sbPaper, sbPaper, sbPaper, sbPaper, sbWitch, sbPaper, sbNone,
     sbNone, sbNone);
 
 {$REGION ' TStages '}
@@ -1391,23 +1390,27 @@ procedure TStageAboutMenu.Render;
 var
   C: Integer;
 
-procedure Add(S, V1: string);
-begin
-  Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceBrown));
-  Saga.Engine.Print(0, Top + C, S, aCenter, 160);
-  Inc(C);
-  Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceWhite));
-  Saga.Engine.Print(0, Top + C, V1, aCenter, 160);
-  Inc(C);
-  Inc(C);
-end;
+  procedure Add(V: string; S: string = '');
+  begin
+    if (S <> '') then
+    begin
+      Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceBrown));
+      Saga.Engine.Print(0, Top + C, S, aCenter, 160);
+      Inc(C);
+    end else Dec(C);
+    Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceWhite));
+    Saga.Engine.Print(0, Top + C, V, aCenter, 160);
+    Inc(C);
+    Inc(C);
+  end;
 
 begin
-  C := 0;
+  C := -2;
   inherited Render;
-  Add(__('Game Design'), 'Sergiy Tkach (Apromix)');
-  Add(__('Lead Programmer'), 'Sergiy Tkach (Apromix)');
-  Add(__('Programmers'), 'Vlad Phomin (Phomm)');
+  Add('Sergiy Tkach (Apromix)', __('Game Design'));
+  Add('Sergiy Tkach (Apromix)', __('Programmng'));
+  Add('Vlad Phomin (Phomm)');
+  Add('Volodymyr Halenchyk (Vocej)', __('World Designers'));
 end;
 
 procedure TStageAboutMenu.Update(var Key: Word);
