@@ -17,7 +17,7 @@ begin
   Saga := TSaga.Create(TMap.Size.Width + TUI.PanelWidth, TMap.Size.Height);
   try
     Saga.Refresh;
-    terminal_set(Format('window.title=%s', [__('Forgotten Saga')]));
+    terminal_set(Format('window.title=%s', ['Forgotten Saga']));
     Saga.Stages.Render;
     terminal_refresh();
     repeat
