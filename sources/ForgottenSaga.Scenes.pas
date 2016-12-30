@@ -178,12 +178,15 @@ type
   TStageStorageMenu = class(TStageCustomMenu)
   strict private
     FKeyFlag: Boolean;
+  private
+    FLeft: Byte;
   public
     constructor Create;
     procedure RenderNum(N: Integer = 9);
     procedure Render; override;
     procedure Update(var Key: Word); override;
     property KeyFlag: Boolean read FKeyFlag write FKeyFlag;
+    property Left: Byte read FLeft write FLeft;
   end;
 
 type
@@ -913,6 +916,7 @@ end;
 constructor TStageStorageMenu.Create;
 begin
   Top := 12;
+  Left := 26;
   FKeyFlag := True;
 end;
 
@@ -920,7 +924,7 @@ procedure TStageStorageMenu.RenderNum(N: Integer = 9);
 var
   I, H: ShortInt;
 begin
-  Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceLGray));
+  Saga.Engine.ForegroundColor(Saga.Engine.DarkColor(Saga.Colors.clMenuDef, 30));
   for I := 0 to N do
   begin
     if (I < N) then
@@ -948,13 +952,13 @@ begin
       Saga.Engine.ForegroundColor(Saga.Colors.clMenuDef);
     if (Saga.GetSlotData(I) <> '') then
     begin
-      Saga.Engine.Print(25, Top + I + 2, Saga.GetSlotData(I), aLeft)
+      Saga.Engine.Print(Left, Top + I + 2, Saga.GetSlotData(I), aLeft)
     end
     else
     begin
       if (I <> MenuPos) then
         Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
-      Saga.Engine.Print(25, Top + I + 2, __('Empty slot'), aLeft);
+      Saga.Engine.Print(Left, Top + I + 2, __('Empty slot'), aLeft);
     end;
   end;
   Self.RenderNum;
@@ -981,8 +985,8 @@ end;
 
 procedure TStageSaveMenu.Render;
 begin
-  Saga.UI.DrawTitle(Top, __('Save game'));
   inherited Render;
+  Saga.UI.DrawTitle(Top, __('Save game'));
   Saga.UI.DrawKey(57, Top + 13, __('Save'), 'ENTER');
 end;
 
@@ -1003,8 +1007,8 @@ end;
 
 procedure TStageLoadMenu.Render;
 begin
-  Saga.UI.DrawTitle(Top, __('Load game'));
   inherited;
+  Saga.UI.DrawTitle(Top, __('Load game'));
   Saga.UI.DrawKey(57, Top + 13, __('Load'), 'ENTER',
     FileExists(Saga.GetSlotPath(Self.MenuPos) + 'game.log'));
 end;
@@ -1131,7 +1135,7 @@ var
   I: Integer;
   S, N, Close: string;
 begin
-  inherited;
+  inherited Render;
   Self.Count := LinkList.Count;
   for I := 0 to Count - 1 do
   begin
@@ -1298,25 +1302,25 @@ var
     Saga.Engine.ForegroundColor(Saga.Colors.clTitle);
     if (Saga.Quest.Get(I - 1, 0) <> '') then
     begin
-      Saga.Engine.Print(25, Top + J + 2, Saga.Quest.Get(I - 1, 0), aLeft)
+      Saga.Engine.Print(Left, Top + J + 2, Saga.Quest.Get(I - 1, 0), aLeft)
     end
     else
     begin
       if (I <> MenuPos) then
         Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
-      Saga.Engine.Print(25, Top + J + 2, __('Empty slot'), aLeft);
+      Saga.Engine.Print(Left, Top + J + 2, __('Empty slot'), aLeft);
     end;
   end;
 
 begin
-  inherited;
+  inherited Render;
   Saga.UI.DrawTitle(Top, __('Quest log'));
   SL := TUtils.ExplodeString(',', Saga.Player.Quests);
   Saga.Engine.ForegroundColor(Saga.Colors.clSplText);
   for I := 0 to Saga.Quest.Count - 1 do
   begin
     RenderQuestLogCursor(I);
-    Saga.Engine.Print(25, Top + I + 2, __('Empty slot'), aLeft);
+    Saga.Engine.Print(Left, Top + I + 2, __('Empty slot'), aLeft);
   end;
   for J := 0 to SL.Count - 1 do
   begin
@@ -1441,7 +1445,7 @@ begin
         begin
           RenderCursor(RecPos + Top + 2, Saga.Colors.GetColor(ceRed));
           Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceWhite));
-          Saga.Engine.Print(25, RecPos + Top + 2,
+          Saga.Engine.Print(Left, RecPos + Top + 2,
             Saga.GetSlotData(RecPos), aLeft);
           Self.RenderNum;
         end;

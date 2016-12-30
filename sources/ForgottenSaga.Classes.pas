@@ -1332,13 +1332,13 @@ procedure TColors.SetColors;
 begin
   clNotification := GetColor(ceYellow);
   clTitle := GetColor(ceYellow);
-  clHotKey := GetColor(ceGreen);
-  clButton := GetColor(ceLGray);
-  clSplText := GetColor(ceLGray);
+  clHotKey := GetColor(ceWhite);
+  clButton := GetColor(ceLGreen);
+  clSplText := GetColor(ceBrown);
   clGoldText := GetColor(ceYellow);
   clAlertText := GetColor(ceRed);
   clMenuAct := GetColor(ceYellow);
-  clMenuDef := GetColor(ceLGray);
+  clMenuDef := GetColor(ceBrown);
   clCursor := GetColor(ceDGray);
 end;
 
