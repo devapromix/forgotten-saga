@@ -121,7 +121,7 @@ type
   public const
     FSVersion = '0.0.4';
   public const
-    Copyright = 'Copyright (C) 2016 by Sergiy Tkach (DevApromix)';
+    Copyright = 'Copyright (C) 2016 - 2017 by Sergiy Tkach (Apromix)';
   public
     constructor Create;
     procedure Render; override;
@@ -244,7 +244,7 @@ type
   end;
 
 type
-  TStageQuestItems = class(TStage)
+  TStageQuestItems = class(TStageCustomMenu)
   private
 
   public
@@ -367,8 +367,8 @@ uses SysUtils, Dialogs, Math, Engine, ForgottenSaga.Classes,
 const
   StageBG: array [TStageEnum] of TStageBackgroundEnum = (sbNone, sbDragon,
     sbDragon, sbGoblins, sbMinotaur, sbPaper, sbPaper, sbPaper, sbPaper,
-    sbPaper, sbPaper, sbPaper, sbPaper, sbPaper, sbWitch, sbPaper, sbNone,
-    sbNone, sbNone);
+    sbPaper, sbPaper, sbPaper, sbPaper, sbPaper, sbWitch, sbPaper, sbPaper,
+    sbPaper, sbPaper);
 
 {$REGION ' TStages '}
 
@@ -741,7 +741,7 @@ end;
 procedure TStageMainMenu.Render;
 begin
   inherited Render;
-  Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceLCyan));
+  Saga.Engine.ForegroundColor(Saga.Colors.clHotKey);
   Saga.Engine.Print(0, Saga.Engine.Window.Height - 1, Copyright, aCenter);
   Saga.Engine.Print(0, Saga.Engine.Window.Height - 1, 'v.' + FSVersion, aRight);
 end;
@@ -1436,8 +1436,8 @@ end;
 
 procedure TStageRecMenu.Render;
 begin
-  Saga.UI.DrawTitle(Top, __('High scores table'));
   inherited Render;
+  Saga.UI.DrawTitle(Top, __('High scores table'));
   case RecPos of
     0 .. 9:
       begin
@@ -1479,6 +1479,7 @@ var
   F: string;
   P, H, D: Integer;
 begin
+  inherited Render;
   P := 0;
   Saga.UI.DrawTitle(5, __('Inventory'));
   for I := Low(TPlayer.TInventory.TInvByte)
@@ -1502,8 +1503,8 @@ begin
     Saga.Player.QuestItems.Count]), 'SPACE',
     (Saga.Player.QuestItems.Count > 0));
   Saga.UI.DrawKey(90, D, __('Equip'), 'ENTER');
-  if UseNotifications then
-    inherited;
+//  if UseNotifications then
+//    inherited;
 end;
 
 procedure TStageInv.Timer;
@@ -1558,6 +1559,7 @@ var
   I, C: Integer;
   S: string;
 begin
+  inherited Render;
   Saga.UI.DrawTitle(5, __('Items'));
   C := 0;
   for I := Saga.World.CurrentItems.Count - 1 downto 0 do
@@ -1577,7 +1579,6 @@ begin
   Saga.UI.DrawKey(57, Saga.Engine.Window.Height - 6, __('Pickup all items'),
     'SPACE', (Saga.World.CurrentItems.Count(Saga.Player.Pos.X,
     Saga.Player.Pos.Y) > 0));
-  inherited;
 end;
 
 procedure TStageItems.Timer;
@@ -1625,6 +1626,7 @@ var
   I, C: Integer;
   S: string;
 begin
+  inherited Render;
   Saga.UI.DrawTitle(5, __('Quest Items'));
   C := Saga.Player.QuestItems.Count;
   if (C > 26) then
