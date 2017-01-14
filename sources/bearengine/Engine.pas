@@ -128,7 +128,7 @@ type
     constructor Create(AWidth, AHeight: Integer);
     destructor Destroy; override;
     procedure Print(X, Y: Integer; S: string; Align: TAlign = aLeft; AdvWidth: Byte = 0); overload;
-    function Print(S: string; R: TRect): Integer; overload;
+    function Print(S: string; R: TRect): Types.TSize; overload;
     procedure ForegroundColor(Color: Integer);
     procedure BackgroundColor(Color: Integer);
     function LightColor(Color: Integer; Percent: Byte): Integer;
@@ -213,10 +213,9 @@ begin
   end;
 end;
 
-function TEngine.Print(S: string; R: TRect): Integer;
+function TEngine.Print(S: string; R: TRect): Types.TSize;
 begin
-  Result := terminal_print(R.Left, R.Top,
-    Format('[bbox=%dx%d][align=left-top]%s', [R.Right, R.Bottom, S]));
+  Result := terminal_print(R.Left, R.Top, R.Right, R.Bottom, TK_ALIGN_LEFT, S);
 end;
 
 function TEngine.DarkColor(Color: Integer; Percent: Byte): Integer;
