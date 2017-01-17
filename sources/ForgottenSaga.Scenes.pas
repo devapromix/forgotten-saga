@@ -119,7 +119,7 @@ type
 type
   TStageMainMenu = class(TStageMenu)
   public const
-    FSVersion = '0.0.4';
+    FSVersion = '0.0.5';
   public const
     Copyright = 'Copyright (C) 2016 - 2017 by Sergiy Tkach (Apromix)';
   public
@@ -742,9 +742,9 @@ end;
 procedure TStageMainMenu.Render;
 begin
   inherited Render;
-//  Saga.Engine.ForegroundColor(Saga.Colors.clHotKey);
-//  Saga.Engine.Print(0, Saga.Engine.Window.Height - 1, Copyright, aCenter);
-//  Saga.Engine.Print(0, Saga.Engine.Window.Height - 1, Format('tt.%s:%s', [FSVersion, Saga.Engine.GetVersion + '>']), aRight);
+  Saga.Engine.ForegroundColor(Saga.Colors.clHotKey);
+  Saga.Engine.Print(0, Saga.Engine.Window.Height - 1, Copyright, aCenter);
+  Saga.Engine.Print(0, Saga.Engine.Window.Height - 1, Format('v.%s:%s', [FSVersion, Saga.Engine.GetVersion]), aRight);
 end;
 
 procedure TStageMainMenu.Update(var Key: Word);
