@@ -137,6 +137,7 @@ type
     property Window: TSize read FWindow write FWindow;
     property Char: TSize read FChar write FChar;
     class function GetTextLength(Text: string): Integer;
+    function GetVersion: string;
     procedure Close;
   end;
 
@@ -216,6 +217,11 @@ end;
 function TEngine.Print(S: string; R: TRect): Types.TSize;
 begin
   Result := terminal_print(R.Left, R.Top, R.Right, R.Bottom, TK_ALIGN_LEFT, S);
+end;
+
+function TEngine.GetVersion: string;
+begin
+  Result := terminal_get('version');
 end;
 
 function TEngine.DarkColor(Color: Integer; Percent: Byte): Integer;

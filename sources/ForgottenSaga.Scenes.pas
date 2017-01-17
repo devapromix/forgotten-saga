@@ -701,11 +701,12 @@ const
   SY = 22;
 begin
   inherited Render;
+  Saga.Engine.BackgroundColor(Saga.Colors.GetColor(ceBlack));
   if (Saga.Stages.Stage = stMainMenu) or (Saga.Stages.Stage = stGameMenu) then
     Saga.UI.DrawTitle(Top, __('Forgotten Saga'));
   for I := 0 to Count - 1 do
   begin
-    Saga.Engine.ForegroundColor(Saga.Colors.clTitle);
+    Saga.Engine.ForegroundColor(Saga.Colors.clAlertText);
     if (I = MenuPos) then
     begin
       RenderCursor(I + Top + 2, Saga.Colors.clCursor);
@@ -741,9 +742,9 @@ end;
 procedure TStageMainMenu.Render;
 begin
   inherited Render;
-  Saga.Engine.ForegroundColor(Saga.Colors.clHotKey);
-  Saga.Engine.Print(0, Saga.Engine.Window.Height - 1, Copyright, aCenter);
-  Saga.Engine.Print(0, Saga.Engine.Window.Height - 1, 'v.' + FSVersion, aRight);
+//  Saga.Engine.ForegroundColor(Saga.Colors.clHotKey);
+//  Saga.Engine.Print(0, Saga.Engine.Window.Height - 1, Copyright, aCenter);
+//  Saga.Engine.Print(0, Saga.Engine.Window.Height - 1, Format('tt.%s:%s', [FSVersion, Saga.Engine.GetVersion + '>']), aRight);
 end;
 
 procedure TStageMainMenu.Update(var Key: Word);
@@ -1689,8 +1690,8 @@ begin
         .Canvas.Pixels[LX, LY]);
       Saga.Engine.Print(LX, LY, ' ');
     end;
-  Saga.Engine.BackgroundColor(StageBackground[StageBG[Saga.Stages.Stage]]
-    .Canvas.Pixels[LX, LY]);
+  //Saga.Engine.BackgroundColor(StageBackground[StageBG[Saga.Stages.Stage]]
+  //  .Canvas.Pixels[LX, LY]);
 end;
 
 procedure TStageWithNotification.Timer;
