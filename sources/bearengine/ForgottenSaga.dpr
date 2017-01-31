@@ -1,4 +1,6 @@
-ï»¿program ForgottenSaga;
+ï{%ToDo 'ForgottenSaga.todo'}
+
+»¿program ForgottenSaga;
 
 uses
   SysUtils,
