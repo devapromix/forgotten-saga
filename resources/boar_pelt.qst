@@ -1,8 +1,0 @@
-; For Quest #4.
-; After defeating the boar.
-
-if quest4=1 then
-	if inv? Boar Pelt < 5 then
-		inv+ Boar Pelt
-	endif
-endif
