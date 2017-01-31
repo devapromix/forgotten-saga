@@ -6,11 +6,15 @@ unit Engine;
 
 interface
 
+{$I Include.inc}
+
 uses
   Graphics,
   Types;
 
+{$IFDEF PASCAL_REGIONS}
 {$REGION ' Keyboard scancodes '}
+{$ENDIF PASCAL_REGIONS}
 
 const
   TK_A = ord('A');
@@ -88,8 +92,10 @@ const
   TK_DOWN = 40;
   TK_UP = 38;
 
+{$IFDEF PASCAL_REGIONS}
 {$ENDREGION ' Keyboard scancodes '}
 {$REGION ' TEngine '}
+{$ENDIF PASCAL_REGIONS}
 
 type
   TEngine = class(TObject)
@@ -125,7 +131,9 @@ type
     procedure Close;
   end;
 
+{$IFDEF PASCAL_REGIONS}
 {$ENDREGION ' TEngine '}
+{$ENDIF PASCAL_REGIONS}
 
 implementation
 
@@ -137,7 +145,9 @@ uses
 {$ENDIF}
   Forms, Classes, SysUtils;
 
+{$IFDEF PASCAL_REGIONS}  
 {$REGION ' TEngine '}
+{$ENDIF PASCAL_REGIONS}
 
 constructor TEngine.Create(AWidth, AHeight: Integer);
 begin
@@ -295,5 +305,6 @@ begin
 end;
 
 {$ENDREGION ' TEngine '}
+{$ENDIF PASCAL_REGIONS}
 
 end.
