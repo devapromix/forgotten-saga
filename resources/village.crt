@@ -1,0 +1,10 @@
+[shaman]
+Name=Shaman
+X=43
+Y=20
+Life=120/120
+Symbol=@
+File=shaman.qst
+Color=200,100,90
+Dialog=0
+NPC=1

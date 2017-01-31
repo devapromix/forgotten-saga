@@ -44,23 +44,4 @@ I have completed this quest.=Я выполнил это задание.
 You walked in location: %s.=Ты вошел в локацию: %s.
 You have opened a new territory: %s.=Ты открыл новую территорию: %s.
 
-Shaman=Шаман
-
-Battle Axe=Боевой Топор
-Short Spear=Короткое Копье
-Bone Sword=Костяной Меч
-
-Chieftain Trom-Hash=Вождь Тром-Хаш
-Tashak-Suum=Ташак-Суум
-Goblin Virn=Гоблин Вирн
-Goblin Telorgon=Гоблин Телоргон
-Black Warg=Черный Варг
-Spider=Паук
-Deep Spider=Глубинный Паук
-
-Filled Crystal Phial=Наполненный хрустальный фиал
-Crystal Phial=Хрустальный фиал
-Black Ring=Черное кольцо
-Pack=Пакет
-Elk Meat=Мясо лося
-Boar Pelt=Кожа вепря
+Shaman=Шаман Могучий Крушитель
