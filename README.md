@@ -8,6 +8,7 @@ Forgotten Saga is a single-player roguelike game for Windows. It should work on 
 ##Current State
 The game is currently in demo stage with very limited contents and lots of issues 
 to solve and improve.
+
 ---
 
 ## Controls:
