@@ -1,6 +1,6 @@
-ï{%ToDo 'ForgottenSaga.todo'}
+{%ToDo 'ForgottenSaga.todo'}
 
-»¿program ForgottenSaga;
+program ForgottenSaga;
 
 uses
   SysUtils,
