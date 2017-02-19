@@ -97,20 +97,24 @@ const
 {$REGION ' TEngine '}
 {$ENDIF PASCAL_REGIONS}
 
+const
+  clClear = -1;
+  kcBegin = '{';
+  kcEnd = '}';
+
+type
+  TAlign = (aLeft, aCenter, aRight);
+
+
+type
+  TSize = record
+    Width: Integer;
+    Height: Integer;
+  end;
+
 type
   TEngine = class(TObject)
-  public const
-    clClear = -1;
-    kcBegin = '{';
-    kcEnd = '}';
-  public type
-    TAlign = (aLeft, aCenter, aRight);
-  public type
-    TSize = record
-      Width: Integer;
-      Height: Integer;
-    end;
-  strict private
+  private
     FSurface: TBitmap;
     FWindow: TSize;
     FChar: TSize;
@@ -304,6 +308,7 @@ begin
   Result := RGB(R, G, B);
 end;
 
+{$IFDEF PASCAL_REGIONS}
 {$ENDREGION ' TEngine '}
 {$ENDIF PASCAL_REGIONS}
 
