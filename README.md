@@ -1,4 +1,5 @@
 # Forgotten Saga
+[![license](https://img.shields.io/badge/license-MIT License-blue.svg?style=flat-square)](./LICENSE) <!--[![release](https://img.shields.io/badge/release-v0.0.1-blue.svg?style=flat-square)]()-->
 
 ##Introduction
 Forgotten Saga is a single-player roguelike game for Windows. It should work on any system with Windows XP or later installed.
