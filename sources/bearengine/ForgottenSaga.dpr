@@ -5,7 +5,8 @@ program ForgottenSaga;
 uses
   SysUtils,
   Engine in 'Engine.pas',
-  BearLibTerminal in 'BearLibTerminal.pas',
+  BearLibItems in '..\includes\BearLibItems.pas',
+  BearLibTerminal in '..\includes\BearLibTerminal.pas',
   ForgottenSaga.Classes in '..\ForgottenSaga.Classes.pas',
   ForgottenSaga.Entities in '..\ForgottenSaga.Entities.pas',
   ForgottenSaga.Scenes in '..\ForgottenSaga.Scenes.pas';
