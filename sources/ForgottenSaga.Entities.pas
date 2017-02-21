@@ -481,7 +481,8 @@ type
 
 implementation
 
-uses SysUtils, Dialogs, Math, ForgottenSaga.Classes, ForgottenSaga.Scenes;
+uses SysUtils, Dialogs, Math, ForgottenSaga.Classes, ForgottenSaga.Scenes,
+  BearLibItems;
 
 {$REGION ' Path find '}
 
@@ -978,6 +979,7 @@ begin
   AddAtr(atLife, Saga.Race[R].Life, True);
   AddAtr(atMana, Saga.Race[R].Mana, True);
   Look.Active := False;
+  Items_Inventory_Clear();
   Inventory.Clear();
   QuestItems.Clear;
   FPrevName := '';
