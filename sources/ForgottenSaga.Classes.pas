@@ -441,7 +441,7 @@ var
 
 implementation
 
-uses Math, SysUtils, Dialogs;
+uses Math, SysUtils, Dialogs, BearLibItems;
 
 {$REGION ' TUtils '}
 
@@ -523,7 +523,7 @@ begin
     begin
       FMaps[I] := TMap.Create;
       FCreatures[I] := TCreatures.Create;
-      FItems[I] := TItems.Create;
+      FItems[I] := ForgottenSaga.Entities.TItems.Create;
       FMaps[I].FileName := Sections[I];
       FMaps[I].Name := F.ReadString(Sections[I], 'Name', '');
       FMaps[I].Level := F.ReadInteger(Sections[I], 'Level', 0);
@@ -550,7 +550,7 @@ begin
   Result := FMaps[Saga.Player.Map];
 end;
 
-function TWorld.CurrentItems: TItems;
+function TWorld.CurrentItems: ForgottenSaga.Entities.TItems;
 begin
   Result := FItems[Saga.Player.Map];
 end;
@@ -595,7 +595,7 @@ begin
   Result := FCreatures[I];
 end;
 
-function TWorld.GetMapItems(I: Byte): TItems;
+function TWorld.GetMapItems(I: Byte): ForgottenSaga.Entities.TItems;
 begin
   Result := FItems[I];
 end;
@@ -688,6 +688,7 @@ var
   GUIBorder: TGUIBorder;
   TempBitmap: TBitmap;
 begin
+  Items_Open();
   FEngine := TEngine.Create(AWidth, AHeight);
   FTUI := TUI.Create(FEngine);
   FList := TStringList.Create;
@@ -710,14 +711,14 @@ begin
       begin
         StageBackground[F].LoadFromFile(TUtils.GetPath('resources') +
           StageBackgroundFileName[F] + '.bmp');
-          if (F > sbPaper) then
-          begin
-            StageBackground[F].Transparent := True;
-            StageBackground[F].TransparentColor := clFuchsia;
-            TempBitmap.Assign(StageBackground[sbPaper]);
-            TempBitmap.Canvas.Draw(0, 0, StageBackground[F]);
-            StageBackground[F].Assign(TempBitmap);
-          end;
+        if (F > sbPaper) then
+        begin
+          StageBackground[F].Transparent := True;
+          StageBackground[F].TransparentColor := clFuchsia;
+          TempBitmap.Assign(StageBackground[sbPaper]);
+          TempBitmap.Canvas.Draw(0, 0, StageBackground[F]);
+          StageBackground[F].Assign(TempBitmap);
+        end;
         GUIBorder.Render(StageBackground[F]);
       end;
     end;
@@ -816,6 +817,7 @@ begin
   FDialog.Free;
   FTiles.Free;
   FQuest.Free;
+  Items_Close();
   inherited;
 end;
 
@@ -875,7 +877,7 @@ begin
   if not FileExists(GetSlotPath(Slot) + 'game.log') then
     Exit;
   Player.LoadFromFile(GetSlotPath(Slot) + 'player.crt');
-// Log[lgGame].LoadFromFile(GetSlotPath(Slot) + 'game.log');
+  // Log[lgGame].LoadFromFile(GetSlotPath(Slot) + 'game.log');
   Quest.LoadFromFile(GetSlotPath(Slot) + 'quest.log');
   World.LoadFromDir(GetSlotPath(Slot));
   Dialog.Vars.LoadFromFile(GetSlotPath(Slot) + 'vars.txt');
@@ -1434,12 +1436,12 @@ end;
 {$REGION ' TIniFile '}
 
 function TIniFile.ReadCategory(Section, Ident: string;
-  DefaultValue: TItem.TCategory): TItem.TCategory;
+  DefaultValue: ForgottenSaga.Entities.TItem.TCategory): ForgottenSaga.Entities.TItem.TCategory;
 var
   S: string;
 begin
-  S := LowerCase(Trim(ReadString(Section, Ident, TItem.CatStr[DefaultValue])));
-  Result := TItem.GetCategory(S);
+  S := LowerCase(Trim(ReadString(Section, Ident, ForgottenSaga.Entities.TItem.CatStr[DefaultValue])));
+  Result := ForgottenSaga.Entities.TItem.GetCategory(S);
 end;
 
 var
@@ -1498,20 +1500,20 @@ begin
 end;
 
 function TIniFile.ReadMaterial(Section, Ident: string;
-  DefaultValue: TItem.TMaterial): TItem.TMaterial;
+  DefaultValue: ForgottenSaga.Entities.TItem.TMaterial): ForgottenSaga.Entities.TItem.TMaterial;
 var
   S: string;
 begin
-  S := LowerCase(Trim(ReadString(Section, Ident, TItem.MatStr[DefaultValue])));
-  Result := TItem.GetMaterial(S);
+  S := LowerCase(Trim(ReadString(Section, Ident, ForgottenSaga.Entities.TItem.MatStr[DefaultValue])));
+  Result := ForgottenSaga.Entities.TItem.GetMaterial(S);
 end;
 
 procedure TIniFile.WriteCategory(Section, Ident: string;
-  Value: TItem.TCategory);
+  Value: ForgottenSaga.Entities.TItem.TCategory);
 begin
   if (Value = ctNone) then
     Exit;
-  WriteString(Section, Ident, TItem.CatStr[Value]);
+  WriteString(Section, Ident, ForgottenSaga.Entities.TItem.CatStr[Value]);
 end;
 
 procedure TIniFile.WriteChar(Section, Ident: string; Value: Char);
@@ -1526,11 +1528,11 @@ begin
 end;
 
 procedure TIniFile.WriteMaterial(Section, Ident: string;
-  Value: TItem.TMaterial);
+  Value: ForgottenSaga.Entities.TItem.TMaterial);
 begin
   if (Value = mtNone) then
     Exit;
-  WriteString(Section, Ident, TItem.MatStr[Value]);
+  WriteString(Section, Ident, ForgottenSaga.Entities.TItem.MatStr[Value]);
 end;
 
 {$ENDREGION ' TIniFile '}
@@ -1759,18 +1761,18 @@ var
   procedure AddItem(S: string);
   var
     SL: TStringList;
-    Item: TItem;
+    Item: ForgottenSaga.Entities.TItem;
     R, G, B: Byte;
   begin
     SL := TUtils.ExplodeString(',', S);
-    Item := TItem.Create;
+    Item := ForgottenSaga.Entities.TItem.Create;
     try
       with Item do
       begin
         Name := Trim(SL[0]);
         Level := StrToIntDef(SL[1], 1);
-        Category := TItem.GetCategory(SL[2]);
-        Material := TItem.GetMaterial(SL[3]);
+        Category := ForgottenSaga.Entities.TItem.GetCategory(SL[2]);
+        Material := ForgottenSaga.Entities.TItem.GetMaterial(SL[3]);
         Symbol := Trim(SL[4])[1];
         R := StrToIntDef(SL[5], 200);
         G := StrToIntDef(SL[6], 200);
@@ -1807,9 +1809,9 @@ begin
   if IsTag('pln') then
   begin
     S := GetLastCode('pln', Code);
-    {if (Vars.Has(S)) then
+    { if (Vars.Has(S)) then
       I := Vars.GetInt(S);
-      Saga.Log[lgDialog].Add(I.ToString());}
+      Saga.Log[lgDialog].Add(I.ToString()); }
     Saga.Log[lgDialog].Add(S);
   end;
 
@@ -2192,7 +2194,7 @@ begin
 end;
 
 {$ENDREGION ' TFlag '}
-{TGUIBorder}
+{ TGUIBorder }
 
 constructor TGUIBorder.Create;
 var
