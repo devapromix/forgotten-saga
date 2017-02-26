@@ -1,0 +1,757 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" dir="ltr" lang="ru"><head>
+
+	
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"><!-- Skin = Monaco2.php -->
+                
+		<meta name="description" content="Классы всегда были центром системы Dungeons &amp;amp;amp; Dragons. И в каждой редакции, основные изменения затрагивали систему классов.">
+		<meta http-equiv="Content-Style-Type" content="text/css">
+		<meta name="generator" content="MediaWiki 1.14.1">
+		<meta name="keywords" content="RPG,rurpg,Классы Dungeons &amp; Dragons 4,D&amp;D,Dragon Magazine,Dungeons &amp; Dragons,Dungeons &amp; Dragons 4,Игровая механика,Игромеханика,Паладин,Персонаж,Роль класса в D&amp;D4,Система развития персонажа">
+		<link rel="alternate" type="application/x-wiki" title="Править" href="http://ru.rpg.wikia.com/index.php?title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;action=edit">
+		<link rel="edit" title="Править" href="http://ru.rpg.wikia.com/index.php?title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;action=edit">
+		<link rel="apple-touch-icon" href="http://images.wikia.com/rpg/ru/images/b/bc/Wiki.png">
+		<link rel="shortcut icon" href="http://images.wikia.com/rpg/ru/images/6/64/Favicon.ico">
+		<link rel="search" type="application/opensearchdescription+xml" href="http://ru.rpg.wikia.com/opensearch_desc.php" title="RPG (ru)">
+		<link rel="copyright" href="http://www.wikia.com/wiki/Wikia:Licensing">
+		<link rel="alternate" type="application/rss+xml" title="RPG — RSS-лента" href="http://ru.rpg.wikia.com/index.php?title=%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:RecentChanges&amp;feed=rss">
+		<link rel="alternate" type="application/atom+xml" title="RPG — Atom-лента" href="http://ru.rpg.wikia.com/index.php?title=%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:RecentChanges&amp;feed=atom">
+		<link rel="canonical" href="http://ru.rpg.wikia.com/wiki/%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4">
+		<script type="text/javascript">/*<![CDATA[*/
+		var wgNow = new Date();
+		/*]]>*/</script><title>Классы Dungeons &amp; Dragons 4 — RPG</title>
+		
+		<script type="text/javascript">/*<![CDATA[*/
+		var skin = "monaco";
+		var stylepath = "http://images.wikia.com/common/releases_200907.3/skins";
+		var wgArticlePath = "/wiki/$1";
+		var wgScriptPath = "";
+		var wgScript = "/index.php";
+		var wgVariantArticlePath = false;
+		var wgActionPaths = {};
+		var wgServer = "http://ru.rpg.wikia.com";
+		var wgCanonicalNamespace = "";
+		var wgCanonicalSpecialPageName = false;
+		var wgNamespaceNumber = 0;
+		var wgPageName = "Классы_Dungeons_\x26_Dragons_4";
+		var wgTitle = "Классы Dungeons \x26 Dragons 4";
+		var wgAction = "view";
+		var wgArticleId = "893";
+		var wgIsArticle = true;
+		var wgUserName = null;
+		var wgUserGroups = null;
+		var wgUserLanguage = "ru";
+		var wgContentLanguage = "ru";
+		var wgBreakFrames = false;
+		var wgCurRevisionId = "6894";
+		var wgVersion = "1.14.1";
+		var wgEnableAPI = true;
+		var wgEnableWriteAPI = true;
+		var wgEnableNewParser = true;
+		var wgSeparatorTransformTable = [",	.", " 	,"];
+		var wgDigitTransformTable = ["", ""];
+		var wgRestrictionEdit = [];
+		var wgRestrictionMove = [];
+		var wgCatId = 2;
+		var wgParentCatId = 0;
+		var wgCurse = null;
+		var wgCityId = "2165";
+		var wgID = 2165;
+		var wgEnableAjaxLogin = true;
+		var wgReturnTo = "";
+		var wgDB = "rurpg";
+		var wgPrivateTracker = false;
+		var wgMainpage = "Заглавная страница";
+		var wgIsMainpage = false;
+		var wgStyleVersion = "10150";
+		var themename = "slate";
+		var wgExtensionsPath = "http://images.wikia.com/common/releases_200907.3/extensions";
+		var wgSitename = "RPG";
+		var wgMenuMore = "Далее…";
+		var wgAfterContentAndJS = [];
+		var wgMWrevId = null;
+		var wgEnableAdsInContent = true;
+		var ls_template_ns = "Шаблон";
+		var ls_file_ns = "Файл";
+		var pr_msg_exceeded = "The maximum number of characters in the Message field is 512. Please rewrite your message.";
+		var pr_msg_exchead = "Message is too long";
+		var csAddCategoryButtonText = "Add category";
+		var csInfoboxCaption = "Category options";
+		var csInfoboxCategoryText = "Provide the name of the category:";
+		var csInfoboxSortkeyText = "Alphabetize this article on the \"$1\" category page under the name:";
+		var csInfoboxSave = "Save";
+		var csEmptyName = "Provide category name (part before |)";
+		var csDefaultSort = null;
+		var csCategoryNamespaces = "Category|Категория";
+		var csDefaultNamespace = "Категория";
+		var csCodeView = "Code view";
+		var csVisualView = "Visual view";
+		var TOCimprovementsEnabled = "1";
+		/*]]>*/</script>
+
+		<link rel="stylesheet" type="text/css" href="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/a.css"><!--[if lt IE 7]><link rel="stylesheet" type="text/css" href="http://images.wikia.com/common/releases_200907.3/skins/monaco2/css/monaco_ltie7.css?10150" /><![endif]--><!--[if IE 7]><link rel="stylesheet" type="text/css" href="http://images.wikia.com/common/releases_200907.3/skins/monaco2/css/monaco_ie7.css?10150" /><![endif]--><!--[if IE 8]><link rel="stylesheet" type="text/css" href="http://images.wikia.com/common/releases_200907.3/skins/monaco2/css/monaco_ie8.css?10150" /><![endif]--><!-- Start for Comscore, page_view --><!-- Begin comScore Tag -->
+		
+		
+		
+		
+		
+
+
+<script type="text/javascript">/*<![CDATA[*/
+setTimeout(function(){ var url = "http" + (/^https:/.test(document.location.href) ? "s" : "") + "://beacon.scorecardresearch.com/scripts/beacon.dll" + "?c1=2&c2=6177433&c3=&c4=&c5=&c6=&c7=" + escape(document.location.href) + "&c8=" + escape(document.title) + "&c9=" + escape(document.referrer) + "&c10=" + escape(screen.width+'x'+screen.height) + "&rn=" + (new Date()).getTime(); var i = new Image(); i.src = url; }, 1);
+/*]]>*/</script><!-- End comScore Tag -->
+
+
+<link rel="stylesheet" href="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/index_003.css" type="text/css">
+		<link rel="stylesheet" href="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/index_002.css" type="text/css" media="print">
+		<link rel="stylesheet" href="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/index.css" type="text/css"></head><noscript><link rel="stylesheet" type="text/css" href="http://images.wikia.com/common/releases_200907.3/skins/monaco2/css/noscript.css" /></noscript><noscript>
+<img
+src="http://beacon.scorecardresearch.com/scripts/beacon.dll?c1=2&amp;c2=6177433&amp;c3=&amp;c4=&amp;c5=&amp;c6=&amp;c7=&amp;x=NOJAVASCRIPT"
+alt="" />
+</noscript><body style="" class="mediawiki ltr ns-0 ns-subject page-Классы_Dungeons_Dragons_4 TOCimprovements loggedout color2 wikiaSkinMonaco action_view" id="body">
+		<form action="" method="post" name="userajaxloginform" id="userajaxloginform" style="display: none;">
+			<input name="wpName" id="wpName1" tabindex="101" size="20" type="text">
+			<input name="wpPassword" id="wpPassword1" tabindex="102" size="20" type="password">
+			<input name="wpRemember" id="wpRemember1" tabindex="104" value="1" type="checkbox">
+		</form>
+	<!-- HEADER -->
+		<div id="wikia_header" class="reset color2">
+			<div class="monaco_shrinkwrap">
+			<div id="wikiaBranding">
+				<div id="wikia_logo"><a rel="nofollow" href="http://www.wikia.com/">Wikia</a></div>
+
+				<div style="position: absolute; left: 50%;">
+				<dl id="headerButtonHub" class="headerMenuButton">
+					<dt>Gaming</dt><dd> </dd>
+				</dl>
+				</div>
+
+			</div>
+			<ul id="userData">
+				<li>
+					<a rel="nofollow" href="http://www.wikia.com/wiki/Special:CreateWiki" id="request_wiki">Request a new wiki</a>
+				</li>
+				<li id="userLogin">
+					<a rel="nofollow" class="bigButton ajaxLogin" id="login" href="http://ru.rpg.wikia.com/index.php?title=%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:UserLogin&amp;returnto=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4">
+						<big>Представиться системе</big>
+						<small> </small>
+					</a>
+				</li>
+				<li>
+					<a rel="nofollow" class="bigButton" id="register" href="http://ru.rpg.wikia.com/index.php?title=%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:UserLogin&amp;type=signup">
+						<big>Создайте учётную запись</big>
+						<small> </small>
+					</a>
+				</li>
+			</ul>
+
+		</div>
+	</div>
+
+	<div class="monaco_shrinkwrap"><div id="background_accent1"></div></div>
+	<div style="position: relative;"><div id="background_accent2"></div></div>
+
+		<div id="background_strip" class="reset">
+			<div class="monaco_shrinkwrap">
+
+			<div id="accent_graphic1"></div>
+			<div id="accent_graphic2"></div>
+			<div id="wiki_logo" style="background-image: url(http://images.wikia.com/rpg/ru/images/b/bc/Wiki.png);"><a href="http://ru.rpg.wikia.com/wiki/%D0%97%D0%B0%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D0%B0%D1%8F_%D1%81%D1%82%D1%80%D0%B0%D0%BD%D0%B8%D1%86%D0%B0" accesskey="z">RPG</a></div>
+			<!--[if lt IE 7]>
+			<style type="text/css">
+				#wiki_logo {
+					background-image: none !important;
+					filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://images.wikia.com/rpg/ru/images/b/bc/Wiki.png', sizingMethod='image');
+				}
+			</style>
+			<![endif]-->
+			</div>
+		</div>
+		<!-- /HEADER -->
+
+		<!-- PAGE -->
+
+	<div class="monaco_shrinkwrap" id="monaco_shrinkwrap_main">
+		<div id="wikia_page">
+						<div id="page_bar" class="reset color1 clearfix">
+				<ul id="page_controls">
+					<li id="control_edit" class=""><div> </div><a rel="nofollow" id="ca-edit" href="http://ru.rpg.wikia.com/index.php?title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;action=edit" title="Эту страницу можно изменять. Используйте, пожалуйста, предварительный просмотр перед сохранением [e]" accesskey="e">Править</a></li>
+					<li id="control_history" class=""><div> </div><a rel="nofollow" id="ca-history" href="http://ru.rpg.wikia.com/index.php?title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;action=history" title="Журнал изменений страницы [h]" accesskey="h">История</a></li>
+				</ul>
+				<ul id="page_tabs">
+					<li class="selected"><a href="http://ru.rpg.wikia.com/wiki/%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4" id="ca-nstab-main" title="Содержание статьи [c]" accesskey="c" class="selected">Статья</a></li>
+					<li class=""><a href="http://ru.rpg.wikia.com/wiki/%D0%9E%D0%B1%D1%81%D1%83%D0%B6%D0%B4%D0%B5%D0%BD%D0%B8%D0%B5:%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4" id="ca-talk" title="Обсуждение содержания страницы [t]" accesskey="t" class="">Обсуждение</a></li>
+				</ul>
+			</div>
+
+			<!-- ARTICLE -->
+<!-- #### BEGIN AdEngine::AdEngine::getSetupHtml ####-->
+<!-- #### END AdEngine::AdEngine::getSetupHtml ####-->
+			<div id="article">
+				<a name="top" id="top"></a>
+								<h1 class="firstHeading">Классы Dungeons &amp; Dragons 4</h1>
+								<div id="bodyContent">
+					<h3 id="siteSub">Материал из RPG</h3>
+					<div id="contentSub"></div>
+																				<div id="TOP_LEADERBOARD" style="display: none;"><!-- Null Ad. Reason: Ads name not served for this language in this slot (ru) , slotname=TOP_LEADERBOARD --></div><div id="TOP_RIGHT_BOXAD" style="display: none;"><!-- Null Ad. Reason: Ads name not served for this language in this slot (ru) , slotname=TOP_RIGHT_BOXAD --></div>					
+					<!-- start content -->
+					<p>Классы всегда были центром системы <a href="http://ru.rpg.wikia.com/wiki/Dungeons_%26_Dragons" title="Dungeons &amp; Dragons">Dungeons &amp; Dragons</a>. И в каждой редакции, основные изменения затрагивали систему классов.
+</p>
+<table id="toc" class="toc" summary="Содержание"><tbody><tr><td><div id="toctitle"><h2>Содержание</h2></div>
+<ul>
+<li class="toclevel-1"><a rel="nofollow" href="#.D0.9E.D1.84.D0.B8.D1.86.D0.B8.D0.B0.D0.BB.D1.8C.D0.BD.D1.8B.D0.B5_.D0.BA.D0.BB.D0.B0.D1.81.D1.81.D1.8B"><span class="tocnumber">1</span> <span class="toctext">Официальные классы</span></a></li>
+<li class="toclevel-1"><a rel="nofollow" href="#.D0.98.D0.B7.D0.BC.D0.B5.D0.BD.D0.B5.D0.BD.D0.B8.D1.8F_.D0.BF.D0.BE_.D1.81.D1.80.D0.B0.D0.B2.D0.BD.D0.B5.D0.BD.D0.B8.D1.8E_.D1.81_.D0.BF.D1.80.D0.B5.D0.B4.D1.8B.D0.B4.D1.83.D1.89.D0.B5.D0.B9_.D1.80.D0.B5.D0.B4.D0.B0.D0.BA.D1.86.D0.B8.D0.B5.D0.B9"><span class="tocnumber">2</span> <span class="toctext">Изменения по сравнению с предыдущей редакцией</span></a>
+<ul>
+<li class="toclevel-2"><a rel="nofollow" href="#.D0.95.D0.B4.D0.B8.D0.BD.D0.B0.D1.8F_.D1.81.D0.B8.D1.81.D1.82.D0.B5.D0.BC.D0.B0_.D1.80.D0.B0.D0.B7.D0.B2.D0.B8.D1.82.D0.B8.D1.8F"><span class="tocnumber">2.1</span> <span class="toctext">Единая система развития</span></a></li>
+<li class="toclevel-2"><a rel="nofollow" href="#.D0.A1.D0.B8.D1.81.D1.82.D0.B5.D0.BC.D0.B0_.D0.BC.D1.83.D0.BB.D1.8C.D1.82.D0.B8.D0.BA.D0.BB.D0.B0.D1.81.D1.81.D0.B8.D1.80.D0.BE.D0.B2.D0.B0.D0.BD.D0.B8.D1.8F"><span class="tocnumber">2.2</span> <span class="toctext">Система мультиклассирования</span></a></li>
+<li class="toclevel-2"><a rel="nofollow" href="#.D0.98.D1.81.D1.82.D0.BE.D1.87.D0.BD.D0.B8.D0.BA.D0.B8_.D1.81.D0.B8.D0.BB.D1.8B"><span class="tocnumber">2.3</span> <span class="toctext">Источники силы</span></a></li>
+<li class="toclevel-2"><a rel="nofollow" href="#.D0.A0.D0.BE.D0.BB.D0.B8"><span class="tocnumber">2.4</span> <span class="toctext">Роли</span></a></li>
+<li class="toclevel-2"><a rel="nofollow" href="#.D0.9F.D1.80.D0.B5.D1.80.D0.B5.D0.BA.D0.B2.D0.B8.D0.B7.D0.B8.D1.82.D1.8B_.D0.BA.D0.BB.D0.B0.D1.81.D1.81.D0.BE.D0.B2"><span class="tocnumber">2.5</span> <span class="toctext">Пререквизиты классов</span></a></li>
+<li class="toclevel-2"><a rel="nofollow" href="#.D0.9E.D0.B1.D0.BB.D0.B0.D1.81.D1.82.D1.8C_.D0.BA.D0.BE.D0.BC.D0.BF.D0.B5.D1.82.D0.B5.D0.BD.D1.86.D0.B8.D0.B8_.D0.BA.D0.BB.D0.B0.D1.81.D1.81.D0.BE.D0.B2"><span class="tocnumber">2.6</span> <span class="toctext">Область компетенции классов</span></a></li>
+</ul>
+</li>
+</ul>
+</td></tr></tbody></table><script type="text/javascript">if (!window.onloadFuncts) var onloadFuncts = [];onloadFuncts[onloadFuncts.length] = function() { if (window.showTocToggle) {  window.tocShowText = "показать";  window.tocHideText = "убрать";  showTocToggle();}};</script>
+<a rel="nofollow" name=".D0.9E.D1.84.D0.B8.D1.86.D0.B8.D0.B0.D0.BB.D1.8C.D0.BD.D1.8B.D0.B5_.D0.BA.D0.BB.D0.B0.D1.81.D1.81.D1.8B" id=".D0.9E.D1.84.D0.B8.D1.86.D0.B8.D0.B0.D0.BB.D1.8C.D0.BD.D1.8B.D0.B5_.D0.BA.D0.BB.D0.B0.D1.81.D1.81.D1.8B"></a><h2><span style="position: relative; top: -3px; margin-bottom: -2px;" class="editsection"><a class="bigButton" href="http://ru.rpg.wikia.com/index.php?title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;action=edit&amp;section=1" title="Править секцию: Официальные классы" rel="nofollow"><big>править</big><small></small></a></span> <span class="mw-headline"> Официальные классы </span></h2>
+<table class="wide">
+<tbody><tr>
+<th> Название
+</th><th> <a href="http://ru.rpg.wikia.com/wiki/%D0%A0%D0%BE%D0%BB%D1%8C_%D0%BA%D0%BB%D0%B0%D1%81%D1%81%D0%B0_%D0%B2_D%26D4" title="Роль класса в D&amp;D4">Роль</a>
+</th><th> <a href="http://ru.rpg.wikia.com/index.php?title=%D0%98%D1%81%D1%82%D0%BE%D1%87%D0%BD%D0%B8%D0%BA_%D1%81%D0%B8%D0%BB%D1%8B_%D0%B2_D%26D4&amp;action=edit&amp;redlink=1" class="new" title="Источник силы в D&amp;D4 (такой страницы не существует)" rel="nofollow">Источник силы</a>
+</th><th> <a href="http://ru.rpg.wikia.com/wiki/%D0%98%D0%B3%D1%80%D0%BE%D0%BC%D0%B5%D1%85%D0%B0%D0%BD%D0%B8%D0%BA%D0%B0" title="Игромеханика">Игромеханические</a> особенности
+</th><th> Источники
+</th></tr>
+<tr>
+<td> <a href="http://ru.rpg.wikia.com/index.php?title=%D0%A1%D0%B2%D1%8F%D1%89%D0%B5%D0%BD%D0%BD%D0%B8%D0%BA&amp;action=edit&amp;redlink=1" class="new" title="Священник (такой страницы не существует)" rel="nofollow">Священник</a>
+<p><span style="color: rgb(128, 128, 128); font-style: italic;" lang="en">англ.</span> Cleric
+</p>
+</td><td> Лидер
+</td><td> Божественный
+</td><td> Обладает неплохим арсеналом лечения и востанавливающих способностей. Дистанционные боевые способности наносят урон сиянием
+</td><td> PH p60
+</td></tr>
+<tr>
+<td> <a href="http://ru.rpg.wikia.com/index.php?title=%D0%92%D0%BE%D0%B8%D0%BD&amp;action=edit&amp;redlink=1" class="new" title="Воин (такой страницы не существует)" rel="nofollow">Воин</a>
+<p><span style="color: rgb(128, 128, 128); font-style: italic;" lang="en">англ.</span> Figther
+</p>
+</td><td> Защитник
+</td><td> Военный
+</td><td> Наносит урон без типа, останавливает врагов
+</td><td> PH p75, MP p4
+</td></tr>
+<tr>
+<td> <a href="http://ru.rpg.wikia.com/index.php?title=%D0%96%D1%83%D0%BB%D0%B8%D0%BA&amp;action=edit&amp;redlink=1" class="new" title="Жулик (такой страницы не существует)" rel="nofollow">Жулик</a>
+<p><span style="color: rgb(128, 128, 128); font-style: italic;" lang="en">англ.</span> Rogue
+</p>
+</td><td> Атакующий
+</td><td> Военный
+</td><td> Наносит меньше урона, чем следопыт, но обладает котрольными способностями (перемещение себя и врагов и применение <a href="http://ru.rpg.wikia.com/index.php?title=%D0%A1%D0%BE%D1%81%D1%82%D0%BE%D1%8F%D0%BD%D0%B8%D0%B5&amp;action=edit&amp;redlink=1" class="new" title="Состояние (такой страницы не существует)" rel="nofollow">состояний</a> к врагам)
+</td><td> PH p116, MP p70
+</td></tr>
+<tr>
+<td> <a href="http://ru.rpg.wikia.com/wiki/%D0%9F%D0%B0%D0%BB%D0%B0%D0%B4%D0%B8%D0%BD" title="Паладин">Паладин</a>
+<p><span style="color: rgb(128, 128, 128); font-style: italic;" lang="en">англ.</span> Paladin
+</p>
+</td><td> Защитник
+</td><td> Божественный
+</td><td> Кроме защитных функций может лечить и наносить сияющий тип урона
+</td><td> PH p89
+</td></tr>
+<tr>
+<td> <a href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BB%D0%B5%D0%B4%D0%BE%D0%BF%D1%8B%D1%82" title="Следопыт" class="mw-redirect">Следопыт</a>
+<p><span style="color: rgb(128, 128, 128); font-style: italic;" lang="en">англ.</span> Ranger
+</p>
+</td><td> Атакующий
+</td><td> Военный
+</td><td> Есть два основных направления: стрелковый бой и бой на двух
+оружиях. В обоих направлениях рейнджер наносит большое количество атак
+и урона на каждой из них. Также, рейнджер может завести питомца.
+</td><td> PH p103, MP p36
+</td></tr>
+<tr>
+<td> <a href="http://ru.rpg.wikia.com/index.php?title=%D0%9A%D0%BE%D0%BB%D0%B4%D1%83%D0%BD&amp;action=edit&amp;redlink=1" class="new" title="Колдун (такой страницы не существует)" rel="nofollow">Колдун</a>
+<p><span style="color: rgb(128, 128, 128); font-style: italic;" lang="en">англ.</span> Warlock
+</p>
+</td><td> Атакующий
+</td><td> Тайный
+</td><td> В зависимости от выбора способностей колдун может наносит редкие типы урона, накладывать большое количество <a href="http://ru.rpg.wikia.com/index.php?title=%D0%A1%D0%BE%D1%81%D1%82%D0%BE%D1%8F%D0%BD%D0%B8%D0%B5&amp;action=edit&amp;redlink=1" class="new" title="Состояние (такой страницы не существует)" rel="nofollow">состояний</a> на единичных врагов или быстро перемещаться по полю боя.
+</td><td> PH p129, Dragon#366 p17
+</td></tr>
+<tr>
+<td> <a href="http://ru.rpg.wikia.com/index.php?title=%D0%9A%D0%BE%D0%BC%D0%B0%D0%BD%D0%B4%D0%B8%D1%80&amp;action=edit&amp;redlink=1" class="new" title="Командир (такой страницы не существует)" rel="nofollow">Командир</a>
+<p><span style="color: rgb(128, 128, 128); font-style: italic;" lang="en">англ.</span> Warlord
+</p>
+</td><td> Лидер
+</td><td> Военный
+</td><td> Дарует союзникам базовые атаки и влияет на растановку на поле боя.
+</td><td> PH p143, MP p100, Dragon#369 p53
+</td></tr>
+<tr>
+<td> <a href="http://ru.rpg.wikia.com/index.php?title=%D0%92%D0%BE%D0%BB%D1%88%D0%B5%D0%B1%D0%BD%D0%B8%D0%BA&amp;action=edit&amp;redlink=1" class="new" title="Волшебник (такой страницы не существует)" rel="nofollow">Волшебник</a>
+<p><span style="color: rgb(128, 128, 128); font-style: italic;" lang="en">англ.</span> Wizard
+</p>
+</td><td> Контроллер
+</td><td> Тайный
+</td><td> В отличии от других контроллеров, наносит много урона элементльных типов.
+</td><td> PH p156, Dragon#364 p68
+</td></tr>
+<tr>
+<td> <a href="http://ru.rpg.wikia.com/index.php?title=%D0%9C%D0%B0%D0%B3_%D0%BC%D0%B5%D1%87%D0%B0&amp;action=edit&amp;redlink=1" class="new" title="Маг меча (такой страницы не существует)" rel="nofollow">Маг меча</a>
+<p><span style="color: rgb(128, 128, 128); font-style: italic;" lang="en">англ.</span> Swordmage
+</p>
+</td><td> Защитник
+</td><td> Тайный
+</td><td>
+</td><td> FRPG p26, Dragon#367 p55
+</td></tr>
+<tr>
+<td> <a href="http://ru.rpg.wikia.com/index.php?title=%D0%A2%D0%B5%D1%85%D0%BD%D0%B8%D0%BA&amp;action=edit&amp;redlink=1" class="new" title="Техник (такой страницы не существует)" rel="nofollow">Техник</a>
+<p><span style="color: rgb(128, 128, 128); font-style: italic;" lang="en">англ.</span> Artificer
+</p>
+</td><td> Лидер
+</td><td> Тайный
+</td><td>
+</td><td> <b>Preview</b> (Dragon#365 p5)
+</td></tr>
+<tr>
+<td> <a href="http://ru.rpg.wikia.com/index.php?title=%D0%92%D0%B0%D1%80%D0%B2%D0%B0%D1%80&amp;action=edit&amp;redlink=1" class="new" title="Варвар (такой страницы не существует)" rel="nofollow">Варвар</a>
+<p><span style="color: rgb(128, 128, 128); font-style: italic;" lang="en">англ.</span> Barbarian
+</p>
+</td><td> Атакующий
+</td><td> Первородный
+</td><td>
+</td><td> <b>Preview</b> (Dragon#368 p19)
+</td></tr>
+<tr>
+<td> <a href="http://ru.rpg.wikia.com/index.php?title=%D0%91%D0%B0%D1%80%D0%B4&amp;action=edit&amp;redlink=1" class="new" title="Бард (такой страницы не существует)" rel="nofollow">Бард</a>
+<p><span style="color: rgb(128, 128, 128); font-style: italic;" lang="en">англ.</span> Bard
+</p>
+</td><td> Лидер
+</td><td> Тайный
+</td><td>
+</td><td> <b>Preview</b> (Dragon#369 p67)
+</td></tr>
+<tr>
+<td> <a href="http://ru.rpg.wikia.com/index.php?title=%D0%92%D0%B7%D1%8B%D0%B2%D0%B0%D1%8E%D1%89%D0%B8%D0%B9&amp;action=edit&amp;redlink=1" class="new" title="Взывающий (такой страницы не существует)" rel="nofollow">Взывающий</a>
+<p><span style="color: rgb(128, 128, 128); font-style: italic;" lang="en">англ.</span> Invoker
+</p>
+</td><td> Контроллер
+</td><td> Божественный
+</td><td>
+</td><td> <b>Preview</b> (D&amp;DI content)
+</td></tr>
+<tr>
+<td> <a href="http://ru.rpg.wikia.com/index.php?title=%D0%94%D1%80%D1%83%D0%B8%D0%B4&amp;action=edit&amp;redlink=1" class="new" title="Друид (такой страницы не существует)" rel="nofollow">Друид</a>
+<p><span style="color: rgb(128, 128, 128); font-style: italic;" lang="en">англ.</span> Druid
+</p>
+</td><td> Контроллер
+</td><td> Первородный
+</td><td>
+</td><td> <b>Preview</b> (D&amp;DI content)
+</td></tr>
+<tr>
+<td> <a href="http://ru.rpg.wikia.com/index.php?title=%D0%A5%D1%80%D0%B0%D0%BD%D0%B8%D1%82%D0%B5%D0%BB%D1%8C&amp;action=edit&amp;redlink=1" class="new" title="Хранитель (такой страницы не существует)" rel="nofollow">Хранитель</a>
+<p><span style="color: rgb(128, 128, 128); font-style: italic;" lang="en">англ.</span> Warden
+</p>
+</td><td> Защитник
+</td><td> Первородный
+</td><td>
+</td><td> <b>Preview</b> (D&amp;DI content)
+</td></tr>
+<tr>
+<td> <a href="http://ru.rpg.wikia.com/index.php?title=%D0%A8%D0%B0%D0%BC%D0%B0%D0%BD&amp;action=edit&amp;redlink=1" class="new" title="Шаман (такой страницы не существует)" rel="nofollow">Шаман</a>
+<p><span style="color: rgb(128, 128, 128); font-style: italic;" lang="en">англ.</span> Shaman
+</p>
+</td><td> Лидер
+</td><td> Первородный
+</td><td>
+</td><td> <b>Preview</b> (D&amp;DI content)
+</td></tr>
+<tr>
+<td> <a href="http://ru.rpg.wikia.com/index.php?title=%D0%A7%D0%B0%D1%80%D0%BE%D0%B4%D0%B5%D0%B9&amp;action=edit&amp;redlink=1" class="new" title="Чародей (такой страницы не существует)" rel="nofollow">Чародей</a>
+<p><span style="color: rgb(128, 128, 128); font-style: italic;" lang="en">англ.</span> Sorcerer
+</p>
+</td><td> Атакующий
+</td><td> Тайный
+</td><td>
+</td><td> <b>Preview</b> (D&amp;DI content)
+</td></tr></tbody></table>
+<p><small><b>Ключ:</b>
+</small></p>
+<ul><li><small> PH — <a href="http://ru.rpg.wikia.com/index.php?title=Player%27s_Handbook&amp;action=edit&amp;redlink=1" class="new" title="Player's Handbook (такой страницы не существует)" rel="nofollow">Player's Handbook</a>
+</small></li><li><small> MP — <a href="http://ru.rpg.wikia.com/index.php?title=Martial_Power&amp;action=edit&amp;redlink=1" class="new" title="Martial Power (такой страницы не существует)" rel="nofollow">Martial Power</a>
+</small></li><li><small> FRPG - <a href="http://ru.rpg.wikia.com/index.php?title=Forgotten_Realms_Player%27s_Guide&amp;action=edit&amp;redlink=1" class="new" title="Forgotten Realms Player's Guide (такой страницы не существует)" rel="nofollow">Forgotten Realms Player's Guide</a>
+</small></li><li><small> Dragon### — <a href="http://ru.rpg.wikia.com/wiki/Dragon_Magazine" title="Dragon Magazine" class="mw-redirect">Dragon Magazine</a> соответствующего номера
+</small></li><li><small> D&amp;DI content — Содержимое D&amp;D Insider, доступно только подписчикам</small>
+</li></ul>
+<a rel="nofollow" name=".D0.98.D0.B7.D0.BC.D0.B5.D0.BD.D0.B5.D0.BD.D0.B8.D1.8F_.D0.BF.D0.BE_.D1.81.D1.80.D0.B0.D0.B2.D0.BD.D0.B5.D0.BD.D0.B8.D1.8E_.D1.81_.D0.BF.D1.80.D0.B5.D0.B4.D1.8B.D0.B4.D1.83.D1.89.D0.B5.D0.B9_.D1.80.D0.B5.D0.B4.D0.B0.D0.BA.D1.86.D0.B8.D0.B5.D0.B9" id=".D0.98.D0.B7.D0.BC.D0.B5.D0.BD.D0.B5.D0.BD.D0.B8.D1.8F_.D0.BF.D0.BE_.D1.81.D1.80.D0.B0.D0.B2.D0.BD.D0.B5.D0.BD.D0.B8.D1.8E_.D1.81_.D0.BF.D1.80.D0.B5.D0.B4.D1.8B.D0.B4.D1.83.D1.89.D0.B5.D0.B9_.D1.80.D0.B5.D0.B4.D0.B0.D0.BA.D1.86.D0.B8.D0.B5.D0.B9"></a><h2><span style="position: relative; top: -3px; margin-bottom: -2px;" class="editsection"><a class="bigButton" href="http://ru.rpg.wikia.com/index.php?title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;action=edit&amp;section=2" title="Править секцию: Изменения по сравнению с предыдущей редакцией" rel="nofollow"><big>править</big><small></small></a></span> <span class="mw-headline"> Изменения по сравнению с предыдущей редакцией </span></h2>
+<p>В новой <a href="http://ru.rpg.wikia.com/wiki/Dungeons_%26_Dragons_4" title="Dungeons &amp; Dragons 4">четвертой редакции</a> <a href="http://ru.rpg.wikia.com/wiki/D%26D" title="D&amp;D" class="mw-redirect">D&amp;D</a>, в очередной раз были переработаны правила по системе классов. Основные изменения и ключевые понятия перечислены ниже.
+</p>
+<a rel="nofollow" name=".D0.95.D0.B4.D0.B8.D0.BD.D0.B0.D1.8F_.D1.81.D0.B8.D1.81.D1.82.D0.B5.D0.BC.D0.B0_.D1.80.D0.B0.D0.B7.D0.B2.D0.B8.D1.82.D0.B8.D1.8F" id=".D0.95.D0.B4.D0.B8.D0.BD.D0.B0.D1.8F_.D1.81.D0.B8.D1.81.D1.82.D0.B5.D0.BC.D0.B0_.D1.80.D0.B0.D0.B7.D0.B2.D0.B8.D1.82.D0.B8.D1.8F"></a><h3><span class="editsection">[<a href="http://ru.rpg.wikia.com/index.php?title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;action=edit&amp;section=3" title="Править секцию: Единая система развития" rel="nofollow">править</a>]</span> <span class="mw-headline"> Единая система развития </span></h3>
+<p>Все классы были приведены к единой <a href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%B8%D1%81%D1%82%D0%B5%D0%BC%D0%B0_%D1%80%D0%B0%D0%B7%D0%B2%D0%B8%D1%82%D0%B8%D1%8F_%D0%BF%D0%B5%D1%80%D1%81%D0%BE%D0%BD%D0%B0%D0%B6%D0%B0" title="Система развития персонажа">системе развития персонажей</a>:
+</p>
+<ul><li> На входе в класс <a href="http://ru.rpg.wikia.com/wiki/%D0%9F%D0%B5%D1%80%D1%81%D0%BE%D0%BD%D0%B0%D0%B6" title="Персонаж">персонаж</a> получает указанные в классе умения обращения с оружием и броней и указанное количество навыков, выбираемых из списка класса
+</li><li> Все персонажи, при входе в класс, получают «классовые
+способности». Часть способностей может выбираться, например, для
+рейнджера можно выбрать стиль: сражение с двумя оружиями или стрелковое
+оружие. Часть способностей может быть активируемыми
+</li><li> Также, все персонажи, при входе в класс, получают две способности применяемые «по желанию»
+</li><li> В общей для всех классов таблице расписано, на каких уровнях
+персонаж получает фиты, повышения характеристик, новые скиллы и
+«ежедневные», «ежесценные» и «вспомогательные» силы класса
+<ul><li> Силы класса могут называться по-другому, в зависимости от стиля класса: у магов — заклинания, у священников — молитвы
+</li><li> Силы выбираются из списка прописанного в классе. Они разделены по уровням: нельзя взять «ежедневную» силу 15-го уровня на 9-ом
+</li><li> «Вспомогательные» силы могут быть как «ежедневными», так и
+«ежесценными» и «по желанию». Главное отличие от остальных сил — они не
+направлены непосредственно на атаку, проклинание врагов или
+благословление союзников
+</li></ul>
+</li></ul>
+<a rel="nofollow" name=".D0.A1.D0.B8.D1.81.D1.82.D0.B5.D0.BC.D0.B0_.D0.BC.D1.83.D0.BB.D1.8C.D1.82.D0.B8.D0.BA.D0.BB.D0.B0.D1.81.D1.81.D0.B8.D1.80.D0.BE.D0.B2.D0.B0.D0.BD.D0.B8.D1.8F" id=".D0.A1.D0.B8.D1.81.D1.82.D0.B5.D0.BC.D0.B0_.D0.BC.D1.83.D0.BB.D1.8C.D1.82.D0.B8.D0.BA.D0.BB.D0.B0.D1.81.D1.81.D0.B8.D1.80.D0.BE.D0.B2.D0.B0.D0.BD.D0.B8.D1.8F"></a><h3><span class="editsection">[<a href="http://ru.rpg.wikia.com/index.php?title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;action=edit&amp;section=4" title="Править секцию: Система мультиклассирования" rel="nofollow">править</a>]</span> <span class="mw-headline"> Система мультиклассирования </span></h3>
+<p>Мультклассирование претерпело существенные изменения. Теперь любой персонаж может взять <a href="http://ru.rpg.wikia.com/wiki/%D0%A4%D0%B8%D1%82" title="Фит">фиты</a>, позволяющие подменить одну силу силой из другого класса. Перед этим нужно взять <a href="http://ru.rpg.wikia.com/wiki/%D0%A4%D0%B8%D1%82" title="Фит">фит</a>,
+определяющий класс, в который вы мультиклассируетесь. Также, на 11-ом
+уровня каждый персонаж должен пойти по одному из трех путей развития:
+</p>
+<ol><li> Взять легендарный путь своего класса, пререквизитам которого он удовлетворяет
+</li><li> Взять легендарный путь чужого класса. Пререквизитам,
+требующим являться персонажем определенного класса, можно удовлетворить
+взять соответствующий классу мультиклассирующий фит.
+</li><li> Если персонаж взял мультклассирующий фит другого класса и
+все три возможные замены сил, то он может продолжить развитие как
+персонаж обоих классов и выбирать в будущем силы из списков обоих
+классов. Но тогда, персонаж не получает легендарный путь. Этот вариант
+называется «легендарным мультиклассированием» (Paragon Multiclassing).
+</li></ol>
+<a rel="nofollow" name=".D0.98.D1.81.D1.82.D0.BE.D1.87.D0.BD.D0.B8.D0.BA.D0.B8_.D1.81.D0.B8.D0.BB.D1.8B" id=".D0.98.D1.81.D1.82.D0.BE.D1.87.D0.BD.D0.B8.D0.BA.D0.B8_.D1.81.D0.B8.D0.BB.D1.8B"></a><h3><span class="editsection">[<a href="http://ru.rpg.wikia.com/index.php?title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;action=edit&amp;section=5" title="Править секцию: Источники силы" rel="nofollow">править</a>]</span> <span class="mw-headline"> Источники силы </span></h3>
+<p>Силы каждого персонажа связаны с с определенным источником. В <a href="http://ru.rpg.wikia.com/index.php?title=Player%27s_Handbook&amp;action=edit&amp;redlink=1" class="new" title="Player's Handbook (такой страницы не существует)" rel="nofollow">Player's Handbook</a>
+представленны классы военного (martial), магического (arcane) и
+божественного (divine) источников силы. В Player's Handbook II будет
+представлен первобытный (primal) источник силы. Также обещаны теневой
+(shadow), стихийный (elemental) и другие источники силы.
+</p>
+<a rel="nofollow" name=".D0.A0.D0.BE.D0.BB.D0.B8" id=".D0.A0.D0.BE.D0.BB.D0.B8"></a><h3><span class="editsection">[<a href="http://ru.rpg.wikia.com/index.php?title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;action=edit&amp;section=6" title="Править секцию: Роли" rel="nofollow">править</a>]</span> <span class="mw-headline"> Роли </span></h3>
+<p>Каждый класс теперь предназначен для одной из следующих ролей, что помогает составлять группу персонажей.
+</p>
+<dl><dd> <i>Основная статья: <a href="http://ru.rpg.wikia.com/wiki/%D0%A0%D0%BE%D0%BB%D1%8C_%D0%BA%D0%BB%D0%B0%D1%81%D1%81%D0%B0_%D0%B2_D%26D4" title="Роль класса в D&amp;D4">Роль класса в D&amp;D4</a></i>
+</dd></dl>
+<a rel="nofollow" name=".D0.9F.D1.80.D0.B5.D1.80.D0.B5.D0.BA.D0.B2.D0.B8.D0.B7.D0.B8.D1.82.D1.8B_.D0.BA.D0.BB.D0.B0.D1.81.D1.81.D0.BE.D0.B2" id=".D0.9F.D1.80.D0.B5.D1.80.D0.B5.D0.BA.D0.B2.D0.B8.D0.B7.D0.B8.D1.82.D1.8B_.D0.BA.D0.BB.D0.B0.D1.81.D1.81.D0.BE.D0.B2"></a><h3><span class="editsection">[<a href="http://ru.rpg.wikia.com/index.php?title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;action=edit&amp;section=7" title="Править секцию: Пререквизиты классов" rel="nofollow">править</a>]</span> <span class="mw-headline"> Пререквизиты классов </span></h3>
+<p>Убраны ограничения <a href="http://ru.rpg.wikia.com/wiki/%D0%98%D0%B3%D1%80%D0%BE%D0%B2%D0%B0%D1%8F_%D0%BC%D0%B5%D1%85%D0%B0%D0%BD%D0%B8%D0%BA%D0%B0" title="Игровая механика" class="mw-redirect">механики</a> на вход и выход из классов. Так, теперь у классов нет ограничений по <a href="http://ru.rpg.wikia.com/index.php?title=%D0%9C%D0%B8%D1%80%D0%BE%D0%B2%D0%BE%D0%B7%D1%80%D0%B5%D0%BD%D0%B8%D0%B5&amp;action=edit&amp;redlink=1" class="new" title="Мировозрение (такой страницы не существует)" rel="nofollow">мировозрению</a>: <a href="http://ru.rpg.wikia.com/wiki/%D0%9F%D0%B0%D0%BB%D0%B0%D0%B4%D0%B8%D0%BD" title="Паладин">паладин</a> может быть хаотично-злым и служить <a href="http://ru.rpg.wikia.com/index.php?title=%D0%92%D0%B5%D0%BA%D0%BD%D0%B0&amp;action=edit&amp;redlink=1" class="new" title="Векна (такой страницы не существует)" rel="nofollow">Векне</a>.
+</p><p>Для легендарных и эпических путей, пререквизиты сведены до
+минимума, и часто требуют только принадлежности к определенному классу.
+</p>
+<a rel="nofollow" name=".D0.9E.D0.B1.D0.BB.D0.B0.D1.81.D1.82.D1.8C_.D0.BA.D0.BE.D0.BC.D0.BF.D0.B5.D1.82.D0.B5.D0.BD.D1.86.D0.B8.D0.B8_.D0.BA.D0.BB.D0.B0.D1.81.D1.81.D0.BE.D0.B2" id=".D0.9E.D0.B1.D0.BB.D0.B0.D1.81.D1.82.D1.8C_.D0.BA.D0.BE.D0.BC.D0.BF.D0.B5.D1.82.D0.B5.D0.BD.D1.86.D0.B8.D0.B8_.D0.BA.D0.BB.D0.B0.D1.81.D1.81.D0.BE.D0.B2"></a><h3><span class="editsection">[<a href="http://ru.rpg.wikia.com/index.php?title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;action=edit&amp;section=8" title="Править секцию: Область компетенции классов" rel="nofollow">править</a>]</span> <span class="mw-headline"> Область компетенции классов </span></h3>
+<p>Большинство классов покрывают только боевые способности персонажа. Немногие содержат силы, позволяющие повлиять на применение <a href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BA%D0%B8%D0%BB%D0%BB" title="Скилл">скиллов</a>.
+</p><!-- 
+NewPP limit report
+Preprocessor node count: 99/1000000
+Post-expand include size: 1527/2097152 bytes
+Template argument size: 143/2097152 bytes
+Expensive parser function count: 0/100
+--><!-- Saved in parser cache with key rurpg:pcache:idhash:893-0!1!0!!ru!2 and timestamp 20090708204030 --><div class="printfooter">
+Источник — «<a href="http://ru.rpg.wikia.com/wiki/%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4">http://ru.rpg.wikia.com/wiki/%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4</a>»</div>
+<table style="margin-top: 1em; width: 100%; clear: both;"><tbody><tr><td style="text-align: center;"><div id="PREFOOTER_LEFT_BOXAD" style="display: none;"><!-- Null Ad. Reason: Ads name not served for this language in this slot (ru) , slotname=PREFOOTER_LEFT_BOXAD --></div></td><td style="text-align: center;"><div id="PREFOOTER_RIGHT_BOXAD" style="display: none;"><!-- Null Ad. Reason: Ads name not served for this language in this slot (ru) , slotname=PREFOOTER_RIGHT_BOXAD --></div></td></tr>
+</tbody></table><div id="catlinks" class="catlinks"><div id="mw-normal-catlinks"><a href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:Categories" title="Служебная:Categories" rel="nofollow">Категория</a>: <span dir="ltr"><a href="http://ru.rpg.wikia.com/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:Dungeons_and_Dragons" title="Категория:Dungeons and Dragons">Dungeons and Dragons</a></span></div> <div id="csAddCategorySwitch" class="noprint" style="border: 1px solid rgb(187, 187, 187); padding: 0pt 4px 0pt 12px; background: rgb(221, 221, 221) url(http://images.wikia.com/common/releases_200907.3/extensions/wikia/CategorySelect/sprite.png) no-repeat scroll left center; position: relative; float: left; -moz-border-radius-topleft: 3px; -moz-border-radius-topright: 3px; -moz-border-radius-bottomright: 3px; -moz-border-radius-bottomleft: 3px; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; line-height: 16px;"><a href="#" onfocus="this.blur();" style="padding: 0pt 3px; background: rgb(221, 221, 221) none repeat scroll 0%; color: rgb(0, 0, 0); font-size: 0.85em; text-decoration: none; -moz-background-clip: -moz-initial; -moz-background-origin: -moz-initial; -moz-background-inline-policy: -moz-initial; display: block;" rel="nofollow">Add category</a></div></div>					<!-- end content -->
+										<div class="visualClear"></div>
+				</div>
+
+				<!--google_ad_section_end-->
+				<!--contextual_targeting_end-->
+
+			</div>
+			<!-- /ARTICLE -->
+			
+			<!-- ARTICLE FOOTER -->
+			<div id="articleFooter" class="reset">
+				<table cellspacing="0">
+					<tbody><tr>
+						<td class="col1">
+							<ul class="actions" id="articleFooterActions">
+								<li><a rel="nofollow" id="fe_edit_icon" href="http://ru.rpg.wikia.com/index.php?title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;action=edit"><img src="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/blank.gif" id="fe_edit_img" class="sprite" alt="Править"></a> <div>Improve RPG by <a id="fe_edit_link" rel="nofollow" href="http://ru.rpg.wikia.com/index.php?title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;action=edit">editing this page</a></div></li>
+							</ul>
+							<ul id="articleFooterActions3" class="actions clearfix">
+								<li id="fe_talk"><a rel="nofollow" id="fe_talk_icon" href="http://ru.rpg.wikia.com/index.php?title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;action=history"><img src="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/blank.gif" id="fe_talk_img" class="sprite" alt="История"></a> <div><a id="fe_talk_link" rel="nofollow" href="http://ru.rpg.wikia.com/index.php?title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;action=history">История</a></div></li>
+								<li id="fe_recent"><a rel="nofollow" id="fe_recent_icon" href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:RecentChangesLinked/%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4"><img src="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/blank.gif" id="fe_recent_img" class="sprite" alt="Связанные правки"></a> <div><a id="fe_recent_link" rel="nofollow" href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:RecentChangesLinked/%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4">Связанные правки</a></div></li></ul><ul id="articleFooterActions4" class="actions clearfix">
+								<li id="fe_permalink"><a rel="nofollow" id="fe_permalink_icon" href="http://ru.rpg.wikia.com/index.php?title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;oldid=6894"><img src="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/blank.gif" id="fe_permalink_img" class="sprite" alt="Постоянная ссылка"></a> <div><a id="fe_permalink_link" rel="nofollow" href="http://ru.rpg.wikia.com/index.php?title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;oldid=6894">Постоянная ссылка</a></div></li>
+								<li id="fe_whatlinkshere"><a rel="nofollow" id="fe_whatlinkshere_icon" href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:WhatLinksHere/%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4"><img src="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/blank.gif" id="fe_whatlinkshere_img" class="sprite" alt="Ссылки сюда"></a> <div><a id="fe_whatlinkshere_link" rel="nofollow" href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:WhatLinksHere/%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4">Ссылки сюда</a></div></li></ul>							
+						</td>
+						<td class="col2">
+							<ul class="actions" id="articleFooterActions2">
+								<li><a rel="nofollow" id="fe_random_icon" href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:Random"><img src="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/blank.gif" id="fe_random_img" class="sprite" alt="Случайная статья"></a> <div><a rel="nofollow" id="fe_random_link" href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:Random">View random page</a></div></li>
+								<li><img src="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/blank.gif" id="fe_report_img" class="sprite" alt="Report a problem"> <div><a style="cursor: pointer;" id="fe_report_link">Report a problem</a></div></li>
+							</ul>
+							<div class="clearfix">
+								<strong>Share this article:</strong>
+								<div id="share">
+								<dl id="shareDelicious" class="share">
+									<dt>del.icio.us</dt>
+									<dd><a rel="nofollow" href="http://del.icio.us/post?v=4&amp;noui&amp;jump=close&amp;url=http://ru.rpg.wikia.com/wiki/%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204" id="shareDelicious_a"></a></dd>
+								</dl>
+								<dl id="shareStumble" class="share">
+									<dt>StumbleUpon</dt>
+									<dd><a rel="nofollow" href="http://www.stumbleupon.com/submit?url=http://ru.rpg.wikia.com/wiki/%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204" id="shareStumble_a"></a></dd>
+								</dl>
+								<dl id="shareDigg" class="share">
+									<dt>Digg</dt>
+									<dd><a rel="nofollow" href="http://digg.com/submit?phase=2&amp;url=http://ru.rpg.wikia.com/wiki/%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4&amp;title=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204" id="shareDigg_a"></a></dd>
+								</dl>
+								<dl id="shareFacebook" class="share">
+									<dt>Facebook</dt>
+									<dd><a rel="nofollow" href="http://www.facebook.com/share.php?u=http://ru.rpg.wikia.com/wiki/%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4" id="shareFacebook_a"></a></dd>
+								</dl>
+								</div>
+							</div>
+							<div class="clearfix">
+								<strong>Оцените:</strong>
+								<div id="star-rating-wrapper">
+									<ul id="star-rating" class="star-rating">
+										<li style="width: 0px;" id="current-rating" class="current-rating"><span>0/5</span></li>
+										<li><a rel="nofollow" class="one-star" id="star1" title="1/5"><span>1</span></a></li>
+										<li><a rel="nofollow" class="two-stars" id="star2" title="2/5"><span>2</span></a></li>
+										<li><a rel="nofollow" class="three-stars" id="star3" title="3/5"><span>3</span></a></li>
+										<li><a rel="nofollow" class="four-stars" id="star4" title="4/5"><span>4</span></a></li>
+										<li><a rel="nofollow" class="five-stars" id="star5" title="5/5"><span>5</span></a></li>
+									</ul>
+									<span style="display: none;" id="unrateLink"><a rel="nofollow" id="unrate" href="#">Сбросить оценку</a></span>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</tbody></table>
+			</div>
+			<!-- /ARTICLE FOOTER -->
+
+		</div>
+		<!-- /PAGE -->
+
+
+		<script type="text/javascript" src="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/a"></script>
+		<script type="text/javascript" src="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/index.php"></script>
+<script type="text/javascript">/*<![CDATA[*/
+/* CategorySelect */
+wgAfterContentAndJS.push(function() {
+	$('#csAddCategorySwitch').children('a').click(function() {
+		WET.byStr('articleAction/addCategory');
+
+		function loadCSJS() {
+			$.getScript(wgExtensionsPath+ '/wikia/CategorySelect/CategorySelect.js?' + wgStyleVersion, function(){showCSpanel();});
+		}
+
+		$.getScript(wgServer + wgScriptPath + '?action=ajax&rs=CategorySelectGetCategories');
+
+		if (typeof YAHOO == 'undefined') {
+			$.getScript(wgExtensionsPath + '/wikia/StaticChute/?type=js&packages=yui&cb=' + wgStyleVersion, loadCSJS);
+		}
+		else {
+			loadCSJS();
+		}
+		$('#catlinks').addClass('csLoading');
+		return false;
+	});
+});
+/*]]>*/</script><script type="text/javascript">/*<![CDATA[*/for(var i=0;i<wgAfterContentAndJS.length;i++){wgAfterContentAndJS[i]();}/*]]>*/</script>
+		<div id="monaco_footer" class="reset">
+
+		<div id="spotlight_footer">
+		<table>
+		<tbody><tr>
+			<td>
+				<div id="FOOTER_SPOTLIGHT_LEFT" style="width: 200px; height: 75px;" class="wikia_ad_placeholder"></div>			</td>
+			<td>
+				<div id="FOOTER_SPOTLIGHT_MIDDLE" style="width: 200px; height: 75px;" class="wikia_ad_placeholder"></div>			</td>
+			<td>
+				<div id="FOOTER_SPOTLIGHT_RIGHT" style="width: 200px; height: 75px;" class="wikia_ad_placeholder"></div>			</td>
+		</tr>
+		</tbody></table>
+		</div>
+		<table id="wikia_footer">
+		<tbody><tr>
+			<td colspan="2" id="wikia_corporate_footer">
+<a rel="nofollow" href="http://www.wikia.com/wiki/Wikia:About">About Wikia</a> | <a rel="nofollow" href="http://www.wikia.com/wiki/Wikia:Contact_us">Contact Wikia</a> | <a rel="nofollow" href="http://www.wikia.com/wiki/Wikia:Terms_of_use">Terms of Use</a> | <a rel="nofollow" href="http://www.wikia.com/wiki/Wikia:Privacy_Policy">Privacy Policy</a> | <a rel="nofollow" href="http://www.mediawiki.org/">MediaWiki</a> | <a href="http://www.wikia.com/wiki/Wikia:Licensing" title="w:Wikia:Licensing">CC-BY-SA</a> | <a rel="nofollow" href="http://www.wikia.com/wiki/Wikia:Advertising_on_Wikia">Advertise on Wikia</a>			</td>
+		</tr>
+		</tbody></table>
+		<script type="text/javascript">/*<![CDATA[*/
+if (skin == "monaco") {
+	$("h2 span.editsection").each(function(i) {
+		//remove nodes in the editsection that are not anchors
+		$(this).contents().not("a").remove();
+		//add elements and styling
+		$(this).find("a").click(function(){WET.byStr('articleAction/editSection')}).addClass("bigButton").contents().wrap("<big></big>").end().append("<small></small>").parent().css("position", "relative").css("top", "-3px").css("margin-bottom", "-2px");
+	});
+}
+/*]]>*/</script>		</div>
+		<!-- WIDGETS -->
+		<div id="widget_sidebar" class="reset widget_sidebar">
+
+			<!-- SEARCH/NAVIGATION -->
+			<div class="widget" id="navigation_widget">
+				<div id="search_box" class="color1">
+					<form action="/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:Search" id="searchform">
+						<input id="search_field" name="search" value="Искать это слово" maxlength="200" onfocus="sf_focus(event);" alt="Искать это слово" autocomplete="off" title="Искать это слово [f]" accesskey="f" type="text">
+						<input name="go" value="1" type="hidden">
+						<input id="search_button" value="" title="Найти" type="submit">
+					</form>
+				</div>
+<div id="navigation"><div id="menu-item_1" class="menu-item"><a id="a-menu-item_1" href="http://ru.rpg.wikia.com/wiki/%D0%97%D0%B0%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D0%B0%D1%8F_%D1%81%D1%82%D1%80%D0%B0%D0%BD%D0%B8%D1%86%D0%B0" rel="nofollow">RPG</a></div><div id="menu-item_2" class="menu-item"><a id="a-menu-item_2" href="http://ru.rpg.wikia.com/wiki/%D0%97%D0%B0%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D0%B0%D1%8F_%D1%81%D1%82%D1%80%D0%B0%D0%BD%D0%B8%D1%86%D0%B0" rel="nofollow">Лучшее<em>›</em></a></div><div id="menu-item_7" class="menu-item"><a id="a-menu-item_7" href="http://ru.rpg.wikia.com/wiki/RPG:%D0%9F%D0%BE%D1%80%D1%82%D0%B0%D0%BB_%D1%81%D0%BE%D0%BE%D0%B1%D1%89%D0%B5%D1%81%D1%82%D0%B2%D0%B0" rel="nofollow">Сообщество<em>›</em></a></div><div id="menu-item_17" class="menu-item"><a id="a-menu-item_17" href="http://ru.rpg.wikia.com/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%A2%D0%B5%D1%80%D0%BC%D0%B8%D0%BD%D0%BE%D0%BB%D0%BE%D0%B3%D0%B8%D1%8F" rel="nofollow">Терминология<em>›</em></a></div><div id="menu-item_18" class="menu-item"><a id="a-menu-item_18" href="http://ru.rpg.wikia.com/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%9D%D0%B5%D0%B7%D0%B0%D0%B2%D0%B5%D1%80%D1%88%D1%91%D0%BD%D0%BD%D1%8B%D0%B5_%D1%81%D1%82%D0%B0%D1%82%D1%8C%D0%B8" rel="nofollow">Незавершённые статьи<em>›</em></a></div><div id="menu-item_19" class="menu-item"><a id="a-menu-item_19" href="http://ru.rpg.wikia.com/wiki/Blog:Recent_posts" rel="nofollow">Recent Blog Posts</a></div></div><script type="text/javascript" src="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/index_002.php"></script><script type="text/javascript" src="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/index_003.php"></script>	<div id="link_box_dynamic" class="clearfix linkbox_dynamic">
+		<ul id="dynamic-links-list">
+
+			<li id="dynamic-links-write-article-li"><a rel="nofollow" id="dynamic-links-write-article-icon" href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:CreatePage" onclick="WET.byStr('toolbox/dynamic/CreatePage')"><img src="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/blank.gif" id="dynamic-links-write-article-img" class="sprite" alt="Write an Article"></a> <div><a id="dynamic-links-write-article-link" rel="nofollow" href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:CreatePage" onclick="WET.byStr('toolbox/dynamic/CreatePage')">Write an Article</a></div></li>
+			<li id="dynamic-links-add-image-li"><a rel="nofollow" id="dynamic-links-add-image-icon" href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:Upload" onclick="WET.byStr('toolbox/dynamic/Upload')"><img src="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/blank.gif" id="dynamic-links-add-image-img" class="sprite" alt="Add Image"></a> <div><a id="dynamic-links-add-image-link" rel="nofollow" href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:Upload" onclick="WET.byStr('toolbox/dynamic/Upload')">Add Image</a></div></li>		</ul>
+	</div>
+				<div id="link_box" class="color2 clearfix linkbox_static">
+					<table cellspacing="0">
+					<tbody><tr>
+						<td>
+							<ul>
+						<li><a rel="nofollow" href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:Upload" onclick="WET.byStr('toolbox/upload')">Upload image</a></li>
+						<li><a rel="nofollow" href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BF%D1%80%D0%B0%D0%B2%D0%BA%D0%B0:%D0%A1%D0%BF%D1%80%D0%B0%D0%B2%D0%BA%D0%B0" onclick="WET.byStr('toolbox/helppage')">Справка</a></li>
+						<li><a rel="nofollow" href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:Random" onclick="WET.byStr('toolbox/randompage')">Случайная статья</a></li>
+							</ul>
+						</td>
+						<td>
+							<ul>
+						<li><a rel="nofollow" href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:SpecialPages" onclick="WET.byStr('toolbox/specialpages')">Спецстраницы</a></li>
+						<li><a rel="nofollow" href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:RecentChanges" onclick="WET.byStr('toolbox/recentchanges')">Свежие правки</a></li>
+						<li><a rel="nofollow" href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:WhatLinksHere/%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4" onclick="WET.byStr('toolbox/whatlinkshere')">Ссылки сюда</a></li>
+								<li style="font-size: 1px; position: absolute; top: -10000px;"><a href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:Recentchanges" accesskey="r" rel="nofollow">Recent changes</a><a href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:Random" accesskey="x" rel="nofollow">Random page</a></li>
+							</ul>
+						</td>
+					</tr>
+					</tbody></table>
+				</div>
+			</div>
+			<!-- /SEARCH/NAVIGATION -->
+
+			<div id="LEFT_NAVBOX_1" style="display: none;"><!-- Null Ad. Reason: Slot is disabled, slotname=LEFT_NAVBOX_1 --></div><div style="text-align: center; margin-bottom: 10px;"><div id="LEFT_SKYSCRAPER_1" style="width: 160px; height: 600px; display: none;" class="wikia_ad_placeholder"></div></div>
+
+			<div id="sidebar_1" class="sidebar">
+			<dl class="widget WidgetCommunity" id="widget_101"><dt class="color1 widget_title" id="widget_101_header"><span class="widgetToolbox"></span>Community</dt><dd class="shadow widget_contents" id="widget_101_content">567 articles on this wiki<br>
+<br>
+
+<a rel="nofollow" id="community_register" href="http://ru.rpg.wikia.com/index.php?title=%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:UserLogin&amp;type=signup" class="bigButton" style="margin-bottom: 5px;"><big>Зарегистрироваться</big><small> </small></a><br style="clear: left;">Already a member? <a rel="nofollow" id="community_login" class="ajaxLogin" href="http://ru.rpg.wikia.com/index.php?title=%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:UserLogin&amp;returnto=%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B_Dungeons_%26_Dragons_4">Log in</a><br><br>
+
+<div class="community_details color2">
+	<div class="community_toggle" onclick="WidgetCommunityDetailsToggle(this);"></div>
+	<h3>Latest Activity</h3>
+	<ul id="widget_101-recently-edited">
+		<li><a rel="nofollow" href="http://ru.rpg.wikia.com/wiki/%D0%91%D0%B5%D0%B7%D0%B4%D0%BD%D0%B0">Бездна</a><br> by <a rel="nofollow" href="http://ru.rpg.wikia.com/wiki/%D0%A3%D1%87%D0%B0%D1%81%D1%82%D0%BD%D0%B8%D0%BA:%D0%93%D0%B5%D0%BE%D0%BC%D0%B5%D1%82%D1%80_%D0%A2%D0%B5%D0%BD%D0%B5%D0%B9">Геометр Теней</a>, yesterday</li>
+		<li><a rel="nofollow" href="http://ru.rpg.wikia.com/wiki/Mongoose_Publishing">Mongoose Publishing</a><br> by <a rel="nofollow" href="http://ru.rpg.wikia.com/wiki/%D0%A3%D1%87%D0%B0%D1%81%D1%82%D0%BD%D0%B8%D0%BA:Radaghast">Radaghast</a>, yesterday</li>
+		<li class="right">
+			<a rel="nofollow" href="http://ru.rpg.wikia.com/wiki/%D0%A1%D0%BB%D1%83%D0%B6%D0%B5%D0%B1%D0%BD%D0%B0%D1%8F:RecentChanges" id="widget_101-more">Далее…</a>
+		</li>
+	</ul>
+	</div>
+</dd></dl><dl class="widget WidgetAdvertiser" id="widget_102"><dt class="color1 widget_title" id="widget_102_header"><span class="widgetToolbox"></span>Wikia Spotlight</dt><dd class="shadow widget_contents" id="widget_102_content"><div id="LEFT_SPOTLIGHT_1" style="width: 200px; height: 75px;" class="wikia_ad_placeholder"></div></dd></dl><dl class="widget WidgetRelatedCommunities" id="widget_104"><dt class="color1 widget_title" id="widget_104_header"><span class="widgetToolbox"></span>Related Communities</dt><dd class="shadow widget_contents" id="widget_104_content"><ul><li><a href="http://diablo.wikia.com/wiki/" title="Diablo" rel="nofollow">Diablo</a></li><li><a href="http://fallout.wikia.com/wiki/" title="Fallout" rel="nofollow">Fallout</a></li><li><a href="http://www.wowwiki.com/" title="WoWWiki" rel="nofollow">WoWWiki</a><br>World of Warcraft</li><li><a href="http://gta.wikia.com/wiki/" title="Grand Theft Wiki" rel="nofollow">Grand Theft Wiki</a><br>Grand Theft Auto</li><li><a href="http://residentevil.wikia.com/wiki/" title="Resident Evil" rel="nofollow">Resident Evil</a></li><li><a href="http://starcraft.wikia.com/wiki/" title="StarCraft" rel="nofollow">StarCraft</a></li></ul></dd></dl>
+			<div id="LEFT_SLIMBOX_1" style="display: none;"><!-- Null Ad. Reason: Slot is disabled, slotname=LEFT_SLIMBOX_1 --></div><div id="LEFT_NAVBOX_2" style="display: none;"><!-- Null Ad. Reason: Slot is disabled, slotname=LEFT_NAVBOX_2 --></div><div style="text-align: center; margin-bottom: 10px;"><div id="LEFT_SKYSCRAPER_2" style="display: none;"><!-- Null Ad. Reason: Slot is disabled, slotname=LEFT_SKYSCRAPER_2 --></div></div>
+			</div>
+		</div>
+		<!-- /WIDGETS -->
+	<!--/div-->
+
+<!-- Begin Analytics -->
+<!-- Start for GA_Urchin, page_view -->
+<script type="text/javascript" src="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/urchin.js"></script>
+<script type="text/javascript">_uff=0;_uacct="UA-288915-1";urchinTracker();</script>
+<!-- Start for GA_Urchin, hub -->
+<script type="text/javascript">_uff=0;_uacct="UA-288915-2";urchinTracker("/Gaming");</script>
+<!-- Start for GA_Urchin, onewiki -->
+<script type="text/javascript">_uff=0;_uacct="UA-1946686-2";urchinTracker();</script>
+<!-- Start for GA_Urchin, pagetime -->
+<script type="text/javascript">
+			if (typeof window.wgNow == "object"){
+				var now = new Date();
+				var ms = (now.getTime() - window.wgNow.getTime()) / 1000;
+     			        var pageTime = Math.floor(ms * 10) / 10; // Round to 1 decimal
+				var slashtime = "/lean_monaco/" + pageTime.toString().replace(/\./, "/");	
+				_uff=0;
+				_uacct="UA-288915-42";	
+				urchinTracker(slashtime);
+			}
+			</script>
+<!-- End Analytics -->
+<div id="INVISIBLE_1" style="display: none;"><!-- Null Ad. Reason: Ads name not served for this language in this slot (ru) , slotname=INVISIBLE_1 --></div><div id="INVISIBLE_2" style="display: none;"><!-- Null Ad. Reason: Ads name not served for this language in this slot (ru) , slotname=INVISIBLE_2 --></div>
+<div id="INVISIBLE_1" style="display: none;"><!-- Null Ad. Reason: Ads name not served for this language in this slot (ru) , slotname=INVISIBLE_1 --></div><div id="INVISIBLE_2" style="display: none;"><!-- Null Ad. Reason: Ads name not served for this language in this slot (ru) , slotname=INVISIBLE_2 --></div>
+<!-- #### BEGIN AdEngine::AdEngine::getDelayedLoadingCode ####-->
+<script type="text/javascript">
+ProviderValues = {};
+ProviderValues.list = [];
+ProviderValues.string = "";
+</script><script type="text/javascript" src="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/Athena.js"></script>
+<script type="text/javascript">
+Athena.setPageVar("wgDBname", "rurpg");
+Athena.setPageVar("hostname", "ru.rpg.wikia.com");
+Athena.setPageVar("request", "/wiki/Классы_Dungeons_&_Dragons_4");
+Athena.setPageVar("article_id", "893");
+Athena.setPageVar("isMainPage", "");
+Athena.setPageVar("hub", "Gaming");
+Athena.setPageVar("skin", "monaco");
+Athena.setPageVar("user_lang", "ru");
+Athena.setPageVar("cont_lang", "ru");
+Athena.setPageVar( "browser", Athena.getBrowser() );
+Athena.pullConfig();</script><script type="text/javascript" src="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/a.js"></script><script type="text/javascript" src="%D0%9A%D0%BB%D0%B0%D1%81%D1%81%D1%8B%20Dungeons%20&amp;%20Dragons%204%20%E2%80%94%20RPG_files/__varnish_geoip.txt"></script><!-- ## BEGIN AdProviderGAM::AdProviderGAM::getSetupHtml ## -->
+<script type="text/javascript" src="http://partner.googleadservices.com/gampad/google_service.js"></script>
+<script type="text/javascript">
+			wgAdBlockEnabled=false;
+			try {
+			  GS_googleAddAdSenseService("ca-pub-4086838842346968");
+			  GS_googleEnableAllServices();
+			} catch (e){
+			  wgAdBlockEnabled=true;
+			}
+			</script><script src="http://pubads.g.doubleclick.net/gampad/test_gam_domain.js"></script><script src="http://partner.googleadservices.com/gampad/google_ads.js"></script>
+<!-- ## END AdProviderGAM::AdProviderGAM::getSetupHtml ## -->
+<div id="LEFT_SKYSCRAPER_1_load" style="display: none; position: absolute;" class="wikia_ad"><script type="text/javascript">Athena.callAd("LEFT_SKYSCRAPER_1");</script><div id="LEFT_SKYSCRAPER_1_177"><script type="text/javascript">
+if ( top != self ){
+// In an iframe
+var Athena = top.Athena;
+var AdEngine =top.AdEngine;
+}
+google_ad_client    = "pub-4086838842346968";
+google_ad_width     = "160";
+google_ad_height    = "600";
+google_ad_format    = google_ad_width + "x" + google_ad_height + "_as";
+google_ad_type      = "text_image";
+
+// If being loaded in a url via an iframe tag, check if its INCONTENT
+if (Athena.getRequestVal("slotname", "").match(/INCONTENT/)){
+g_slot = Athena.getRequestVal("slotname"); // not to be confused with g_spot
+} else {
+g_slot = "";
+}
+var g_slot_channels = {
+"TOP_RIGHT_BOXAD": 9100000030,	
+"LEFT_SKYSCRAPER_1": 9100000031,	
+"LEFT_LEADERBOARD": 9100000032,	
+"INCONTENT_BOXAD_1": 9100000033,	
+"INCONTENT_BOXAD_2": 9100000034,	
+"INCONTENT_BOXAD_3": 9100000035,	
+"INCONTENT_BOXAD_4": 9100000036,	
+"INCONTENT_BOXAD_5": 9100000037,	
+"INCONTENT_LEADERBOARD_1": 9100000038,	
+"INCONTENT_LEADERBOARD_2": 9100000039,	
+"INCONTENT_LEADERBOARD_3": 9100000040,	
+"INCONTENT_LEADERBOARD_4": 9100000041,	
+"INCONTENT_LEADERBOARD_5": 9100000042,
+"PREFOOTER_LEFT_BOXAD": 9100000043,
+"PREFOOTER_RIGHT_BOXAD": 9100000044
+};
+if (!Athena.e(g_slot_channels[g_slot])){
+google_ad_channel = g_slot_channels[g_slot];
+} else {
+google_ad_channel = "";
+}
+
+
+if (typeof AdEngine != "undefined"){
+google_color_border = AdEngine.getAdColor("text");
+google_color_bg     = AdEngine.getAdColor("bg");
+google_color_link   = AdEngine.getAdColor("link");
+google_color_text   = AdEngine.getAdColor("text");
+google_color_url    = AdEngine.getAdColor("url");
+}
+google_ad_channel      += ",9000000033";
+
+if (typeof Athena != "undefined" && typeof Athena.getPageVar != "undefined"){
+google_page_url = "http://" + Athena.getPageVar("hostname") + Athena.getPageVar("request");
+} else if (top != self && typeof document.referrer != "undefined"){
+google_page_url = document.referrer;
+}</script><script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"></script><script src="http://pagead2.googlesyndication.com/pagead/expansion_embed.js"></script><script src="http://googleads.g.doubleclick.net/pagead/test_domain.js"></script></div></div></div></body></html>

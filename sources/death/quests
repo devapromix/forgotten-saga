@@ -1,0 +1,52 @@
+[0]
+Name = Охотник
+Description = Убить %d %s.
+Type = qtKill
+ObjectID = 1
+ObjectCount = 2
+BonusType = qbItem
+BonusID = 20
+BonusCount = 100
+
+[1]
+Name = Пещера
+Description = Спуститься в %s.
+Type = qtLoc
+ObjectID = 0
+ObjectCount = 1
+BonusType = qbItem
+BonusID = 20
+BonusCount = 100
+
+[2]
+Name = Предмет 
+Description = Принести %d %s.
+Type = qtItem
+ObjectID = 1
+ObjectCount = 50
+BonusType = qbItem
+BonusID = 20
+BonusCount = 100
+
+[3]
+Name = Провал
+Description = Спуститься в подземелье.
+Type = qtLoc
+ObjectID = 0
+ObjectCount = 1
+BonusType = qbItem
+BonusID = 20
+BonusCount = 100
+
+[4]
+Name = Отцовский меч
+Description = Принести старейшине меч его отца.
+Type = qtItem
+ObjectID = 159
+ObjectCount = 1
+BonusType = qbItem
+BonusID = 20
+BonusCount = 100
+
+
+
