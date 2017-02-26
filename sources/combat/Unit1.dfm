@@ -46,7 +46,7 @@ object Form1: TForm1
     Left = 504
     Top = 8
     Width = 177
-    Height = 361
+    Height = 329
     Lines.Strings = (
       'RichEdit1')
     ScrollBars = ssVertical
@@ -62,11 +62,20 @@ object Form1: TForm1
   end
   object Button3: TButton
     Left = 8
-    Top = 336
+    Top = 344
     Width = 145
     Height = 25
     Caption = 'Auto (100)'
     TabOrder = 5
     OnClick = Button3Click
+  end
+  object Button4: TButton
+    Left = 504
+    Top = 344
+    Width = 177
+    Height = 25
+    Caption = 'Restart'
+    TabOrder = 6
+    OnClick = Button4Click
   end
 end

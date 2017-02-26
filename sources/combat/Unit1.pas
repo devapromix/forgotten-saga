@@ -14,10 +14,12 @@ type
     RichEdit2: TRichEdit;
     ListBox1: TListBox;
     Button3: TButton;
+    Button4: TButton;
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -54,8 +56,8 @@ type
 var   
   Mob: array [0..3] of TMob;
   PlayerIndex: Integer = 0;
-  Sel: Integer = 0;
-  Run: Boolean = False;
+  SelIndex: Integer = 0;
+  IsRun: Boolean = False;
   RunFlag: Boolean = False;
 
 function IsDefeat: Boolean;
@@ -89,7 +91,7 @@ begin
       if (Life > 0) and (Force <> tfPlayer) then
       Form1.ListBox1.Items.Append(Name);
     end;
-  Form1.ListBox1.ItemIndex := Sel;
+  Form1.ListBox1.ItemIndex := SelIndex;
 
   with Form1 do
     if IsVictory then
@@ -102,8 +104,7 @@ var
   Damage: Integer;
   S: string;
 begin
-  if (A.Life <= 0) then Exit;
-  if (B.Life <= 0) then Exit;
+  if (A.Life <= 0) or (B.Life <= 0) then Exit;
   if (RandomRange(0, A.Agility) < RandomRange(0, B.Agility)) then
   begin
     Result := Format('%s miss. ', [A.Name]);
@@ -185,12 +186,10 @@ begin
   StartRound;
 end;
 
-
-procedure TForm1.FormCreate(Sender: TObject);
+procedure Restart();
 var
   I, E: Integer;
 begin
-  Randomize;
   E := 0;
   for I := Low(Mob) to Length(Mob) - 1 do
   with Mob[I] do
@@ -216,6 +215,14 @@ begin
   end;
   MobRefresh;
   StartCombat();
+end;
+
+
+
+procedure TForm1.FormCreate(Sender: TObject);
+begin
+  Randomize;
+  Restart();
 end;
 
 // lukas ?: you're to there
@@ -244,17 +251,17 @@ procedure TForm1.Button1Click(Sender: TObject);
 var
   S: string;
 begin
-  if Run then Exit;
+  if IsRun then Exit;
   if (Mob[PlayerIndex].Life <= 0) then Exit;
-  Sel := ListBox1.ItemIndex;
-  if (Sel < 0) then Sel := 0;
-  if (GetSel(Sel) < 0) then Exit;
-  if (GetSel(Sel) = PlayerIndex) then Exit;
-  if (Mob[GetSel(Sel)].Life <= 0) then Exit;
+  SelIndex := ListBox1.ItemIndex;
+  if (SelIndex < 0) then SelIndex := 0;
+  if (GetSel(SelIndex) < 0) then Exit;
+  if (GetSel(SelIndex) = PlayerIndex) then Exit;
+  if (Mob[GetSel(SelIndex)].Life <= 0) then Exit;
 
   if RunFlag then
     S := S + 'Player try run. '
-      else S := S + AttackMob(Mob[PlayerIndex], Mob[GetSel(Sel)]);
+      else S := S + AttackMob(Mob[PlayerIndex], Mob[GetSel(SelIndex)]);
 
   ListBox1.SetFocus;       
   ListBox1.ItemIndex := 0;
@@ -270,10 +277,10 @@ end;
 
 procedure TForm1.Button2Click(Sender: TObject);
 begin
-  if Run or IsDefeat or IsVictory then Exit;
+  if IsRun or IsDefeat or IsVictory then Exit;
   if (RandomRange(0, 100) <= 25) then
   begin
-    Run := True;
+    IsRun := True;
     Form1.RichEdit1.Lines.Add('RUN!');
   end else begin
     RunFlag := True;
@@ -286,6 +293,11 @@ var
   I: Integer;
 begin
   for I := 0 to 99 do Button1.Click;
+end;
+
+procedure TForm1.Button4Click(Sender: TObject);
+begin
+  Restart;
 end;
 
 end.
