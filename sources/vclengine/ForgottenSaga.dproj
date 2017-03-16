@@ -82,6 +82,7 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="Engine.pas"/>
+        <DCCReference Include="..\includes\BearLibItems.pas"/>
         <DCCReference Include="ForgottenSaga.MainForm.pas">
             <Form>fMain</Form>
         </DCCReference>

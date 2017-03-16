@@ -1149,7 +1149,7 @@ begin
       begin
         Saga.Engine.ForegroundColor
           (Saga.Engine.DarkColor(Saga.Colors.clNotification, 100 - (I * 20)));
-        Saga.Engine.Print(0, I - 1, FMessages[I], aCenter);
+        Saga.Engine.Print(0, I - 1, FMessages[I], aCenter, 0);
       end;
 end;
 
@@ -1366,7 +1366,7 @@ procedure TUI.DrawChar(X, Y: Integer; Symbol: System.Char;
   ForegroundColor: Integer);
 begin
   FEngine.ForegroundColor(ForegroundColor);
-  FEngine.Print(X, Y, Symbol);
+  FEngine.Print(X, Y, Symbol, aLeft, 0);
 end;
 
 procedure TUI.DrawChar(X, Y: Integer; Symbol: System.Char;
@@ -1374,7 +1374,7 @@ procedure TUI.DrawChar(X, Y: Integer; Symbol: System.Char;
 begin
   FEngine.BackgroundColor(BackgroundColor);
   FEngine.ForegroundColor(ForegroundColor);
-  FEngine.Print(X, Y, Symbol);
+  FEngine.Print(X, Y, Symbol, aLeft, 0);
 end;
 
 procedure TUI.DrawKey(X, Y: Integer; Caption, Key: string; Active: Boolean);
@@ -1386,9 +1386,9 @@ begin
     FEngine.ForegroundColor(Saga.Colors.clHotKey)
   else
     FEngine.ForegroundColor(FEngine.DarkColor(Saga.Colors.clHotKey, 60));
-  FEngine.Print(X, Y, S);
+  FEngine.Print(X, Y, S, aLeft, 0);
   FEngine.ForegroundColor(Saga.Colors.clButton);
-  FEngine.Print(X + TEngine.GetTextLength(S) + 1, Y, Caption);
+  FEngine.Print(X + TEngine.GetTextLength(S) + 1, Y, Caption, aLeft, 0);
 end;
 
 procedure TUI.DrawKey(X, Y: Integer; Caption, Key: string;
@@ -1428,8 +1428,8 @@ end;
 procedure TUI.DrawTitle(Y: Word; Text: string);
 begin
   Engine.ForegroundColor(Saga.Colors.clTitle);
-  Engine.Print(0, Y - 1, Text, aCenter);
-  Engine.Print(0, Y, StringOfChar('=', TEngine.GetTextLength(Text)), aCenter);
+  Engine.Print(0, Y - 1, Text, aCenter, 0);
+  Engine.Print(0, Y, StringOfChar('=', TEngine.GetTextLength(Text)), aCenter, 0);
 end;
 
 {$ENDREGION ' TUI '}
@@ -2188,7 +2188,7 @@ begin
       end;
       Saga.Engine.ForegroundColor(C);
       Saga.Engine.BackgroundColor(Saga.Engine.DarkColor(C, 95));
-      Saga.Engine.Print(AX + X - 1, AY + I - Y, FList[I][X]);
+      Saga.Engine.Print(AX + X - 1, AY + I - Y, FList[I][X], aLeft, 0);
     end;
   Saga.Engine.BackgroundColor(0);
 end;

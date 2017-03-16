@@ -103,18 +103,19 @@ const
   kcEnd = '}';
 
 type
-  TAlign = (aLeft, aCenter, aRight);
-
-
-type
-  TSize = record
-    Width: Integer;
-    Height: Integer;
-  end;
-
-type
   TEngine = class(TObject)
-  private
+  public const
+    clClear = -1;
+    kcBegin = '{';
+    kcEnd = '}';
+  public type
+    TAlign = (aLeft, aCenter, aRight);
+  public type
+    TSize = record
+      Width: Integer;
+      Height: Integer;
+    end;
+  strict private
     FSurface: TBitmap;
     FWindow: TSize;
     FChar: TSize;
@@ -122,7 +123,7 @@ type
     procedure Clear;
     constructor Create(AWidth, AHeight: Integer);
     destructor Destroy; override;
-    procedure Print(X, Y: Integer; S: string; A: TAlign = aLeft); overload;
+    procedure Print(X, Y: Integer; S: string; A: TAlign; P: Integer); overload;
     function Print(S: string; R: TRect; A: TAlign = aLeft): Integer; overload;
     procedure ForegroundColor(Color: Integer);
     procedure BackgroundColor(Color: Integer);
@@ -132,6 +133,7 @@ type
     property Window: TSize read FWindow write FWindow;
     property Char: TSize read FChar write FChar;
     class function GetTextLength(Text: string): Integer;
+    function GetVersion: string;
     procedure Close;
   end;
 
@@ -186,6 +188,11 @@ begin
   Result := Length(Text);
 end;
 
+function TEngine.GetVersion: string;
+begin
+  Result := '1.0.0';
+end;
+
 procedure TEngine.BackgroundColor(Color: Integer);
 begin
   case Color of
@@ -208,7 +215,7 @@ begin
   Application.Terminate;
 end;
 
-procedure TEngine.Print(X, Y: Integer; S: string; A: TAlign = aLeft);
+procedure TEngine.Print(X, Y: Integer; S: string; A: TAlign; P: Integer);
 begin
   case A of
     aLeft:
@@ -231,7 +238,7 @@ var
   procedure AddRow(S: string);
   begin
     Print(R.Left div Char.Width, (L * Char.Height + R.Top)
-      div Char.Height, S, A);
+      div Char.Height, S, A, 0);
   end;
 
   function AddLine(astr, aword: string): Boolean;

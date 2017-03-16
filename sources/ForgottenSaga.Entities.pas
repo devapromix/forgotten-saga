@@ -1272,7 +1272,7 @@ begin
   begin
     Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceWhite));
     Saga.Engine.BackgroundColor(0);
-    Saga.Engine.Print(0, 39, GetItems(Saga.Player.Pos));
+    Saga.Engine.Print(0, 39, GetItems(Saga.Player.Pos), aLeft, 0);
     Exit;
   end;
   Saga.UI.DrawChar(Pos.X, Pos.Y, Saga.World.CurrentMap.GetTopTileChar(Pos.X,
@@ -1280,7 +1280,7 @@ begin
   Saga.Engine.ForegroundColor(Saga.Colors.GetColor(ceWhite));
   Saga.Engine.BackgroundColor(0);
   Saga.Engine.Print(0, 39, Trim(GetTile(lrTerrain) + GetTile(lrObjects) +
-    GetCreature() + GetItems(Pos)));
+    GetCreature() + GetItems(Pos)), aLeft, 0);
 end;
 
 {$ENDREGION ' TPlayer.TLook '}
