@@ -19,7 +19,7 @@
 ---
 
 
-   **Version 0.0.1 — July 26, 2016**
+   **Version 0.0.1 - July 26, 2016**
 
  - Compacting code.
  - Initial source commit.
