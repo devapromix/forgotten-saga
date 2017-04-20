@@ -82,6 +82,7 @@ procedure MobRefresh;
 var
   I: Integer;
 begin
+  SelIndex := 0;
   Form1.RichEdit2.Clear;
   Form1.ListBox1.Clear;
   for I := Low(Mob) to Length(Mob) - 1 do
@@ -115,7 +116,7 @@ begin
   B.Life := B.Life - Damage;
   if (B.Life < 0) then B.Life := 0;
   S := S + Format('%s=>%s (%d). ', [A.Name, B.Name, Damage]);
-  if (B.Life = 0) then
+  if (B.Life <= 0) then
   begin
     S := S + Format('%s die. ', [B.Name]);
     if (B.Force <> tfPlayer) then
@@ -132,7 +133,7 @@ begin
   S := '';
   for I := Low(Mob) to Length(Mob) - 1 do
   begin
-    if (Mob[I].Life <= 0) or (Mob[PlayerIndex].Life <= 0) then Break;
+    if (Mob[I].Life <= 0) or (Mob[PlayerIndex].Life <= 0) then Continue;
     begin
       if (Mob[I].Force = tfPlayer) then Break;
       S := S + AttackMob(Mob[I], Mob[PlayerIndex]);
@@ -202,7 +203,7 @@ begin
       Name := 'Player';
       Ini := 20;
       Agility := 10;
-      Life := 100;
+      Life := 200;
     end else begin
       Inc(E);
       Name := 'Enemy[' + IntToStr(E) + ']';
