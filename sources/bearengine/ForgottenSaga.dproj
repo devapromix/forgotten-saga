@@ -1,6 +1,6 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{3E1AA211-CEB1-44A3-80DF-8EE92EC03E05}</ProjectGuid>
+        <ProjectGuid>{79BFAD2D-6092-4FCC-AFEB-6FB0E1090EB7}</ProjectGuid>
         <MainSource>ForgottenSaga.dpr</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>

@@ -1429,18 +1429,21 @@ procedure TUI.DrawTitle(Y: Word; Text: string);
 begin
   Engine.ForegroundColor(Saga.Colors.clTitle);
   Engine.Print(0, Y - 1, Text, aCenter, 0);
-  Engine.Print(0, Y, StringOfChar('=', TEngine.GetTextLength(Text)), aCenter, 0);
+  Engine.Print(0, Y, StringOfChar('=', TEngine.GetTextLength(Text)),
+    aCenter, 0);
 end;
 
 {$ENDREGION ' TUI '}
 {$REGION ' TIniFile '}
 
 function TIniFile.ReadCategory(Section, Ident: string;
-  DefaultValue: ForgottenSaga.Entities.TItem.TCategory): ForgottenSaga.Entities.TItem.TCategory;
+  DefaultValue: ForgottenSaga.Entities.TItem.TCategory)
+  : ForgottenSaga.Entities.TItem.TCategory;
 var
   S: string;
 begin
-  S := LowerCase(Trim(ReadString(Section, Ident, ForgottenSaga.Entities.TItem.CatStr[DefaultValue])));
+  S := LowerCase(Trim(ReadString(Section, Ident,
+    ForgottenSaga.Entities.TItem.CatStr[DefaultValue])));
   Result := ForgottenSaga.Entities.TItem.GetCategory(S);
 end;
 
@@ -1500,11 +1503,13 @@ begin
 end;
 
 function TIniFile.ReadMaterial(Section, Ident: string;
-  DefaultValue: ForgottenSaga.Entities.TItem.TMaterial): ForgottenSaga.Entities.TItem.TMaterial;
+  DefaultValue: ForgottenSaga.Entities.TItem.TMaterial)
+  : ForgottenSaga.Entities.TItem.TMaterial;
 var
   S: string;
 begin
-  S := LowerCase(Trim(ReadString(Section, Ident, ForgottenSaga.Entities.TItem.MatStr[DefaultValue])));
+  S := LowerCase(Trim(ReadString(Section, Ident,
+    ForgottenSaga.Entities.TItem.MatStr[DefaultValue])));
   Result := ForgottenSaga.Entities.TItem.GetMaterial(S);
 end;
 
@@ -2194,7 +2199,7 @@ begin
 end;
 
 {$ENDREGION ' TFlag '}
-{ TGUIBorder }
+{$REGION ' TGUIBorder '}
 
 constructor TGUIBorder.Create;
 var
@@ -2233,5 +2238,7 @@ begin
   Surface.Canvas.Draw(Surface.Width - FBordElem[eeDL].Width,
     Surface.Height - FBordElem[eeDL].Height, FBordElem[eeDR]);
 end;
+
+{$ENDREGION ' TGUIBorder '}
 
 end.
