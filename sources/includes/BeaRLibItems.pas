@@ -4,7 +4,7 @@ interface
 
 type
   Item = record
-    ItemID: Integer;
+    ItemID: Integer;    
     X: Integer;
     Y: Integer;
     MapID: Integer;
@@ -13,12 +13,15 @@ type
     Durability: Integer;
     Weight: Integer;
     Size: Integer;
+    SlotID: Integer;
+    Equipment: Integer;
   end;
 
 // Library
 procedure Items_Open(); stdcall; external 'BeaRLibItems.dll';
 procedure Items_Close(); stdcall; external 'BeaRLibItems.dll';
 function Items_GetVersion(): PChar; stdcall; external 'BeaRLibItems.dll';
+procedure Items_Clear_Item(var AItem: Item); external 'BeaRLibItems.dll';
 
 // Dungeon
 procedure Items_Dungeon_Clear(); stdcall; external 'BeaRLibItems.dll';
@@ -61,12 +64,16 @@ function Items_Inventory_GetSize(): Integer; stdcall; external 'BeaRLibItems.dll
 function Items_Inventory_GetItemSize(ItemID: Integer): Integer; stdcall; external 'BeaRLibItems.dll';
 
 function Items_Inventory_GetItemAmount(ItemID: Integer): Integer; stdcall; external 'BeaRLibItems.dll';
+function Items_Inventory_DeleteItemAmount(ItemID, Amount: Integer): Integer; stdcall; external 'BeaRLibItems.dll';
 
 function Items_Inventory_SetItem(Index: Integer; AItem: Item): Integer; stdcall; external 'BeaRLibItems.dll';
 function Items_Inventory_GetItem(Index: Integer): Item; stdcall; external 'BeaRLibItems.dll';
 
 procedure Items_Inventory_AppendItem(AItem: Item); stdcall; external 'BeaRLibItems.dll';
 function Items_Inventory_DeleteItem(Index: Integer; var AItem: Item): Integer; stdcall; external 'BeaRLibItems.dll';
+
+function Items_Inventory_EquipItem(Index: Integer): Integer; stdcall; external 'BeaRLibItems.dll';
+function Items_Inventory_UnEquipItem(Index: Integer): Integer; stdcall; external 'BeaRLibItems.dll';
 
 implementation
 
