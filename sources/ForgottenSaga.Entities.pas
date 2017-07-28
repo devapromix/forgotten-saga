@@ -1869,16 +1869,18 @@ end;
 
 begin
   ClearFOV();
-  DoFOV(Self.Width, Self.Height, Saga.Player.Pos.X, Saga.Player.Pos.Y,
-    Saga.Player.Radius, @GetFOVCallback, @SetFOVCallback, nil);
+  if not Saga.Wizard then
+    DoFOV(Self.Width, Self.Height, Saga.Player.Pos.X, Saga.Player.Pos.Y,
+      Saga.Player.Radius, @GetFOVCallback, @SetFOVCallback, nil);
   for Z := Low(TLayerEnum) to High(TLayerEnum) do
     for Y := 0 to Self.Height - 1 do
       for X := 0 to Self.Width - 1 do
       begin
         HasObj := HasTile(tNone, X, Y, lrObjects);
         Tile.Ter := Saga.Tiles.GetTile(FMap[Y][X][lrTerrain]);
-        Tile.Ter.Color := IfThen(MapFOV[Y][X] and FOV_CELL_VISIBLE > 0,
-          Tile.Ter.Color, $00111111);
+        if not Saga.Wizard then
+          Tile.Ter.Color := IfThen(MapFOV[Y][X] and FOV_CELL_VISIBLE > 0,
+            Tile.Ter.Color, $00111111);
         case Z of
           lrTerrain:
             if HasObj then
@@ -1888,8 +1890,9 @@ begin
             if not HasObj then
             begin
               Tile.Obj := Saga.Tiles.GetTile(FMap[Y][X][Z]);
-              Tile.Obj.Color := IfThen(MapFOV[Y][X] and FOV_CELL_VISIBLE > 0,
-                Tile.Obj.Color, $00222222);
+              if not Saga.Wizard then
+                Tile.Obj.Color := IfThen(MapFOV[Y][X] and FOV_CELL_VISIBLE > 0,
+                  Tile.Obj.Color, $00222222);
               Saga.UI.DrawChar(X, Y, Tile.Obj.Symbol, Tile.Obj.Color,
                 Saga.Engine.DarkColor(Tile.Ter.Color, TTiles.TileDarkPercent));
             end;
@@ -1937,6 +1940,8 @@ end;
 function TMap.HasCellVisible(X, Y: Integer): Boolean;
 begin
   Result := MapFOV[Y][X] and FOV_CELL_VISIBLE > 0;
+  if Saga.Wizard then
+    Result := True;
 end;
 
 function TMap.HasTile(Tile: TTiles.TTileEnum; X, Y: Integer;

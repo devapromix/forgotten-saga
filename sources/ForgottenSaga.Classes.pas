@@ -396,6 +396,7 @@ type
     FRace: array [TRaceEnum] of TRace;
     FDialog: TScript;
     FFlags: TFlags;
+    FWizard: Boolean;
   strict protected
     function GetLog(I: TLogEnum): TLog;
     procedure SetLog(I: TLogEnum; const Value: TLog);
@@ -432,6 +433,7 @@ type
     property Colors: TColors read FColors write FColors;
     property Dialog: TScript read FDialog write FDialog;
     property Flags: TFlags read FFlags;
+    property Wizard: Boolean read FWizard;
   end;
 
 {$ENDREGION ' TSaga '}
@@ -688,6 +690,12 @@ var
   GUIBorder: TGUIBorder;
   TempBitmap: TBitmap;
 begin
+  FWizard := False;
+  for I := 1 to ParamCount do
+  begin
+    if (LowerCase(ParamStr(I)) = '-w') then
+      FWizard := True;
+  end;
   Items_Open();
   FEngine := TEngine.Create(AWidth, AHeight);
   FTUI := TUI.Create(FEngine);
