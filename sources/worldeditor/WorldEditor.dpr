@@ -8,7 +8,8 @@ uses
   ForgottenSaga.Classes in '..\ForgottenSaga.Classes.pas',
   ForgottenSaga.Scenes in '..\ForgottenSaga.Scenes.pas',
   ForgottenSaga.Entities in '..\ForgottenSaga.Entities.pas',
-  WorldEditor.NewMapForm in 'WorldEditor.NewMapForm.pas' {fNew};
+  WorldEditor.NewMapForm in 'WorldEditor.NewMapForm.pas' {fNew},
+  BeaRLibItems in '..\includes\BeaRLibItems.pas';
 
 {$R *.res}
 
