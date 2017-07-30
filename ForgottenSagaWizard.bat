@@ -1,0 +1,1 @@
+ForgottenSaga.exe -w
