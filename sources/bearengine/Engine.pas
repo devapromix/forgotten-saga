@@ -261,18 +261,8 @@ begin
 end;
 
 function TEngine.GetColor(Color: Integer): Cardinal;
-var
-  R, G, B: Byte;
-  C: Integer;
 begin
-  if Color < 0 then
-    C := GetSysColor(Color and $000000FF)
-  else
-    C := Color;
-  R := GetRValue(C);
-  G := GetGValue(C);
-  B := GetBValue(C);
-  Result := color_from_argb(255, R, G, B);
+  Result := color_from_argb($FF, Byte(Color), Byte(Color shr 8), Byte(Color shr 16));
 end;
 
 class function TEngine.GetTextLength(Text: string): Integer;
