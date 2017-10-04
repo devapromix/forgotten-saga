@@ -55,6 +55,7 @@ Goblin Virn=Гоблин Вирн
 Goblin Telorgon=Гоблин Телоргон
 Black Warg=Черный Варг
 Spider=Паук
+Gray Spider=Серый Прядильщик
 Deep Spider=Глубинный Паук
 
 Filled Crystal Phial=Наполненный хрустальный фиал
