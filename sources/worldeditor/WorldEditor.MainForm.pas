@@ -319,6 +319,7 @@ begin
 
     UpdateCaption;
   end;
+  FormPaint(Sender);
 end;
 
 procedure TfMain.ToolButton4Click(Sender: TObject);
