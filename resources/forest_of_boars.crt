@@ -44,7 +44,18 @@ Color=255,255,255
 Dialog=0
 NPC=0
 
-[61]
+[62]
+Name=Thistle Boar
+X=44
+Y=19
+Life=100/100
+Symbol=B
+File=defeat:boar_pelt.qst
+Color=255,255,255
+Dialog=0
+NPC=0
+
+[64]
 Name=Thistle Boar
 X=44
 Y=27
@@ -55,10 +66,10 @@ Color=255,255,255
 Dialog=0
 NPC=0
 
-[62]
+[66]
 Name=Thistle Boar
 X=40
-Y=23
+Y=22
 Life=100/100
 Symbol=B
 File=defeat:boar_pelt.qst
@@ -66,7 +77,7 @@ Color=255,255,255
 Dialog=0
 NPC=0
 
-[63]
+[68]
 Name=Thistle Boar
 X=40
 Y=14
@@ -77,7 +88,7 @@ Color=255,255,255
 Dialog=0
 NPC=0
 
-[64]
+[70]
 Name=Thistle Boar
 X=56
 Y=19
@@ -88,7 +99,7 @@ Color=255,255,255
 Dialog=0
 NPC=0
 
-[65]
+[72]
 Name=Thistle Boar
 X=52
 Y=23
@@ -99,7 +110,7 @@ Color=255,255,255
 Dialog=0
 NPC=0
 
-[66]
+[74]
 Name=Thistle Boar
 X=61
 Y=6
@@ -110,7 +121,7 @@ Color=255,255,255
 Dialog=0
 NPC=0
 
-[67]
+[76]
 Name=Thistle Boar
 X=54
 Y=3
@@ -121,7 +132,7 @@ Color=255,255,255
 Dialog=0
 NPC=0
 
-[68]
+[78]
 Name=Thistle Boar
 X=16
 Y=14
@@ -132,7 +143,7 @@ Color=255,255,255
 Dialog=0
 NPC=0
 
-[69]
+[80]
 Name=Thistle Boar
 X=46
 Y=16
@@ -143,7 +154,7 @@ Color=255,255,255
 Dialog=0
 NPC=0
 
-[70]
+[82]
 Name=Thistle Boar
 X=17
 Y=11
@@ -154,7 +165,7 @@ Color=255,255,255
 Dialog=0
 NPC=0
 
-[71]
+[84]
 Name=Thistle Boar
 X=50
 Y=31
@@ -165,7 +176,7 @@ Color=255,255,255
 Dialog=0
 NPC=0
 
-[72]
+[86]
 Name=Thistle Boar
 X=42
 Y=36
@@ -176,10 +187,21 @@ Color=255,255,255
 Dialog=0
 NPC=0
 
-[73]
+[88]
 Name=Thistle Boar
 X=52
 Y=12
+Life=100/100
+Symbol=B
+File=defeat:boar_pelt.qst
+Color=255,255,255
+Dialog=0
+NPC=0
+
+[90]
+Name=Thistle Boar
+X=57
+Y=14
 Life=100/100
 Symbol=B
 File=defeat:boar_pelt.qst
