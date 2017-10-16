@@ -1,18 +1,16 @@
 # Forgotten Saga
-[![license](https://img.shields.io/badge/license-MIT License-blue.svg?style=flat-square)](./LICENSE) <!--[![release](https://img.shields.io/badge/release-v0.0.1-blue.svg?style=flat-square)]()-->
 
-##Introduction
+#Introduction
 Forgotten Saga is a single-player roguelike game for Windows. It should work on any system with Windows XP or later installed.
 
 ---
 
-##Current State
-The game is currently in demo stage with very limited contents and lots of issues 
-to solve and improve.
+#Current State
+The game is currently in demo stage with very limited contents and lots of issues to solve and improve.
 
 ---
 
-## Controls:
+# Controls:
 The game is controlled via the keyboard.
 
 **Menus:**
@@ -29,7 +27,7 @@ The game is controlled via the keyboard.
 
 ---
 
-##Credits
-Copyright (C) 2016 Sergiy Tkach (DevApromix)
+#Credits
+Copyright (C) 2016-2017 Sergiy Tkach (DevApromix)
 
 This program is free software; you can redistribute it and/or modify it under the terms of the MIT License version 2 as published by the Free Software Foundation.
