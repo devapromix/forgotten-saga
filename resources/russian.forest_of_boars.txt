@@ -1,2 +1,4 @@
 Stone Idol=Каменный Идол
 Magic Well=Магический Источник
+Elk=Лось
+Thistle Boar=Кабан

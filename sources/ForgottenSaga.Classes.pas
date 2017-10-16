@@ -121,6 +121,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+    procedure LoadMods();
     procedure Clear;
     procedure LoadFromFile(FileName: string);
     function Get(S: string): string;
@@ -874,6 +875,7 @@ begin
   Saga.Clear;
   Player.Clear;
   World.LoadFromDir(TUtils.GetPath('resources'));
+  Lg.LoadMods();
   // World.Gen(0); // Пока вместо редактора
   Stages.SetStage(stGame);
   Notification.Add('Создан новый мир');
@@ -1276,6 +1278,23 @@ begin
     end;
   finally
     SL.Free;
+  end;
+end;
+
+procedure TLanguage.LoadMods();
+var
+  I: Integer;
+  F: string;
+begin
+  for I := 0 to Saga.World.Count - 1 do
+  begin
+    F := TUtils.GetPath('resources') + Current + '.' +
+      Saga.World.GetMap(I).FileName + '.txt';
+    if FileExists(F) then
+    begin
+      ShowMessage(F);
+      LoadFromFile(F);
+    end;
   end;
 end;
 

@@ -8,5 +8,7 @@ del /s *.otares
 del /s *.local
 del /s *.cfg
 del /s *.ddp
+del /s *.a
+del /s *.compiled
 del /s *.o
-del *.exe
+del /s *.or

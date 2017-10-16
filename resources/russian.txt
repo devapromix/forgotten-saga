@@ -57,10 +57,6 @@ Black Warg=Черный Варг
 Spider=Паук
 Gray Spider=Серый Прядильщик
 Deep Spider=Глубинный Паук
-Elk=Лось
-
-Stone Idol=Каменный Идол
-Magic Well=Магический Источник
 
 Filled Crystal Phial=Наполненный хрустальный фиал
 Crystal Phial=Хрустальный фиал
