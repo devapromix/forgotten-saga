@@ -1,7 +1,7 @@
 ;Forest of Boars
 
 [stone_idol]
-Name=Каменный Идол
+Name=Stone Idol
 X=10
 Y=28
 Life=100/100
@@ -12,8 +12,8 @@ Dialog=0
 NPC=1
 
 [elk]
-Name=Лось
-X=10
+Name=Elk
+X=11
 Y=15
 Life=100/100
 Symbol=E
@@ -23,8 +23,8 @@ Dialog=0
 NPC=1
 
 [well]
-Name=Магический Источник
-X=20
+Name=Magic Well
+X=15
 Y=18
 Life=100/100
 Symbol=U
