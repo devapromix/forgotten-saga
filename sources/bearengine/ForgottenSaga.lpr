@@ -4,7 +4,8 @@ uses
   SysUtils,
   Interfaces,
   Engine in 'Engine.pas',
-  BearLibTerminal in 'BearLibTerminal.pas',
+  BearLibTerminal in '..\Includes\BearLibTerminal.pas',
+  BearLibItems in '..\Includes\BearLibItems.pas',
   ForgottenSaga.Classes in '..\ForgottenSaga.Classes.pas',
   ForgottenSaga.Entities in '..\ForgottenSaga.Entities.pas',
   ForgottenSaga.Scenes in '..\ForgottenSaga.Scenes.pas';
