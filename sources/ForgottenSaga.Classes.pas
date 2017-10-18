@@ -1288,13 +1288,10 @@ var
 begin
   for I := 0 to Saga.World.Count - 1 do
   begin
-    F := TUtils.GetPath('resources') + Current + '.' +
-      Saga.World.GetMap(I).FileName + '.txt';
+    F := TUtils.GetPath('resources') + Current + '.' + Saga.World.GetMap(I)
+      .FileName + '.txt';
     if FileExists(F) then
-    begin
-      ShowMessage(F);
       LoadFromFile(F);
-    end;
   end;
 end;
 
