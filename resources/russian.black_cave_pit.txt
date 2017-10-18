@@ -1,0 +1,2 @@
+Spider=Паук
+Deep Spider=Глубинный Паук
