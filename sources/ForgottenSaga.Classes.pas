@@ -772,8 +772,8 @@ end;
 procedure TSaga.Refresh;
 var
   SL: TStringList;
-  F, V, T: string;
-  I, X: Integer;
+  F: string;
+  I: Integer;
 begin
   // Load intro
   SL := TStringList.Create;
