@@ -38,7 +38,7 @@
     </RequiredPackages>
     <Units Count="1">
       <Unit0>
-        <Filename Value="WorldEditor.lpr"/>
+        <Filename Value="WorldEditor.dpr"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
     </Units>
