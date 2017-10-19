@@ -53,7 +53,6 @@ Chieftain Trom-Hash=Вождь Тром-Хаш
 Tashak-Suum=Ташак-Суум
 Goblin Virn=Гоблин Вирн
 Goblin Telorgon=Гоблин Телоргон
-Black Warg=Черный Варг
 
 Filled Crystal Phial=Наполненный хрустальный фиал
 Crystal Phial=Хрустальный фиал
