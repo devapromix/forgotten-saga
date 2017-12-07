@@ -33,6 +33,17 @@ Color=160,170,255
 Dialog=0
 NPC=1
 
+[58]
+Name=Thistle Boar
+X=34
+Y=22
+Life=100/100
+Symbol=B
+File=defeat:boar_pelt.qst
+Color=255,255,255
+Dialog=0
+NPC=0
+
 [60]
 Name=Thistle Boar
 X=42
