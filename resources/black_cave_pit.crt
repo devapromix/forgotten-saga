@@ -1,6 +1,6 @@
 ;The Pit
 
-[0]
+[10]
 Name=Deep Spider
 X=24
 Y=12
@@ -10,7 +10,7 @@ File=
 Color=255,255,255
 Dialog=0
 NPC=0
-[1]
+[20]
 Name=Spider
 X=22
 Y=25
@@ -20,7 +20,7 @@ File=
 Color=255,255,255
 Dialog=0
 NPC=0
-[2]
+[30]
 Name=Spider
 X=10
 Y=14
@@ -30,7 +30,7 @@ File=
 Color=255,255,255
 Dialog=0
 NPC=0
-[3]
+[40]
 Name=Spider
 X=16
 Y=19
