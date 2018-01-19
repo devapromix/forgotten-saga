@@ -48,12 +48,6 @@ Battle Axe=Боевой Топор
 Short Spear=Короткое Копье
 Bone Sword=Костяной Меч
 
-Shaman Varok Tal=Шаман Варок Тал
-Chieftain Trom-Hash=Вождь Тром-Хаш
-Tashak-Suum=Ташак-Суум
-Goblin Virn=Гоблин Вирн
-Goblin Telorgon=Гоблин Телоргон
-
 Filled Crystal Phial=Наполненный хрустальный фиал
 Crystal Phial=Хрустальный фиал
 Black Ring=Черное кольцо
