@@ -195,7 +195,7 @@ begin
   for I := Low(Mob) to Length(Mob) - 1 do
   with Mob[I] do
   begin
-    if (I = 0) then
+    if (I <= 0) then
       Force := tfPlayer
         else Force := tfEnemy;
     if (Force = tfPlayer) then

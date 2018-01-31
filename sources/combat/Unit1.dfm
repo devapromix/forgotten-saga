@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 192
   Top = 107
   Caption = 'Form1'
-  ClientHeight = 369
+  ClientHeight = 376
   ClientWidth = 688
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -19,8 +19,14 @@ object Form1: TForm1
     Top = 8
     Width = 337
     Height = 361
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = []
     Lines.Strings = (
       'RichEdit1')
+    ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 0
   end
@@ -47,8 +53,14 @@ object Form1: TForm1
     Top = 8
     Width = 177
     Height = 329
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'Tahoma'
+    Font.Style = []
     Lines.Strings = (
       'RichEdit1')
+    ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 3
   end
