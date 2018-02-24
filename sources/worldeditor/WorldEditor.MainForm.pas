@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls, Menus, Buttons, ComCtrls, ToolWin, ImgList, StdCtrls,
-  ForgottenSaga.Entities;
+  ForgottenSaga.Entities, ForgottenSaga.Classes;
 
 type
   TfMain = class(TForm)
@@ -39,8 +39,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormPaint(Sender: TObject);
-    procedure FormMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+    procedure FormMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure brTerrainClick(Sender: TObject);
     procedure TerListBoxClick(Sender: TObject);
@@ -56,13 +55,12 @@ type
     procedure bfBlockClick(Sender: TObject);
   private
     procedure LoadResources;
-    {Private declarations}
+    { Private declarations }
   public
-    {Public declarations}
+    { Public declarations }
     procedure UpdateCaption;
     function GetCurrentLayer(): Byte;
-    function GetRealTile(Index: Integer; Layer: TTiles.TLayerTypeEnum)
-      : TTiles.TTileEnum;
+    function GetRealTile(Index: Integer; Layer: TTiles.TLayerTypeEnum): TTiles.TTileEnum;
   end;
 
 var
@@ -78,9 +76,8 @@ procedure Border(Pos: TPoint; Color: Integer; Symbol: Char = #32);
 begin
   Editor.Engine.Surface.Canvas.Pen.Color := Color;
   Editor.Engine.Surface.Canvas.Brush.Style := bsClear;
-  Editor.Engine.Surface.Canvas.Rectangle(Pos.X * Editor.Engine.Char.Width - 1,
-    Pos.Y * Editor.Engine.Char.Height - 1, Pos.X * Editor.Engine.Char.Width +
-    Editor.Engine.Char.Width + 1, Pos.Y * Editor.Engine.Char.Height +
+  Editor.Engine.Surface.Canvas.Rectangle(Pos.X * Editor.Engine.Char.Width - 1, Pos.Y * Editor.Engine.Char.Height - 1,
+    Pos.X * Editor.Engine.Char.Width + Editor.Engine.Char.Width + 1, Pos.Y * Editor.Engine.Char.Height +
     Editor.Engine.Char.Height + 1);
 end;
 
@@ -95,8 +92,7 @@ begin
   Editor.ToolBarHeight := ToolBar.Height;
   Editor.Tile := tNone;
   ClientWidth := Editor.Engine.Surface.Width + ToolsPanel.Width;
-  ClientHeight := Editor.Engine.Surface.Height + Editor.ToolBarHeight +
-    StatusBar.Height;
+  ClientHeight := Editor.Engine.Surface.Height + Editor.ToolBarHeight + StatusBar.Height;
   Left := (Screen.Width div 2) - (Width div 2);
   Top := (Screen.Height div 2) - (Height div 2);
   btTerrain.Down := True;
@@ -110,8 +106,7 @@ begin
   FormPaint(Sender);
 end;
 
-procedure TfMain.FormMouseMove(Sender: TObject; Shift: TShiftState;
-  X, Y: Integer);
+procedure TfMain.FormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
 begin
   Editor.MouseMove(TMap.TLayerEnum(GetCurrentLayer), X, Y);
   FormPaint(Sender);
@@ -152,8 +147,7 @@ begin
     Result := 3;
 end;
 
-function TfMain.GetRealTile(Index: Integer; Layer: TTiles.TLayerTypeEnum)
-  : TTiles.TTileEnum;
+function TfMain.GetRealTile(Index: Integer; Layer: TTiles.TLayerTypeEnum): TTiles.TTileEnum;
 var
   Tile: TTiles.TTileEnum;
   Counter: Byte;
@@ -163,8 +157,7 @@ begin
   Result := tNone;
   for Tile := Low(TTiles.TTileEnum) to High(TTiles.TTileEnum) do
   begin
-    Flag := (Editor.Tiles.GetTile(Tile).Layer = Layer) or
-      (Editor.Tiles.GetTile(Tile).Layer = ltBoth);
+    Flag := (Editor.Tiles.GetTile(Tile).Layer = Layer) or (Editor.Tiles.GetTile(Tile).Layer = ltBoth);
     if not Flag then
       Continue;
     if (Counter = Index) then
@@ -194,16 +187,12 @@ begin
 
   for I := Low(TTiles.TTileEnum) to High(TTiles.TTileEnum) do
   begin
-    TerFlag := (Editor.Tiles.GetTile(I).Layer = ltTerrain) or
-      (Editor.Tiles.GetTile(I).Layer = ltBoth);
-    ObjFlag := (Editor.Tiles.GetTile(I).Layer = ltObjects) or
-      (Editor.Tiles.GetTile(I).Layer = ltBoth);
+    TerFlag := (Editor.Tiles.GetTile(I).Layer = ltTerrain) or (Editor.Tiles.GetTile(I).Layer = ltBoth);
+    ObjFlag := (Editor.Tiles.GetTile(I).Layer = ltObjects) or (Editor.Tiles.GetTile(I).Layer = ltBoth);
     if TerFlag then
-      TerListBox.Items.Append(Format(TPlayer.KeyFmt,
-        [Editor.Tiles.GetTile(I).Symbol, Editor.Tiles.GetTile(I).Name]));
+      TerListBox.Items.Append(Format(TPlayer.KeyFmt, [Editor.Tiles.GetTile(I).Symbol, Editor.Tiles.GetTile(I).Name]));
     if ObjFlag then
-      ObjListBox.Items.Append(Format(TPlayer.KeyFmt,
-        [Editor.Tiles.GetTile(I).Symbol, Editor.Tiles.GetTile(I).Name]));
+      ObjListBox.Items.Append(Format(TPlayer.KeyFmt, [Editor.Tiles.GetTile(I).Symbol, Editor.Tiles.GetTile(I).Name]));
   end;
   TerListBox.ItemIndex := 0;
   ObjListBox.ItemIndex := 0;
@@ -214,16 +203,14 @@ begin
   Editor.Free;
 end;
 
-procedure TfMain.FormMouseDown(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
+procedure TfMain.FormMouseDown(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   Editor.MouseDown(TMap.TLayerEnum(GetCurrentLayer), Button, X, Y);
   FormPaint(Sender);
   UpdateCaption;
 end;
 
-procedure TfMain.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TfMain.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   Editor.KeyDown(Key);
   FormPaint(Sender);
@@ -294,6 +281,7 @@ procedure TfMain.ToolButton1Click(Sender: TObject);
 var
   I: Integer;
 begin
+  OD.InitialDir := TUtils.GetPath('resources');
   if OD.Execute then
   begin
     Editor.CurrentMap.FileName := OD.FileName;
@@ -303,8 +291,7 @@ begin
     ItmListBox.Clear;
     for I := 0 to Editor.Items.Count - 1 do
     begin
-      ItmListBox.Items.Append(Format(TPlayer.KeyFmt,
-        [Editor.Items.Entity[I].Symbol, __(Editor.Items.Entity[I].Name)]));
+      ItmListBox.Items.Append(Format(TPlayer.KeyFmt, [Editor.Items.Entity[I].Symbol, __(Editor.Items.Entity[I].Name)]));
     end;
     ItmListBox.ItemIndex := 0;
 
@@ -312,8 +299,8 @@ begin
     CrtListBox.Clear;
     for I := 0 to Editor.Creatures.Count - 1 do
     begin
-      CrtListBox.Items.Append(Format(TPlayer.KeyFmt,
-        [Editor.Creatures.Entity[I].Symbol, __(Editor.Creatures.Entity[I].Name)]));
+      CrtListBox.Items.Append(Format(TPlayer.KeyFmt, [Editor.Creatures.Entity[I].Symbol,
+        __(Editor.Creatures.Entity[I].Name)]));
     end;
     CrtListBox.ItemIndex := 0;
 
@@ -362,8 +349,7 @@ begin
   if (Editor.CurrentMap.FileName = '') then
     Caption := Application.Title
   else
-    Caption := Format('%s%s - %s', [ExtractFileName(Editor.CurrentMap.FileName), S,
-      Application.Title]);
+    Caption := Format('%s%s - %s', [ExtractFileName(Editor.CurrentMap.FileName), S, Application.Title]);
 end;
 
 end.
