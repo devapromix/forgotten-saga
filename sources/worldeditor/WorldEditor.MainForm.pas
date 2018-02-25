@@ -281,6 +281,10 @@ procedure TfMain.ToolButton1Click(Sender: TObject);
 var
   I: Integer;
 begin
+  if Editor.Modified then
+  begin
+    Editor.Modified := False;
+  end;
   OD.InitialDir := TUtils.GetPath('resources');
   if OD.Execute then
   begin
