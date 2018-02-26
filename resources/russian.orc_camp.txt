@@ -3,5 +3,6 @@ Chieftain Trom-Hash=Вождь Тром-Хаш
 Tashak-Suum=Ташак-Суум
 Goblin Virn=Гоблин Вирн
 Goblin Telorgon=Гоблин Телоргон
+
 Dar-Gul=Дар-Гул
 Black Warg=Черный Варг
