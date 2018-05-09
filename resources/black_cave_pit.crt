@@ -40,3 +40,23 @@ File=
 Color=255,255,255
 Dialog=0
 NPC=0
+[50]
+Name=Spider
+X=26
+Y=27
+Life=100/100
+Symbol=s
+File=
+Color=255,255,255
+Dialog=0
+NPC=0
+[60]
+Name=Deep Spider
+X=43
+Y=29
+Life=100/100
+Symbol=S
+File=
+Color=255,255,255
+Dialog=0
+NPC=0
