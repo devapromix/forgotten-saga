@@ -40,3 +40,13 @@ File=
 Color=255,255,255
 Dialog=0
 NPC=0
+[4]
+Name=Кобольд
+X=9
+Y=35
+Life=100/100
+Symbol=k
+File=
+Color=255,255,255
+Dialog=0
+NPC=0
