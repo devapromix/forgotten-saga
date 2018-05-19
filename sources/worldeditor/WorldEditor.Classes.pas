@@ -2,11 +2,10 @@ unit WorldEditor.Classes;
 
 interface
 
-uses Windows, Graphics, Types, Controls, ForgottenSaga.Classes,
-  ForgottenSaga.Entities;
+uses Windows, Graphics, Types, Forms, Controls, ForgottenSaga.Classes,
+  ForgottenSaga.Entities, Dialogs;
 
 {$REGION ' TEditor '}
-
 function __(S: string): string;
 
 type
@@ -27,7 +26,8 @@ type
     procedure RenderItems;
     procedure RenderCreatures;
     procedure MouseMove(Layer: TMap.TLayerEnum; X, Y: Integer);
-    procedure MouseDown(Layer: TMap.TLayerEnum; Button: TMouseButton; X, Y: Integer);
+    procedure MouseDown(Layer: TMap.TLayerEnum; Button: TMouseButton;
+      X, Y: Integer);
     procedure KeyDown(var Key: Word);
     property Pos: TPoint read FPos write FPos;
     property ToolBarHeight: Integer read FToolBarHeight write FToolBarHeight;
@@ -42,6 +42,14 @@ var
   Editor: TEditor;
 
 {$ENDREGION ' TEditor '}
+
+type
+  Utils = class(TObject)
+  public
+    class function ShowForm(const Form: TForm): Integer;
+    class function MsgDlg(const Msg: string; DlgType: TMsgDlgType;
+      Buttons: TMsgDlgButtons; HelpCtx: Integer = 0): Integer;
+  end;
 
 implementation
 
@@ -79,7 +87,8 @@ begin
 
 end;
 
-procedure TEditor.MouseDown(Layer: TMap.TLayerEnum; Button: TMouseButton; X, Y: Integer);
+procedure TEditor.MouseDown(Layer: TMap.TLayerEnum; Button: TMouseButton;
+  X, Y: Integer);
 begin
   case Button of
     mbLeft:
@@ -164,5 +173,22 @@ begin
 end;
 
 {$ENDREGION ' TEditor '}
+{ Utils }
+
+class function Utils.MsgDlg(const Msg: string; DlgType: TMsgDlgType;
+  Buttons: TMsgDlgButtons; HelpCtx: Integer): Integer;
+begin
+  Result := ShowForm(CreateMessageDialog(Msg, DlgType, Buttons));
+end;
+
+class function Utils.ShowForm(const Form: TForm): Integer;
+begin
+  with Form do
+  begin
+    BorderStyle := bsDialog;
+    Position := poOwnerFormCenter;
+    Result := ShowModal;
+  end;
+end;
 
 end.
