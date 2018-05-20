@@ -35,8 +35,6 @@ type
     ItmListBox: TListBox;
     CrtListBox: TListBox;
     bfBlock: TToolButton;
-    Timer1: TTimer;
-    LoadTimer: TTimer;
     procedure FormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -57,8 +55,6 @@ type
     procedure ItmListBoxClick(Sender: TObject);
     procedure bfBlockClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure Timer1Timer(Sender: TObject);
-    procedure LoadTimerTimer(Sender: TObject);
   private
     procedure LoadResources;
     { Private declarations }
@@ -69,11 +65,11 @@ type
     function GetRealTile(Index: Integer; Layer: TTiles.TLayerTypeEnum)
       : TTiles.TTileEnum;
     function CheckModified: Boolean;
+    procedure LoadMap;
   end;
 
 var
   fMain: TfMain;
-  EditorEnabled: Boolean = False;
 
 implementation
 
@@ -194,6 +190,38 @@ begin
   //
 end;
 
+procedure TfMain.LoadMap;
+var
+I: Integer;
+begin
+  Editor.CurrentMap.FileName := OD.FileName;
+  Editor.CurrentMap.LoadFromFile(Editor.CurrentMap.FileName);
+
+  Editor.Items.LoadFromFile(ChangeFileExt(Editor.CurrentMap.FileName, '.itm'));
+  ItmListBox.Clear;
+  for I := 0 to Editor.Items.Count - 1 do
+  begin
+    ItmListBox.Items.Append(Format(TPlayer.KeyFmt,
+      [Editor.Items.Entity[I].Symbol, __(Editor.Items.Entity[I].Name)]));
+  end;
+  ItmListBox.ItemIndex := 0;
+
+  Editor.Creatures.LoadFromFile
+    (ChangeFileExt(Editor.CurrentMap.FileName, '.crt'));
+  CrtListBox.Clear;
+  for I := 0 to Editor.Creatures.Count - 1 do
+  begin
+    CrtListBox.Items.Append(Format(TPlayer.KeyFmt,
+      [Editor.Creatures.Entity[I].Symbol,
+      __(Editor.Creatures.Entity[I].Name)]));
+  end;
+  CrtListBox.ItemIndex := 0;
+
+  UpdateCaption;
+
+  FormPaint(Self);
+end;
+
 procedure TfMain.LoadResources;
 var
   I: TTiles.TTileEnum;
@@ -221,40 +249,6 @@ begin
   ObjListBox.ItemIndex := 0;
 end;
 
-procedure TfMain.LoadTimerTimer(Sender: TObject);
-var
-  I: Integer;
-begin
-  LoadTimer.Enabled := False;
-
-  Editor.CurrentMap.FileName := OD.FileName;
-  Editor.CurrentMap.LoadFromFile(Editor.CurrentMap.FileName);
-
-  Editor.Items.LoadFromFile(ChangeFileExt(Editor.CurrentMap.FileName, '.itm'));
-  ItmListBox.Clear;
-  for I := 0 to Editor.Items.Count - 1 do
-  begin
-    ItmListBox.Items.Append(Format(TPlayer.KeyFmt,
-      [Editor.Items.Entity[I].Symbol, __(Editor.Items.Entity[I].Name)]));
-  end;
-  ItmListBox.ItemIndex := 0;
-
-  Editor.Creatures.LoadFromFile
-    (ChangeFileExt(Editor.CurrentMap.FileName, '.crt'));
-  CrtListBox.Clear;
-  for I := 0 to Editor.Creatures.Count - 1 do
-  begin
-    CrtListBox.Items.Append(Format(TPlayer.KeyFmt,
-      [Editor.Creatures.Entity[I].Symbol,
-      __(Editor.Creatures.Entity[I].Name)]));
-  end;
-  CrtListBox.ItemIndex := 0;
-
-  UpdateCaption;
-
-  FormPaint(Sender);
-end;
-
 procedure TfMain.FormDestroy(Sender: TObject);
 begin
   Editor.Free;
@@ -263,8 +257,6 @@ end;
 procedure TfMain.FormMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
 begin
-  if not EditorEnabled then
-    Exit;
   Editor.MouseDown(TMap.TLayerEnum(GetCurrentLayer), Button, X, Y);
   FormPaint(Sender);
   UpdateCaption;
@@ -341,12 +333,6 @@ begin
   Editor.Tile := GetRealTile(TerListBox.ItemIndex, ltTerrain);
 end;
 
-procedure TfMain.Timer1Timer(Sender: TObject);
-begin
-  EditorEnabled := True;
-  Timer1.Enabled := False;
-end;
-
 procedure TfMain.ObjListBoxClick(Sender: TObject);
 begin
   Editor.Tile := GetRealTile(ObjListBox.ItemIndex, ltObjects);
@@ -359,11 +345,13 @@ begin
   OD.InitialDir := TUtils.GetPath('resources');
   if OD.Execute then
   begin
-    LoadTimer.Enabled := True;
     fProgressBar.Left := Self.Left +
       ((Self.Width div 2) - (fProgressBar.Width div 2));
     fProgressBar.Top := Self.Top +
       ((Self.Height div 2) - (fProgressBar.Height div 2));
+    fProgressBar.Speed := 100;
+    fProgressBar.Start;
+    fProgressBar.OnAct := LoadMap;
     fProgressBar.ShowModal;
   end;
   FormPaint(Sender);

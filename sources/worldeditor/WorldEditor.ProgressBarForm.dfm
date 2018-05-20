@@ -13,6 +13,7 @@ object fProgressBar: TfProgressBar
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object ProgressBar1: TProgressBar
@@ -22,7 +23,10 @@ object fProgressBar: TfProgressBar
     Height = 87
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 569
-    ExplicitHeight = 49
+  end
+  object Timer1: TTimer
+    OnTimer = Timer1Timer
+    Left = 216
+    Top = 32
   end
 end
