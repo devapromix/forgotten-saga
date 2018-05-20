@@ -909,7 +909,7 @@ object fMain: TfMain
     Left = 24
     Top = 48
     Bitmap = {
-      494C01010700C8009C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01010700C800A00010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -1197,5 +1197,17 @@ object fMain: TfMain
     Options = [ofOverwritePrompt, ofHideReadOnly, ofNoChangeDir, ofEnableSizing]
     Left = 24
     Top = 144
+  end
+  object Timer1: TTimer
+    Interval = 2000
+    OnTimer = Timer1Timer
+    Left = 24
+    Top = 200
+  end
+  object LoadTimer: TTimer
+    Enabled = False
+    OnTimer = LoadTimerTimer
+    Left = 128
+    Top = 288
   end
 end

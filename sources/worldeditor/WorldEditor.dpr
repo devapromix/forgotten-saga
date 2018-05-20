@@ -9,7 +9,8 @@ uses
   ForgottenSaga.Scenes in '..\ForgottenSaga.Scenes.pas',
   ForgottenSaga.Entities in '..\ForgottenSaga.Entities.pas',
   WorldEditor.NewMapForm in 'WorldEditor.NewMapForm.pas' {fNew},
-  BeaRLibItems in '..\includes\BeaRLibItems.pas';
+  BeaRLibItems in '..\includes\BeaRLibItems.pas',
+  WorldEditor.ProgressBarForm in 'WorldEditor.ProgressBarForm.pas' {fProgressBar};
 
 {$R *.res}
 
@@ -18,6 +19,7 @@ begin
   Application.Title := 'Forgotten Saga WorldEditor';
   Application.CreateForm(TfMain, fMain);
   Application.CreateForm(TfNew, fNew);
+  Application.CreateForm(TfProgressBar, fProgressBar);
   Application.Run;
 
 end.
