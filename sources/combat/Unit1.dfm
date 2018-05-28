@@ -29,6 +29,7 @@ object Form1: TForm1
     ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 0
+    Zoom = 100
   end
   object Button1: TButton
     Left = 8
@@ -63,6 +64,7 @@ object Form1: TForm1
     ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 3
+    Zoom = 100
   end
   object ListBox1: TListBox
     Left = 8
