@@ -42,6 +42,7 @@ var
   Editor: TEditor;
 
 {$ENDREGION ' TEditor '}
+{$REGION ' Utils '}
 
 type
   Utils = class(TObject)
@@ -50,6 +51,7 @@ type
     class function MsgDlg(const Msg: string; DlgType: TMsgDlgType;
       Buttons: TMsgDlgButtons; HelpCtx: Integer = 0): Integer;
   end;
+{$ENDREGION ' Utils '}
 
 implementation
 
@@ -173,7 +175,7 @@ begin
 end;
 
 {$ENDREGION ' TEditor '}
-{ Utils }
+{$REGION ' Utils '}
 
 class function Utils.MsgDlg(const Msg: string; DlgType: TMsgDlgType;
   Buttons: TMsgDlgButtons; HelpCtx: Integer): Integer;
@@ -190,5 +192,6 @@ begin
     Result := ShowModal;
   end;
 end;
+{$ENDREGION ' Utils '}
 
 end.
