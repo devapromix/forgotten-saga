@@ -1,7 +1,7 @@
 # Forgotten Saga
 
 ## Introduction
-Forgotten Saga is a single-player roguelike game for Windows. It should work on any system with Windows XP or later installed.
+A tactical turn-based roguelike game with elements of survival and world exploration, where the player controls the hero, fighting enemies, completing tasks, collecting resources and upgrading equipment.
 
 ---
 
